@@ -22,7 +22,7 @@ state.game = {
   startNewLevel = function(s)
     s.waitingForNewLevel = false
     s.levelNumber = s.levelNumber + 1
-    s.world = love.physics.newWorld(-1,-1,101,101,0,1, true)
+    s.world = love.physics.newWorld(-1,-1,levelGenerator.maxCol+1,levelGenerator.maxRow+1,0,1, true)
     s.world:setCallback(state.game.collision)
     s.level = getLevel(s.difficulty*10 + s.levelNumber)
     s.level.physics = solidify(s.world,s.level.tiles)

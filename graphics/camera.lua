@@ -20,8 +20,8 @@ camera = {
     local fovX = (c.width/2)*(zDiff/24)
     local fovY = fovX*0.75
     
-    local minX, maxX = math.max(1,math.floor(c.x - fovX)), math.min(100,math.ceil(c.x + fovX))
-    local minY, maxY = math.max(1,math.floor(c.y - fovY)), math.min(100,math.ceil(c.y + fovY))
+    local minX, maxX = math.max(1,math.floor(c.x - fovX)), math.min(table.getn(plane),math.ceil(c.x + fovX))
+    local minY, maxY = math.max(1,math.floor(c.y - fovY)), math.min(table.getn(plane[minX]),math.ceil(c.y + fovY))
     
     for col = minX, maxX do
       local column = plane[col]

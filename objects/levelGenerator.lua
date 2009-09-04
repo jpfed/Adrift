@@ -1,3 +1,12 @@
+levelGenerator = {
+  margin = 1,
+  maxCol = 100,
+  maxRow = 100,
+  minNodeRadius = 30,
+  maxNodeRadius = 100,
+  minArcThickness = 5,
+  maxArcThickness = 20,
+}
 getLevel = function(difficulty)
   local enemyProbability = 1-math.exp(-difficulty/10)
   local powerupProbability = (0.25 + math.exp(-difficulty/20))/2
@@ -75,19 +84,19 @@ getLevel = function(difficulty)
   local minYindex, maxYindex = -1, -1
   local maxDistIndex, maxDist = -1, -math.huge
   for k,v in ipairs(_nodes) do
-    minX, maxX = math.min(minX, v.x), math.max(maxX, v.x)
-    minY, maxY = math.min(minY, v.y), math.max(maxY, v.y)
+    minX, maxX = math.min(minX, v.x-v.radius), math.max(maxX, v.x+v.radius)
+    minY, maxY = math.min(minY, v.y-v.radius), math.max(maxY, v.y+v.radius)
     if v.dist > maxDist then
       maxDist = v.dist
       maxDistIndex = k
     end
   end
   
-  local size = 80
-  local scaleX, scaleY = size / (maxX-minX), size / (maxY - minY)
+  local sizeX, sizeY = levelGenerator.maxCol - levelGenerator.margin, levelGenerator.maxRow - levelGenerator.margin
+  local scaleX, scaleY = sizeX / (maxX-minX), sizeY / (maxY - minY)
   for k,v in ipairs(_nodes) do
-    v.x = (v.x-minX) * scaleX + 10
-    v.y = (v.y-minY) * scaleY + 10
+    v.x = (v.x-minX) * scaleX + levelGenerator.margin
+    v.y = (v.y-minY) * scaleY + levelGenerator.margin
   end
   
   _nodes[maxDistIndex].warpCrystal = true
@@ -104,11 +113,11 @@ createNode = function(lx,ly,ux,uy)
   local locX, locY = lx, ly
   if lx ~= ux then locX = math.random(lx, ux) end
   if ly ~= uy then locY = math.random(ly, uy) end
-  return {x = locX, y = locY, radius = math.random(30,100)/10}
+  return {x = locX, y = locY, radius = math.random(levelGenerator.minNodeRadius,levelGenerator.maxNodeRadius)/10}
 end
 
 createArc = function(tl, hd)
-  return {tail = tl, head = hd, thickness = math.random(5,20)/10}
+  return {tail = tl, head = hd, thickness = math.random(levelGenerator.minArcThickness,levelGenerator.maxArcThickness)/10}
 end
 
 
@@ -136,17 +145,17 @@ end
 
 rasterize = function(nodes, arcs)
   local result = {}
-  for col = 1,100 do
+  
+  for col = 1,levelGenerator.maxCol do
     table.insert(result,{})
-    for row = 1,100 do
+    for row = 1,levelGenerator.maxRow do
       result[col][row] = 1
     end
   end
 
   for k,v in ipairs(nodes) do
-    --local bevel = math.ceil(v.radius/2)
-    local minX, maxX = math.max(2,math.floor(v.x - v.radius)), math.min(99,math.ceil(v.x + v.radius))
-    local minY, maxY = math.max(2,math.floor(v.y - v.radius)), math.min(99,math.ceil(v.y + v.radius))
+    local minX, maxX = math.max(1+levelGenerator.margin,math.floor(v.x - v.radius)), math.min(levelGenerator.maxCol-levelGenerator.margin,math.ceil(v.x + v.radius))
+    local minY, maxY = math.max(1+levelGenerator.margin,math.floor(v.y - v.radius)), math.min(levelGenerator.maxRow-levelGenerator.margin,math.ceil(v.y + v.radius))
     for x = minX, maxX do
       for y = minY, maxY do
         if geom.distance(v.x,v.y,x,y) <= v.radius then result[x][y] = 0 end
@@ -159,8 +168,8 @@ rasterize = function(nodes, arcs)
     local inc = v.thickness/(2*geom.length(v.head,v.tail))
     while t <= 1 do
       local m = util.interpolate2d(v.head,v.tail,t)
-      local minX, maxX = math.max(2,math.floor(m.x - v.thickness)), math.min(99,math.ceil(m.x + v.thickness))
-      local minY, maxY = math.max(2,math.floor(m.y - v.thickness)), math.min(99,math.ceil(m.y + v.thickness))
+      local minX, maxX = math.max(1+levelGenerator.margin,math.floor(m.x - v.thickness)), math.min(levelGenerator.maxCol-levelGenerator.margin,math.ceil(m.x + v.thickness))
+      local minY, maxY = math.max(1+levelGenerator.margin,math.floor(m.y - v.thickness)), math.min(levelGenerator.maxRow-levelGenerator.margin,math.ceil(m.y + v.thickness))
       for x = minX, maxX do
         for y = minY, maxY do
           result[x][y] = 0
@@ -176,11 +185,11 @@ end
 solidify = function(world, tiles)
   local result = {type = "level", rows={}}
   result.body = love.physics.newBody(world,0,0,0)
-  for row = 1,100 do
+  for row = 1,levelGenerator.maxRow do
     result.rows[row] = {}
     local wasSolid = false
     local leftMost = 0
-    for col = 1,101 do
+    for col = 1,levelGenerator.maxCol+1 do
       local isSolid = (tiles[col]~=nil and tiles[col][row]~=nil and tiles[col][row]>0)
       if isSolid then
         if not wasSolid then

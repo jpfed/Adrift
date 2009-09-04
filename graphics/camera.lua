@@ -11,9 +11,7 @@ camera = {
     love.graphics.newColor(192,128,64),
   },
   
-  render = function(c,plane, planeZ)
-    love.graphics.setColor(c.colors[2])
-    love.graphics.rectangle(love.draw_fill, 0,0,800,600)
+  render = function(c,plane, planeZ, levelColors)
     
     local zDiff = planeZ - c.z
     
@@ -29,8 +27,14 @@ camera = {
       for square = minY,maxY do
         if column[square]~=nil then
           local yVal = 800*(square - c.y)/fovX + 300
-          love.graphics.setColor(c.colors[column[square]+1])
-          love.graphics.rectangle(love.draw_fill,xVal,yVal,800/fovX,800/fovX)
+          if column[square]>0 then
+            if column[square]==1 then
+              love.graphics.setColor(levelColors[square].normal)
+            elseif column[square]==2 then
+              love.graphics.setColor(levelColors[square].highlight)
+            end
+            love.graphics.rectangle(love.draw_fill,xVal,yVal,800/fovX,800/fovX)
+          end
         end
       end
     end

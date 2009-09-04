@@ -223,6 +223,27 @@ highlight = function(tiles)
   end
 end
 
+coloration = function(brightness)
+  local strata = {}
+  local fineVariations = util.randomVector(levelGenerator.maxRow,0.125)
+  local bigVariationsR = util.randomVector(levelGenerator.maxRow/8,0.5)
+  local bigVariationsG = util.randomVector(levelGenerator.maxRow/8,0.5)
+  local bigVariationsB = util.randomVector(levelGenerator.maxRow/8,0.5)
+  for k,v in ipairs(fineVariations) do
+    local lumR = brightness*((v*0.25 + util.interpolatedVector(bigVariationsR,k/8)*0.75)*0.625+0.375)
+    local lumG = brightness*((v*0.25 + util.interpolatedVector(bigVariationsG,k/8)*0.75)*0.625+0.375)
+    local lumB = brightness*((v*0.25 + util.interpolatedVector(bigVariationsB,k/8)*0.75)*0.625+0.375)
+    lumR = math.min(1,math.max(0,lumR))
+    lumG = math.min(1,math.max(0,lumG))
+    lumB = math.min(1,math.max(0,lumB))
+    local col1 = love.graphics.newColor(96*lumR,64*lumG,32*lumB)
+    local col2 = love.graphics.newColor(196*lumR, 128*lumG, 64*lumB)
+    local colors = {normal = col1, highlight = col2}
+    table.insert(strata,colors)
+  end
+  return strata
+end
+
 getObjects = function(world, nodeSet, difficulty)
   local result = {}
   for k,v in ipairs(nodeSet) do

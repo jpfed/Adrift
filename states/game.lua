@@ -26,6 +26,7 @@ state.game = {
     s.world:setCallback(state.game.collision)
     s.level = getLevel(s.difficulty*10 + s.levelNumber)
     s.level.physics = solidify(s.world,s.level.tiles)
+    s.level.colors = coloration(1)
     s.objects = getObjects(s.world, s.level.nodes,s.difficulty*10)
     s.ship = objects.ships.getShip(s.world, s.level.nodes[1].x, s.level.nodes[1].y,1)
     camera.x = s.ship.body:getX()
@@ -38,12 +39,6 @@ state.game = {
     state.current = state.loss
     state.loss.ct = 0
     end
-    -- if love.keyboard.isDown(love.key_up) then camera.y = camera.y-5*dt end
-    -- if love.keyboard.isDown(love.key_down) then camera.y = camera.y+5*dt end
-    -- if love.keyboard.isDown(love.key_left) then camera.x = camera.x-5*dt end
-    -- if love.keyboard.isDown(love.key_right) then camera.x = camera.x+5*dt end
-    -- if love.keyboard.isDown(love.key_z) then camera.z = camera.z+5*dt end
-    -- if love.keyboard.isDown(love.key_x) then camera.z = camera.z-5*dt end
     for k,v in ipairs(s.objects) do
       v:update(dt)
     end
@@ -81,7 +76,7 @@ state.game = {
   
   draw = function(s) 
     if not s.waitingForNextLevel then
-      camera:render(s.level.tiles, 0)
+      camera:render(s.level.tiles, 0, s.level.colors)
       for k,v in ipairs(s.objects) do
         v:draw()
       end

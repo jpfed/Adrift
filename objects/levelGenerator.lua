@@ -144,18 +144,12 @@ rasterize = function(nodes, arcs)
   end
 
   for k,v in ipairs(nodes) do
-    local bevel = math.ceil(v.radius/2)
+    --local bevel = math.ceil(v.radius/2)
     local minX, maxX = math.max(2,math.floor(v.x - v.radius)), math.min(99,math.ceil(v.x + v.radius))
     local minY, maxY = math.max(2,math.floor(v.y - v.radius)), math.min(99,math.ceil(v.y + v.radius))
     for x = minX, maxX do
       for y = minY, maxY do
-        local ul = x + y - bevel > minX + minY
-        local ur = y - x - bevel > -maxX + minY
-        local ll = x - y - bevel > minX - maxY
-        local lr = -x - y - bevel > -maxX - maxY
-        if ul and ur and ll and lr then
-          result[x][y] = 0 
-        end
+        if geom.distance(v.x,v.y,x,y) <= v.radius then result[x][y] = 0 end
       end
     end
   end
@@ -164,9 +158,9 @@ rasterize = function(nodes, arcs)
     local t = 0
     local inc = v.thickness/(2*geom.length(v.head,v.tail))
     while t <= 1 do
-      local mx, my = t*v.head.x + (1-t)*v.tail.x, t*v.head.y + (1-t)*v.tail.y
-      local minX, maxX = math.max(2,math.floor(mx - v.thickness)), math.min(99,math.ceil(mx + v.thickness))
-      local minY, maxY = math.max(2,math.floor(my - v.thickness)), math.min(99,math.ceil(my + v.thickness))
+      local m = util.interpolate2d(v.head,v.tail,t)
+      local minX, maxX = math.max(2,math.floor(m.x - v.thickness)), math.min(99,math.ceil(m.x + v.thickness))
+      local minY, maxY = math.max(2,math.floor(m.y - v.thickness)), math.min(99,math.ceil(m.y + v.thickness))
       for x = minX, maxX do
         for y = minY, maxY do
           result[x][y] = 0

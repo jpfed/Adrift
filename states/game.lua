@@ -25,8 +25,10 @@ state.game = {
     s.world = love.physics.newWorld(-1,-1,levelGenerator.maxCol+1,levelGenerator.maxRow+1,0,1, true)
     s.world:setCallback(state.game.collision)
     s.level = getLevel(s.difficulty*10 + s.levelNumber)
+    s.background = getLevel(s.difficulty*10 + s.levelNumber)
     s.level.physics = solidify(s.world,s.level.tiles)
     s.level.colors = coloration(1)
+    s.background.colors = coloration(0.25)
     s.objects = getObjects(s.world, s.level.nodes,s.difficulty*10)
     s.ship = objects.ships.getShip(s.world, s.level.nodes[1].x, s.level.nodes[1].y,1)
     camera.x = s.ship.body:getX()
@@ -76,6 +78,7 @@ state.game = {
   
   draw = function(s) 
     if not s.waitingForNextLevel then
+      camera:render(s.background.tiles, 12, s.background.colors)
       camera:render(s.level.tiles, 0, s.level.colors)
       for k,v in ipairs(s.objects) do
         v:draw()

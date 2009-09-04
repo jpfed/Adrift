@@ -111,8 +111,10 @@ state.game = {
     if a.type == objects.weapons or b.type == objects.weapons then
       if a.type == objects.ships then
         a.armor = a.armor - 1
+        if a.armor <= 0 and not a.friendly then state.game.score = state.game.score + 1000 end
       elseif b.type == objects.ships then
-        a.armor = a.armor - 1
+        b.armor = b.armor - 1
+        if b.armor <= 0 and not b.friendly then state.game.score = state.game.score + 1000 end
       end
       if a.type == objects.weapons and a.firer ~= b then a.dead = true end
       if b.type == objects.weapons and b.firer ~= a then b.dead = true end

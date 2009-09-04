@@ -99,11 +99,11 @@ objects = {
         local tipx,tipy = objects.ships.getPoints(s.body:getX(),s.body:getY(),theta)
       
         local vx,vy = s.body:getVelocity()
-        local mx, my = 16*math.cos(theta), 16*math.sin(theta)
+        local mx, my = 12*math.cos(theta), 12*math.sin(theta)
         vx = vx + mx
         vy = vy + my
         local bbody = love.physics.newBody(state.game.world, tipx+mx/60,tipy+my/60,0.01)
-        local bshape = love.physics.newCircleShape(bbody, 0.05)
+        local bshape = love.physics.newCircleShape(bbody, 0.075)
         bbody:setBullet(true)
         bbody:setVelocity(vx,vy)
         bshape:setSensor(true)
@@ -113,7 +113,8 @@ objects = {
           shape = bshape,
           firer = s,
           draw = objects.weapons[1].draw,
-          update = objects.weapons[1].update
+          update = objects.weapons[1].update,
+          cleanup = objects.weapons[1].cleanup
         }
         if s.friendly then result.color = w.friendlyFire else result.color = w.enemyFire end
         result.shape:setData(result)
@@ -124,10 +125,14 @@ objects = {
       draw = function(b) 
         local x,y,scale = camera:xy(b.body:getX(),b.body:getY(),0)
         love.graphics.setColor(b.color)
-        love.graphics.circle(love.draw_fill,x,y,scale*0.05)
+        love.graphics.circle(love.draw_fill,x,y,scale*0.075)
       end,
       
-      update = function(b,dt)  end
+      update = function(b,dt)  end,
+      cleanup = function(b) 
+        b.shape:destroy()
+        b.body:destroy()
+      end
     },
   },
   
@@ -191,7 +196,7 @@ objects = {
                 local firingFrom = {x = s.body:getX(),y=s.body:getY()}
                 local firingTowards = {x = firingFrom.x + math.cos(theta), y= firingFrom.y + math.sin(theta)}
                 local distToHit = geom.distToLine({x = v.body:getX(),y=v.body:getY()},firingFrom,firingTowards)
-                if distToHit < 0.75 then isFiring = false end
+                if distToHit < 1 then isFiring = false end
               end
             end
           end
@@ -230,10 +235,12 @@ objects = {
         hasCrystal = false,
         thrust = 10,
         heat = 0,
+        coolRate = 1,
         draw = objects.ships.draw,
         control = controller,
         friendly = (controllerIndex == 1),
         update = objects.ships.update,
+        cleanup = objects.ships.cleanup,
         circColor = love.graphics.newColor(32,64,128),
         triColor = love.graphics.newColor(64,128,255),
         cryColor = love.graphics.newColor(255,255,255),
@@ -242,8 +249,13 @@ objects = {
         collisionShock = 0,
         collisionReaction = 1
       }
-      result.collisionReaction = math.random()*2-1
-      if result.friendly then result.armor = 20 end
+      result.collisionReaction = math.random(2)*2-3
+      if result.friendly then 
+        result.armor = 20 
+        result.coolRate = 5
+      else
+        sh:setRestitution(1.0)
+      end
       result.shape:setData(result)
       return result
     end,
@@ -262,7 +274,6 @@ objects = {
       if s.friendly then
         love.graphics.setColor(s.circColor)
         love.graphics.circle(love.draw_fill,cx,cy,0.375*radius,32)
-        love.graphics.circle(love.draw_line,cx,cy,0.375*radius + s.heat*radius,32)
         if s.hasCrystal then 
           love.graphics.setColor(s.cryColor)
         else
@@ -298,12 +309,16 @@ objects = {
       s.body:setSpin(spin * spRetain + targetSpin * spChange)
       s.body:setVelocity(vx * velRetain + targVx * velChange, vy * velRetain + targVy * velChange)
       
-      s.heat = math.max(0,s.heat - dt)
+      s.heat = math.max(0,s.heat - dt*s.coolRate)
       
       if isFiring and s.heat == 0 then 
         s.activeWeapon:fire(s)
       end
       
+    end,
+    cleanup = function(s)
+      s.shape:destroy()
+      s.body:destroy()
     end
   },
 }

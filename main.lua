@@ -1,6 +1,6 @@
 load = function()
   math.randomseed(os.time())
-  love.filesystem.require("util/geom.lua")
+  love.filesystem.require("util/util.lua")
   love.filesystem.require("objects/objects.lua")
   love.filesystem.require("objects/levelGenerator.lua")
   love.filesystem.require("graphics/camera.lua")
@@ -11,11 +11,10 @@ load = function()
   state.current = state.menu
   love.audio.setChannels(4)
   love.audio.setVolume(0.9)
-  love.audio.play(sound.bgm)
 end
 
 update = function(dt)
-  if not love.audio.isPlaying then love.audio.play(sound.bgm) end
+  if not love.audio.isPlaying() then love.audio.play(sound.bgm) end
   state.current:update(dt)
 end
 

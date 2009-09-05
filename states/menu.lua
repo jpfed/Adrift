@@ -1,4 +1,4 @@
-getMenu = function()
+getMenu = function(opts, extras)
   
   return {
     
@@ -32,46 +32,9 @@ getMenu = function()
       end
     },
 
-    supplemental = {
-      draw = function(sup,s)
-        love.graphics.setColor(s.normalColor)
-        love.graphics.line(425,150,425,450)
-        love.graphics.line(600,150,600,450)
-        love.graphics.line(275,0,425,150)
-        love.graphics.line(750,0,600,150)
-        love.graphics.line(425,450,275,600)
-        love.graphics.line(600,450,750,600)
-      end
-    },
+    options = opts,
+    supplemental = extras,
     
-    options = {
-      
-      {text = "Easy", x = 500, y = 200, w = 60, h = 20,
-        action = function()  
-        state.game:load(1)
-      end},
-      
-      {text = "Medium", x = 500, y = 250, w = 75, h = 20,
-        action = function()  
-        state.game:load(2)
-      end},
-      
-      {text = "Hard", x = 500, y = 300, w = 60, h = 20,
-        action = function()  
-        state.game:load(3)
-      end},
-      
-      {text = "Help", x = 500, y = 350, w = 60, h = 20,
-        action = function()
-        state.current = state.help
-      end},
-      
-      {text = "Quit", x = 500, y = 400, w = 60, h = 20,
-        action = function() 
-        love.system.exit()
-      end}
-    },
-
     update = function(s,dt) 
       s.cursor:update()
       local found = false
@@ -106,4 +69,44 @@ getMenu = function()
   }
 end
 
-state.menu = getMenu()
+local options = {
+  
+  {text = "Easy", x = 500, y = 200, w = 60, h = 20,
+    action = function()  
+    state.game:load(1)
+  end},
+  
+  {text = "Medium", x = 500, y = 250, w = 75, h = 20,
+    action = function()  
+    state.game:load(2)
+  end},
+  
+  {text = "Hard", x = 500, y = 300, w = 60, h = 20,
+    action = function()  
+    state.game:load(3)
+  end},
+  
+  {text = "Help", x = 500, y = 350, w = 60, h = 20,
+    action = function()
+    state.current = state.help
+  end},
+  
+  {text = "Quit", x = 500, y = 400, w = 60, h = 20,
+    action = function() 
+    love.system.exit()
+  end}
+}
+
+local supplemental = {
+  draw = function(sup,s)
+    love.graphics.setColor(s.normalColor)
+    love.graphics.line(425,150,425,450)
+    love.graphics.line(600,150,600,450)
+    love.graphics.line(275,0,425,150)
+    love.graphics.line(750,0,600,150)
+    love.graphics.line(425,450,275,600)
+    love.graphics.line(600,450,750,600)
+  end
+}
+
+state.menu = getMenu(options, supplemental)

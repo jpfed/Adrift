@@ -1,12 +1,11 @@
-state.help = getMenu()
-state.help.options = {
+local options = {
   {text = "Done", x = 675, y = 350, w = 60, h = 20,
     action = function() 
     state.current = state.menu
   end}
 }
 
-state.help.supplemental = {
+local supplemental = {
   draw = function(sup,s)
     love.graphics.setColor(s.normalColor)
     love.graphics.draw("Pilot your ship using the arrow keys.", 75, 200)
@@ -18,5 +17,8 @@ state.help.supplemental = {
     love.graphics.line(0,125,800,125)
     love.graphics.line(0,400,800,400)
   end
-
 }
+
+state.help = getMenu(options, supplemental)
+
+

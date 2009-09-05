@@ -27,7 +27,7 @@ local opts = {
       state.options.difficulty = 3
   end},
   
-  {text = "Done", x = 300, y = 500, w = 60, h = 20,
+  {text = "Done", x = 500, y = 500, w = 60, h = 20,
     action = function() 
       state.current = state.menu
   end},
@@ -38,9 +38,13 @@ local supplemental = {
     local controlsOption = s.options[3-state.options.controlScheme]
     local difficultyOption = s.options[state.options.difficulty + 2]
     love.graphics.setColor(s.highlightColor)
-    love.graphics.circle(love.draw_fill, controlsOption.x - 30, controlsOption.y - 5, 8, 32)
-    love.graphics.circle(love.draw_fill, difficultyOption.x - 30, difficultyOption.y - 5, 8, 32)
+    love.graphics.circle(love.draw_fill, controlsOption.x - 30, controlsOption.y - 4, 8, 32)
+    love.graphics.circle(love.draw_fill, difficultyOption.x - 30, difficultyOption.y - 4, 8, 32)
     love.graphics.setColor(s.normalColor)
+    love.graphics.line(400,400,400,600)
+    love.graphics.line(400,400,000,400)
+    love.graphics.line(650,100,000,100)
+    love.graphics.line(650,100,650,600)
   end
 }
 

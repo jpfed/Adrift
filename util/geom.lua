@@ -20,6 +20,19 @@ geom = {
     return math.sqrt(distx*distx + disty*disty)
   end,
   
+  normalize = function(x,y) 
+    if x==0 and y==0 then return 0,0 end
+    local len = geom.distance(0,0,x,y)
+    return x/len, y/len
+  end,
+  
+  dotProduct = function(x1,y1,x2,y2) 
+    return x1*x2 + y1*y2
+  end,
+  crossProduct = function(x1,y1,x2,y2) 
+    return x1*y2 - x2*y1
+  end,
+  
   intersectionPoint = function(p1,p2,p3,p4, includeEndpoints)
     local d = (p4.y-p3.y)*(p2.x-p1.x) - (p4.x-p3.x)*(p2.y-p1.y)
     if d == 0 then return nil end

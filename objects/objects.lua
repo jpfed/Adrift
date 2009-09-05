@@ -58,7 +58,7 @@ objects = {
   },
   
   getEnemy = function(obs,world, node)
-    return objects.ships.getShip(world,node.x,node.y,2)
+    return objects.ships.getShip(world,node.x,node.y,3)
 
     -- local result = {
       -- type = objects.enemies,
@@ -148,7 +148,7 @@ objects = {
     end,
   
     controllers = {
-      -- friendly (keyboard) control
+      -- friendly (radial keyboard) control
       {
         getAction = function(s,vx,vy,theta,spin)
           local targVx,targVy,targetSpin,isFiring = vx,vy,0,false
@@ -164,6 +164,40 @@ objects = {
           if love.keyboard.isDown(love.key_right)  then 
             targetSpin = 360
           end
+          isFiring = love.keyboard.isDown(love.key_f)
+          return targVx,targVy,targetSpin,isFiring
+        end
+      },
+      
+      -- friendly (eight-directional) control
+      {
+        getAction = function(s,vx,vy,theta,spin)
+          local targVx,targVy,targetSpin,isFiring = vx,vy,0,false
+          local targX, targY, turn = 0,0, false
+          if love.keyboard.isDown(love.key_up)  then 
+            targY, turn = targY-1,true
+          end
+          if love.keyboard.isDown(love.key_down)  then 
+            targY, turn = targY+1,true
+          end
+          if love.keyboard.isDown(love.key_left)  then 
+            targX, turn = targX-1,true
+          end
+          if love.keyboard.isDown(love.key_right)  then 
+            targX, turn = targX+1,true
+          end
+          targX, targY = geom.normalize(targX, targY)
+          local pointingX,pointingY = math.cos(theta), math.sin(theta)
+          if turn then
+            local cp = geom.crossProduct(pointingX,pointingY,targX,targY)
+            if cp > 0 then
+              targetSpin = 360
+            else
+              targetSpin = -360
+            end
+          end
+          local thrust = geom.dotProduct(pointingX,pointingY,targX,targY)
+          targVx, targVy = thrust*s.thrust*math.cos(theta), thrust*s.thrust*math.sin(theta)
           isFiring = love.keyboard.isDown(love.key_f)
           return targVx,targVy,targetSpin,isFiring
         end
@@ -206,13 +240,13 @@ objects = {
     },
   
     getShip = function(wld,sx,sy,controllerIndex)
-      if controllerIndex == nil then controllerIndex = 1 end
+      if controllerIndex == nil then controllerIndex = 2 end
       local controller = objects.ships.controllers[controllerIndex]
       
       logger:add("Ship located at " .. tostring(sx) .. ", " .. tostring(sy))
       local bd = love.physics.newBody(wld,sx,sy)
       local sh
-      if controllerIndex == 1 then
+      if controllerIndex < 3 then
         sh = love.physics.newCircleShape(bd,0.375)
         bd:setMass(0,0,1,1)
       else
@@ -238,7 +272,7 @@ objects = {
         coolRate = 1,
         draw = objects.ships.draw,
         control = controller,
-        friendly = (controllerIndex == 1),
+        friendly = (controllerIndex < 3),
         update = objects.ships.update,
         cleanup = objects.ships.cleanup,
         circColor = love.graphics.newColor(32,64,128),

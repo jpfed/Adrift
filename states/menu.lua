@@ -71,29 +71,24 @@ end
 
 local options = {
   
-  {text = "Easy", x = 500, y = 200, w = 60, h = 20,
+  {text = "Start Game", x = 480, y = 200, w = 95, h = 20,
     action = function()  
-    state.game:load(1)
+      state.game:load()
   end},
   
-  {text = "Medium", x = 500, y = 250, w = 75, h = 20,
+  {text = "Options", x = 480, y = 300, w = 75, h = 20,
     action = function()  
-    state.game:load(2)
+      state.current = state.options
   end},
   
-  {text = "Hard", x = 500, y = 300, w = 60, h = 20,
-    action = function()  
-    state.game:load(3)
-  end},
-  
-  {text = "Help", x = 500, y = 350, w = 60, h = 20,
+  {text = "Help", x = 480, y = 350, w = 60, h = 20,
     action = function()
-    state.current = state.help
+      state.current = state.help
   end},
   
-  {text = "Quit", x = 500, y = 400, w = 60, h = 20,
+  {text = "Quit", x = 480, y = 400, w = 60, h = 20,
     action = function() 
-    love.system.exit()
+      love.system.exit()
   end}
 }
 

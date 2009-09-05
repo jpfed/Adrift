@@ -8,10 +8,10 @@ state.game = {
   objects = {},
   score = 0,
   
-  load = function(s, difficulty)
+  load = function(s)
     state.current = state.game
     s.levelNumber = 0
-    s.difficulty = difficulty
+    s.difficulty = state.options.difficulty
     s:startNewLevel()
   end,
   
@@ -30,7 +30,7 @@ state.game = {
     s.level.colors = coloration(1)
     s.background.colors = coloration(0.25)
     s.objects = getObjects(s.world, s.level.nodes,s.difficulty*10)
-    s.ship = objects.ships.getShip(s.world, s.level.nodes[1].x, s.level.nodes[1].y,2)
+    s.ship = objects.ships.getShip(s.world, s.level.nodes[1].x, s.level.nodes[1].y,state.options.controlScheme)
     camera.x = s.ship.body:getX()
     camera.y = s.ship.body:getY()
   end,

@@ -206,10 +206,10 @@ objects = {
       -- enemy control
       {
         getAction = function(s,vx,vy,theta,spin)
-        assert(s ~= nil)
-        local target = state.game.ship
+          local targVx, targVy, targetSpin, isFiring = math.random(3)-2 - vx,math.random(3)-2 - vy,0,false
+          local target = state.game.ship
           local targetSpin = 0
-          if target ~= nil then
+          if target ~= nil and geom.distance(s.body:getX(),s.body:getY(),target.body:getX(),target.body:getY()) < camera.width then
             local targetTheta = math.atan2(target.body:getY() - s.body:getY(), target.body:getX() - s.body:getX())
             if s.collisionShock > 0 then targetTheta = targetTheta + s.collisionReaction*math.pi/2 end
             local pointingX,pointingY = math.cos(theta), math.sin(theta)
@@ -220,17 +220,17 @@ objects = {
             else
               targetSpin = -360
             end
-          end
-          targVx, targVy = s.thrust*(1-2*s.collisionShock)*math.cos(theta),s.thrust*(1-2*s.collisionShock)*math.sin(theta)
-          s.collisionShock = math.max(0,s.collisionShock - 1/60)
-          local isFiring = true
-          for k,v in ipairs(state.game.objects) do
-            if v.type==objects.ships then
-              if not v.friendly and not v==s then
-                local firingFrom = {x = s.body:getX(),y=s.body:getY()}
-                local firingTowards = {x = firingFrom.x + math.cos(theta), y= firingFrom.y + math.sin(theta)}
-                local distToHit = geom.distToLine({x = v.body:getX(),y=v.body:getY()},firingFrom,firingTowards)
-                if distToHit < 1 then isFiring = false end
+            targVx, targVy = s.thrust*(1-2*s.collisionShock)*math.cos(theta),s.thrust*(1-2*s.collisionShock)*math.sin(theta)
+            s.collisionShock = math.max(0,s.collisionShock - 1/60)
+            isFiring = true
+            for k,v in ipairs(state.game.objects) do
+              if v.type==objects.ships then
+                if not v.friendly and not v==s then
+                  local firingFrom = {x = s.body:getX(),y=s.body:getY()}
+                  local firingTowards = {x = firingFrom.x + math.cos(theta), y= firingFrom.y + math.sin(theta)}
+                  local distToHit = geom.distToLine({x = v.body:getX(),y=v.body:getY()},firingFrom,firingTowards)
+                  if distToHit < 1 then isFiring = false end
+                end
               end
             end
           end
@@ -288,7 +288,7 @@ objects = {
         result.armor = 20 
         result.coolRate = 5
       else
-        sh:setRestitution(1.0)
+        sh:setRestitution(1.5)
       end
       result.shape:setData(result)
       return result

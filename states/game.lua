@@ -12,6 +12,7 @@ state.game = {
     state.current = state.game
     s.levelNumber = 0
     s.difficulty = state.options.difficulty
+    s.score = 0
     s:startNewLevel()
   end,
   

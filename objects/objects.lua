@@ -1,8 +1,14 @@
 objects = {
-
-  startingSpot = {
-    dummy = "dummy"
+  
+  base = {
+    draw = function(b) end,
+    update = function(b,dt) end,
+    getObject = function(xLoc,yLoc)
+      return {x = xLoc, y = yLoc, type = objects.base, draw = objects.base.draw, update = objects.base.update}
+    end
   },
+  
+  startingSpot = { },
 
   getStartingSpot = function(obs,world, node)
     local ssBody = love.physics.newBody(world,node.x,node.y,0)
@@ -22,7 +28,6 @@ objects = {
       update = function(o, dt) end
     }
     result.shape:setData(result)
-    logger:add("startingSpot instantiated with type: " .. tostring(result.type))
     return result
   end,
 
@@ -31,7 +36,6 @@ objects = {
   getWarpCrystal = function(obs,world, node)
     local wcBody = love.physics.newBody(world,node.x,node.y,0.25)
     local wcShape = love.physics.newRectangleShape(wcBody,1,1)
-    logger:add("Crystal located at " .. tostring(node.x) .. ", " .. tostring(node.y))
     local result = {
       type = objects.warpCrystal,
       body = wcBody,
@@ -54,7 +58,23 @@ objects = {
   end,
 
   enemies = {
-  
+    {
+      getEnemy = function(world,x,y) 
+      
+      end,
+      draw = function(e) 
+        
+      end,
+        
+      update = function(e,dt)
+        
+      end,
+      
+      cleanup = function(e) 
+        e.shape:destroy()
+        e.body:destroy()
+      end
+    }
   },
   
   getEnemy = function(obs,world, node)
@@ -72,15 +92,12 @@ objects = {
   end,
 
   powerups = {
-  
+    
   },
   
   getPowerup = function(obs,world, node)
-    local result = {
-      type = objects.powerups,
-      draw = function(o) end,
-      update = function(o, dt) end
-    }
+    local result = objects.base.getObject(node.x,node.y) 
+    result.type = objects.powerups
     return result
   end,
 
@@ -114,21 +131,36 @@ objects = {
           firer = s,
           draw = objects.weapons[1].draw,
           update = objects.weapons[1].update,
-          cleanup = objects.weapons[1].cleanup
+          cleanup = objects.weapons[1].cleanup,
+          store_old_position = function(b)
+            b.ox, b.oy = b.body:getPosition()
+          end
         }
         if s.friendly then result.color = w.friendlyFire else result.color = w.enemyFire end
+        result.color_highlight = love.graphics.newColor(255,255,255,200)
         result.shape:setData(result)
-        if s.friendly then logger:add("sx,sy,vx,vy" .. " " .. tostring(s.body:getX()) .. " " .. tostring(s.body:getY()) .. " " .. tostring(vx) .. " " .. tostring(vy)) end
+        result:store_old_position()
         return result
       end,
       
       draw = function(b) 
         local x,y,scale = camera:xy(b.body:getX(),b.body:getY(),0)
+        local ox,oy,scale = camera:xy(b.ox,b.oy,0)
+        love.graphics.setBlendMode(love.blend_additive)
         love.graphics.setColor(b.color)
         love.graphics.circle(love.draw_fill,x,y,scale*0.075)
+        love.graphics.setLineWidth(scale*0.050)
+        love.graphics.line(x,y,ox,oy)
+        love.graphics.setColor(b.color_highlight)
+        love.graphics.circle(love.draw_fill,x,y,scale*0.050)
+        love.graphics.circle(love.draw_fill,x,y,scale*0.015)
+        love.graphics.setBlendMode(love.blend_normal)
       end,
       
-      update = function(b,dt)  end,
+      update = function(b,dt)  
+        b:store_old_position()
+      end,
+
       cleanup = function(b) 
         b.shape:destroy()
         b.body:destroy()
@@ -151,7 +183,7 @@ objects = {
       -- friendly (radial keyboard) control
       {
         getAction = function(s,vx,vy,theta,spin)
-          local targVx,targVy,targetSpin,isFiring = vx,vy,0,false
+          local targVx,targVy,targetSpin,isFiring = 0,0,0,false
           if love.keyboard.isDown(love.key_up)  then 
             targVx, targVy = s.thrust*math.cos(theta), s.thrust*math.sin(theta)
           end
@@ -281,8 +313,28 @@ objects = {
         healthColor = love.graphics.newColor(255,255,255),
         enemyColor = love.graphics.newColor(255,0,0),
         collisionShock = 0,
-        collisionReaction = 1
+        collisionReaction = 1,
+        thruster = {
+          fire = love.graphics.newImage("graphics/fire.png"),
+          fire_color = love.graphics.newColor(255, 128, 64, 255),
+          fade_color = love.graphics.newColor(255, 0, 0, 0),
+        }
       }
+
+      -- init partical system
+      result.thruster.system = love.graphics.newParticleSystem(result.thruster.fire, 100)
+      local t = result.thruster.system
+      t:setEmissionRate(30)
+      t:setLifetime(-1)
+      t:setParticleLife(0.5)
+      t:setDirection(90)
+      t:setSpread(40)
+      t:setSpeed(80)
+      t:setGravity(0)
+      t:setSize(2, 0.1, 1.0)
+      t:setColor(result.thruster.fire_color, result.thruster.fade_color)
+      t:start()
+
       result.collisionReaction = math.random(2)*2-3
       if result.friendly then 
         result.armor = 20 
@@ -305,6 +357,7 @@ objects = {
       local rightx, righty = camera:xy(wrightx, wrighty, 0)
       local leftx, lefty = camera:xy(wleftx, wlefty, 0)
       
+      love.graphics.draw(s.thruster.system, cx, cy)
       if s.friendly then
         love.graphics.setColor(s.circColor)
         love.graphics.circle(love.draw_fill,cx,cy,0.375*radius,32)
@@ -324,24 +377,25 @@ objects = {
     end,
     
     update = function(s,dt)
-    
-    if s.armor <=0 and not s.friendly then s.dead = true end
-    
-      local spRetain = math.exp(-8*dt)
-      local spChange = 1-spRetain
-      
+      if s.armor <=0 and not s.friendly then s.dead = true end
+
+
+      local vx, vy = s.body:getVelocity()
+      local theta = math.pi*s.body:getAngle()/180 + math.pi/2
+      local spin = s.body:getSpin()
+      local targVx, targVy, targetSpin, isFiring = s.control.getAction(s,vx,vy,theta,spin)
+
       local velRetain = math.exp(-2*dt)
       local velChange = 1-velRetain
-    
-      local theta = math.pi*s.body:getAngle()/180 + math.pi/2
       
-      local vx, vy = s.body:getVelocity()
-      local spin = s.body:getSpin()
-      
-      local targVx, targVy, targetSpin,isFiring = s.control.getAction(s,vx,vy,theta,spin)
-      
-      s.body:setSpin(spin * spRetain + targetSpin * spChange)
       s.body:setVelocity(vx * velRetain + targVx * velChange, vy * velRetain + targVy * velChange)
+
+      if targetSpin == 0 then
+        local spRetain = math.exp(-8 * dt)
+        s.body:setSpin(spin * spRetain)
+      else
+        s.body:setSpin(targetSpin * dt * 40)
+      end
       
       s.heat = math.max(0,s.heat - dt*s.coolRate)
       
@@ -349,6 +403,15 @@ objects = {
         s.activeWeapon:fire(s)
       end
       
+      local wx, wy = s.body:getWorldVector(0, 0)
+
+      s.thruster.system:setEmissionRate(s.body:getInertia() * 30)
+      s.thruster.system:setSpeed((math.abs(targVx) + math.abs(targVy)) * 10)
+      local vx2,vy2 = s.body:getVelocity()
+      local deltaX,deltaY = vx-vx2, vy-vy2
+      s.thruster.system:setDirection(math.deg(math.atan2(deltaY,deltaX)))
+      s.thruster.system:setPosition(wx, wy)
+      s.thruster.system:update(dt)
     end,
     cleanup = function(s)
       s.shape:destroy()

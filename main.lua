@@ -1,5 +1,6 @@
 load = function()
   math.randomseed(os.time())
+  love.filesystem.require("oo.lua")
   love.filesystem.require("util/util.lua")
   love.filesystem.require("objects/objects.lua")
   love.filesystem.require("objects/levelGenerator.lua")
@@ -15,6 +16,7 @@ end
 
 update = function(dt)
   if not love.audio.isPlaying() then love.audio.play(sound.bgm) end
+  dt = math.min(dt, 1/15)
   state.current:update(dt)
 end
 

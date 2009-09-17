@@ -1,3 +1,7 @@
+love.filesystem.require("objects/WarpCrystal.lua")
+love.filesystem.require("objects/WarpPortal.lua")
+love.filesystem.require("objects/EnergyPowerup.lua")
+
 objects = {
   
   base = {
@@ -7,54 +11,13 @@ objects = {
       return {x = xLoc, y = yLoc, type = objects.base, draw = objects.base.draw, update = objects.base.update}
     end
   },
-  
-  startingSpot = { },
 
   getStartingSpot = function(obs,world, node)
-    local ssBody = love.physics.newBody(world,node.x,node.y,0)
-    local ssShape = love.physics.newCircleShape(ssBody,0.75)
-    ssShape:setSensor(true)
-    local result = {
-      type = objects.startingSpot,
-      x = node.x,
-      y = node.y,
-      image = love.graphics.newImage("graphics/warpPortal.png"),
-      body = ssBody,
-      shape = ssShape,
-      draw = function(o)
-        local x,y,scale = camera:xy(o.x,o.y,0)
-        love.graphics.draw(o.image,x,y,0,scale/50)
-      end,
-      update = function(o, dt) end
-    }
-    result.shape:setData(result)
-    return result
+    return WarpPortal:create(world, node)
   end,
-
-  warpCrystal = {},
   
   getWarpCrystal = function(obs,world, node)
-    local wcBody = love.physics.newBody(world,node.x,node.y,0.25)
-    local wcShape = love.physics.newRectangleShape(wcBody,1,1)
-    local result = {
-      type = objects.warpCrystal,
-      body = wcBody,
-      shape = wcShape,
-      image = love.graphics.newImage("graphics/warpCrystal.png"),
-      draw = function(o) 
-        local x,y,scale = camera:xy(o.x,o.y,0)
-        love.graphics.draw(o.image,x,y,0,scale/25)
-      end,
-      update = function(o, dt) 
-        o.x,o.y = o.body:getX(), o.body:getY()
-      end,
-      cleanup = function(o)
-        o.shape:destroy()
-        o.body:destroy()
-      end
-    }
-    result.shape:setData(result)
-    return result
+    return WarpCrystal:create(world,node)
   end,
 
   enemies = {
@@ -96,9 +59,10 @@ objects = {
   },
   
   getPowerup = function(obs,world, node)
-    local result = objects.base.getObject(node.x,node.y) 
-    result.type = objects.powerups
-    return result
+    -- local result = objects.base.getObject(node.x,node.y) 
+    -- result.type = objects.powerups
+    -- return result
+    return EnergyPowerup:create(world,node)
   end,
 
   

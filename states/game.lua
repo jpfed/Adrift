@@ -98,7 +98,7 @@ state.game = {
     if key==love.key_p then state.current = state.pause end
     if key==love.key_v then state.current = state.victory end
   end,
-
+  
   collision = function(a,b,c)
   
     if a==0 or b==0 then -- something just collided with the level
@@ -120,31 +120,32 @@ state.game = {
       if a.type == objects.weapons and a.firer ~= b then a.dead = true end
       if b.type == objects.weapons and b.firer ~= a then b.dead = true end
     end
-    -- let the ship collect the crystal
-    if (a.type == objects.warpCrystal or b.type == objects.warpCrystal) then
-      
-      if a.type == objects.ships then
-        if a.friendly then
-          a.hasCrystal = true
-          b.dead = true
-          state.game.score = state.game.score + 10000
-        end
-      elseif b.type == objects.ships then
-        if b.friendly then
-          logger:add("You found the warp crystal! Return the beginning of the level!")
-          b.hasCrystal = true
-          a.dead = true
-          state.game.score = state.game.score + 10000
-        end
-      end
-    end
+    
+    -- let the ship collect things
+    tryCollide( a, b,
+      function(maybeCollectible) return AisInstanceOfB(maybeCollectible,CollectibleObject) end, 
+      function(maybeShip) return maybeShip.type == objects.ships and maybeShip.friendly end, 
+      function(collectible) collectible:collected() end, 
+      function(ship) end
+    )
     
     -- check if they just finished the level
-    if (a.type == objects.startingSpot) or (b.type == objects.startingSpot) then
-      if (a.type == objects.ships and a.hasCrystal) or (b.type == objects.ships and b.hasCrystal) then
-        state.current = state.victory
-      end
-    end
+    tryCollide( a, b,
+      function(maybePortal) return AisInstanceOfB(maybePortal, WarpPortal) end,
+      function(maybeShip) return maybeShip.type == objects.ships and maybeShip.hasCrystal end,
+      function(portal) love.audio.play(portal.sound) end,
+      function(ship) state.current = state.victory end
+    )
     
   end
 }
+
+tryCollide = function(object1, object2, predicate1, predicate2, consequence1, consequence2)
+  if predicate1(object1) and predicate2(object2) then
+    consequence1(object1)
+    consequence2(object2)
+  elseif predicate1(object2) and predicate2(object1) then
+    consequence1(object2)
+    consequence2(object1)
+  end
+end

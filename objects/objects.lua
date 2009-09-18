@@ -1,17 +1,10 @@
 love.filesystem.require("objects/WarpCrystal.lua")
 love.filesystem.require("objects/WarpPortal.lua")
 love.filesystem.require("objects/EnergyPowerup.lua")
+love.filesystem.require("objects/SimpleBullet.lua")
 
 objects = {
   
-  base = {
-    draw = function(b) end,
-    update = function(b,dt) end,
-    getObject = function(xLoc,yLoc)
-      return {x = xLoc, y = yLoc, type = objects.base, draw = objects.base.draw, update = objects.base.update}
-    end
-  },
-
   getStartingSpot = function(obs,world, node)
     return WarpPortal:create(world, node)
   end,
@@ -20,117 +13,13 @@ objects = {
     return WarpCrystal:create(world,node)
   end,
 
-  enemies = {
-    {
-      getEnemy = function(world,x,y) 
-      
-      end,
-      draw = function(e) 
-        
-      end,
-        
-      update = function(e,dt)
-        
-      end,
-      
-      cleanup = function(e) 
-        e.shape:destroy()
-        e.body:destroy()
-      end
-    }
-  },
-  
   getEnemy = function(obs,world, node)
     return objects.ships.getShip(world,node.x,node.y,3)
-
-    -- local result = {
-      -- type = objects.enemies,
-      -- draw = function(o) 
-      -- end,
-      -- update = function(o, dt) 
-      
-      -- end
-    -- }
-    -- return result
   end,
 
-  powerups = {
-    
-  },
-  
   getPowerup = function(obs,world, node)
-    -- local result = objects.base.getObject(node.x,node.y) 
-    -- result.type = objects.powerups
-    -- return result
     return EnergyPowerup:create(world,node)
   end,
-
-  
-  weapons = {
-    {
-      friendlyFire = love.graphics.newColor(0,0,255),
-      enemyFire= love.graphics.newColor(255,0,0),
-      fire = function(w,s)
-        table.insert(state.game.objects,w:getBullet(s))
-        s.heat = s.heat + 1
-      end,
-      
-      getBullet = function(w,s)
-        local theta = math.pi*s.body:getAngle()/180 + math.pi/2
-        local tipx,tipy = objects.ships.getPoints(s.body:getX(),s.body:getY(),theta)
-      
-        local vx,vy = s.body:getVelocity()
-        local mx, my = 12*math.cos(theta), 12*math.sin(theta)
-        vx = vx + mx
-        vy = vy + my
-        local bbody = love.physics.newBody(state.game.world, tipx+mx/60,tipy+my/60,0.01)
-        local bshape = love.physics.newCircleShape(bbody, 0.075)
-        bbody:setBullet(true)
-        bbody:setVelocity(vx,vy)
-        bshape:setSensor(true)
-        local result = {
-          type = objects.weapons,
-          body = bbody,
-          shape = bshape,
-          firer = s,
-          draw = objects.weapons[1].draw,
-          update = objects.weapons[1].update,
-          cleanup = objects.weapons[1].cleanup,
-          store_old_position = function(b)
-            b.ox, b.oy = b.body:getPosition()
-          end
-        }
-        if s.friendly then result.color = w.friendlyFire else result.color = w.enemyFire end
-        result.color_highlight = love.graphics.newColor(255,255,255,200)
-        result.shape:setData(result)
-        result:store_old_position()
-        return result
-      end,
-      
-      draw = function(b) 
-        local x,y,scale = camera:xy(b.body:getX(),b.body:getY(),0)
-        local ox,oy,scale = camera:xy(b.ox,b.oy,0)
-        love.graphics.setBlendMode(love.blend_additive)
-        love.graphics.setColor(b.color)
-        love.graphics.circle(love.draw_fill,x,y,scale*0.075)
-        love.graphics.setLineWidth(scale*0.050)
-        love.graphics.line(x,y,ox,oy)
-        love.graphics.setColor(b.color_highlight)
-        love.graphics.circle(love.draw_fill,x,y,scale*0.050)
-        love.graphics.circle(love.draw_fill,x,y,scale*0.015)
-        love.graphics.setBlendMode(love.blend_normal)
-      end,
-      
-      update = function(b,dt)  
-        b:store_old_position()
-      end,
-
-      cleanup = function(b) 
-        b.shape:destroy()
-        b.body:destroy()
-      end
-    },
-  },
   
   ships = {
   
@@ -216,7 +105,7 @@ objects = {
             else
               targetSpin = -360
             end
-            targVx, targVy = s.thrust*(1-2*s.collisionShock)*math.cos(theta),s.thrust*(1-2*s.collisionShock)*math.sin(theta)
+            targVx, targVy = s.thrust*math.cos(theta),s.thrust*math.sin(theta)
             s.collisionShock = math.max(0,s.collisionShock - 1/60)
             isFiring = true
             for k,v in ipairs(state.game.objects) do
@@ -259,8 +148,6 @@ objects = {
         type = objects.ships,
         body = bd,
         shape = sh,
-        weapons = {objects.weapons[1]},
-        activeWeapon = objects.weapons[1],
         armor = state.game.difficulty,
         hasCrystal = false,
         thrust = 10,
@@ -278,6 +165,7 @@ objects = {
         enemyColor = love.graphics.newColor(255,0,0),
         collisionShock = 0,
         collisionReaction = 1,
+        explosionSound = love.audio.newSound("sound/hornetDeath.ogg"),
         thruster = {
           fire = love.graphics.newImage("graphics/fire.png"),
           fire_color = love.graphics.newColor(255, 128, 64, 255),
@@ -341,7 +229,14 @@ objects = {
     end,
     
     update = function(s,dt)
-      if s.armor <=0 and not s.friendly then s.dead = true end
+      s.x = s.body:getX()
+      s.y = s.body:getY()
+      s.angle = s.body:getAngle()
+      if s.armor <=0 and not s.friendly then 
+        s.dead = true 
+        love.audio.play(s.explosionSound)
+        state.game.score = state.game.score + 1000
+      end
 
 
       local vx, vy = s.body:getVelocity()
@@ -364,7 +259,15 @@ objects = {
       s.heat = math.max(0,s.heat - dt*s.coolRate)
       
       if isFiring and s.heat == 0 then 
-        s.activeWeapon:fire(s)
+        local bulletColor
+        if s.friendly then bulletColor = love.graphics.newColor(0,0,255)
+        else bulletColor = love.graphics.newColor(255,0,0) end
+        
+        local tipx, tipy = objects.ships.getPoints(s.x,s.y,theta)
+        
+        local bullet = SimpleBullet:create(s,{x=tipx,y=tipy},bulletColor)
+        table.insert(state.game.objects,bullet)
+        s.heat = s.heat + bullet.heat
       end
       
       local wx, wy = s.body:getWorldVector(0, 0)

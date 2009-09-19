@@ -101,23 +101,15 @@ state.game = {
   
   collision = function(a,b,c)
   
-    -- if a==0 or b==0 then -- something just collided with the level
-      -- if a==0 then
-        -- if b.type == objects.ships then b.collisionShock = 1 end
-      -- elseif b==0 then
-        -- if a.type == objects.ships then a.collisionShock = 1 end
-      -- end
-    -- end
-    
     if tryCollideInteraction( a, b,
       function(maybeWall) return maybeWall == 0 end,
-      function(maybeShip) return maybeShip.type == objects.ships end,
-      function(wall, ship) ship.collisionShock = 1 end
+      function(maybeHornet) return AisInstanceOfB(maybeHornet, Hornet) end,
+      function(wall, hornet) hornet.collisionShock = 1 end
     ) then return end
 
     if tryCollideInteraction( a, b,
       function(maybeProjectile) return AisInstanceOfB(maybeProjectile,Projectile) end,
-      function(maybeDamageable) return maybeDamageable.armor ~= nil end,
+      function(maybeDamageable) return AisInstanceOfB(maybeDamageable, DamageableObject) end,
       function(projectile, damageable) projectile:strike(damageable) end
     ) then return end
     
@@ -130,14 +122,14 @@ state.game = {
     -- let the ship collect things
     if tryCollideInteraction( a, b,
       function(maybeCollectible) return AisInstanceOfB(maybeCollectible,CollectibleObject) end, 
-      function(maybeShip) return maybeShip.type == objects.ships and maybeShip.friendly end, 
-      function(collectible, ship) collectible:collected() end
+      function(maybeShip) return AisInstanceOfB(maybeShip, Ship) end, 
+      function(collectible, ship) collectible:collected(ship) end
     ) then return end
     
     -- check if they just finished the level
     if tryCollideInteraction( a, b,
       function(maybePortal) return AisInstanceOfB(maybePortal, WarpPortal) end,
-      function(maybeShip) return maybeShip.type == objects.ships and maybeShip.hasCrystal end,
+      function(maybeShip) return AisInstanceOfB(maybeShip, Ship) and maybeShip.hasCrystal end,
       function(portal, ship) love.audio.play(portal.sound); state.current = state.victory end
     ) then return end
     

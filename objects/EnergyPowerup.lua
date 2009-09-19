@@ -7,9 +7,11 @@ EnergyPowerup = {
   image = love.graphics.newImage("graphics/energyPowerup.png"),
   sound = love.audio.newSound("sound/energyPowerup.ogg"),
   
-  effect = function(self) 
-    state.game.ship.armor = state.game.ship.armor + 1
-    state.game.score = state.game.score + 100
+  effect = function(self, collector) 
+    if AisInstanceOfB(collector, DamageableObject) then
+      collector.armor = collector.armor + 1
+      if collector == state.game.ship then state.game.score = state.game.score + 100 end
+    end
   end,
   
   create = function(self,world,node)

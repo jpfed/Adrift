@@ -7,9 +7,9 @@ WarpCrystal = {
   image = love.graphics.newImage("graphics/warpCrystal.png"),
   sound = love.audio.newSound("sound/crystal.ogg"),
   
-  effect = function(self) 
-    state.game.ship.hasCrystal = true
-    state.game.score = state.game.score + 10000
+  effect = function(self, collector) 
+    collector.hasCrystal = true
+    if collector == state.game.ship then state.game.score = state.game.score + 10000 end
   end,
   
   create = function(self,world,node)

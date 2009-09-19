@@ -2,6 +2,10 @@ love.filesystem.require("objects/WarpCrystal.lua")
 love.filesystem.require("objects/WarpPortal.lua")
 love.filesystem.require("objects/EnergyPowerup.lua")
 love.filesystem.require("objects/SimpleBullet.lua")
+love.filesystem.require("objects/DamageableObject.lua")
+love.filesystem.require("objects/Ship.lua")
+love.filesystem.require("objects/Hornet.lua")
+
 
 objects = {
   
@@ -128,7 +132,6 @@ objects = {
       if controllerIndex == nil then controllerIndex = 2 end
       local controller = objects.ships.controllers[controllerIndex]
       
-      logger:add("Ship located at " .. tostring(sx) .. ", " .. tostring(sy))
       local bd = love.physics.newBody(wld,sx,sy)
       local sh
       if controllerIndex < 3 then
@@ -195,6 +198,13 @@ objects = {
         sh:setRestitution(1.5)
       end
       result.shape:setData(result)
+      if result.friendly then
+        result.super = Ship
+        result.class = Ship
+      else
+        result.super = Hornet
+        result.class = Hornet
+      end
       return result
     end,
     

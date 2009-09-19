@@ -18,9 +18,9 @@ CollectibleObject = {
   
   effect = function(self) end,
   
-  collected = function(self) 
+  collected = function(self, collector)
     love.audio.play(self.sound)
-    self:effect()
+    self:effect(collector)
     self.dead = true
   end
   

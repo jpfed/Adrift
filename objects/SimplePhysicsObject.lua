@@ -3,8 +3,8 @@ love.filesystem.require("objects/GameObject.lua")
 
 SimplePhysicsObject = {
   super = GameObject,
-  body = {},
-  shape = {},
+  body = nil,
+  shape = nil,
   
   create = function(self, bod, shp)
     local result = GameObject:create(bod:getX(),bod:getY())
@@ -13,7 +13,6 @@ SimplePhysicsObject = {
     result.body = bod
     result.shape = shp
     result.shape:setData(result)
-    printall(result,"SimplePhysicsObject")
     return result 
   end,
   

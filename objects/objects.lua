@@ -151,41 +151,37 @@ objects = {
       bd:setAngle(180)
       local result = DamageableObject:create(bd,sh,state.game.difficulty,nil,love.audio.newSound("sound/hornetDeath.ogg"),1000)
       local properties = {
-        hasCrystal = false,
         thrust = 10,
         heat = 0,
         coolRate = 1,
-        draw = objects.ships.draw,
         control = controller,
         friendly = (controllerIndex < 3),
+        draw = objects.ships.draw,
         update = objects.ships.update,
-        circColor = love.graphics.newColor(32,64,128),
-        triColor = love.graphics.newColor(64,128,255),
-        cryColor = love.graphics.newColor(255,255,255),
-        healthColor = love.graphics.newColor(255,255,255),
-        enemyColor = love.graphics.newColor(255,0,0),
-        collisionShock = 0,
-        collisionReaction = 1
       }
       mixin(result,properties)
       result.thruster = FireThruster:create(result, 90)
 
-      result.collisionReaction = math.random(2)*2-3
       if result.friendly then 
+        result.hasCrystal = false
+        result.circColor = love.graphics.newColor(32,64,128)
+        result.triColor = love.graphics.newColor(64,128,255)
+        result.cryColor = love.graphics.newColor(255,255,255)
+        result.healthColor = love.graphics.newColor(255,255,255)
         result.armor = 20 
         result.coolRate = 5
-      else
-        sh:setRestitution(1.5)
-      end
-      result.shape:setData(result)
-      if result.friendly then
         result.super = Ship
         result.class = Ship
       else
+        result.enemyColor = love.graphics.newColor(255,0,0)
+        result.collisionShock = 0
+        result.collisionReaction = math.random(2)*2-3
+        sh:setRestitution(1.5)
         result.super = Hornet
         result.class = Hornet
       end
-      
+      result.shape:setData(result)
+     
       return result
     end,
     

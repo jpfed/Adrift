@@ -30,12 +30,15 @@ Thruster = {
   end,
   
   update = function(self, dt)
-    local x, y, scale = camera:xy(self.x, self.y, 0)
-    self.system:setPosition(x,y)
     local dir = self.parent.angle - 90
     if self.sign == -1 then dir = dir + 180 end
     self.system:setDirection(dir)
     self.system:update(dt)
+  end,
+  
+  draw = function(self)
+    local x, y, scale = camera:xy(self.parent.x, self.parent.y, 0)
+    love.graphics.draw(self.system,x,y)
   end
 }
 

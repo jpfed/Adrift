@@ -201,7 +201,7 @@ objects = {
       local rightx, righty = camera:xy(wrightx, wrighty, 0)
       local leftx, lefty = camera:xy(wleftx, wlefty, 0)
       
-      love.graphics.draw(s.thruster.system, cx, cy)
+      s.thruster:draw()
       if s.friendly then
         love.graphics.setColor(s.circColor)
         love.graphics.circle(love.draw_fill,cx,cy,0.375*radius,32)

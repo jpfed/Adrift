@@ -149,11 +149,8 @@ objects = {
       bd:setAllowSleep(false)
       sh:setRestitution(0.125)
       bd:setAngle(180)
-      local result = {
-        type = objects.ships,
-        body = bd,
-        shape = sh,
-        armor = state.game.difficulty,
+      local result = DamageableObject:create(bd,sh,state.game.difficulty,nil,love.audio.newSound("sound/hornetDeath.ogg"),1000)
+      local properties = {
         hasCrystal = false,
         thrust = 10,
         heat = 0,
@@ -169,10 +166,9 @@ objects = {
         healthColor = love.graphics.newColor(255,255,255),
         enemyColor = love.graphics.newColor(255,0,0),
         collisionShock = 0,
-        collisionReaction = 1,
-        explosionSound = love.audio.newSound("sound/hornetDeath.ogg"),
-
+        collisionReaction = 1
       }
+      mixin(result,properties)
       result.thruster = FireThruster:create(result, 90)
 
       result.collisionReaction = math.random(2)*2-3
@@ -190,6 +186,7 @@ objects = {
         result.super = Hornet
         result.class = Hornet
       end
+      
       return result
     end,
     
@@ -227,12 +224,6 @@ objects = {
       s.x = s.body:getX()
       s.y = s.body:getY()
       s.angle = s.body:getAngle()
-      if s.armor <=0 and not s.friendly then 
-        s.dead = true 
-        love.audio.play(s.explosionSound)
-        state.game.score = state.game.score + 1000
-      end
-
 
       local vx, vy = s.body:getVelocity()
       local theta = math.rad(s.body:getAngle()+90)

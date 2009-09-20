@@ -9,7 +9,7 @@ Projectile = {
   
   
   strike = function(p,s) 
-    s.armor = s.armor - p.damage 
+    s:damage(p.damage)
     if p.strikeSound ~= nil then love.audio.play(p.strikeSound) end
     p.dead = true
   end,

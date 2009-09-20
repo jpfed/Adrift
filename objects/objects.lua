@@ -159,7 +159,6 @@ objects = {
         control = controller,
         friendly = (controllerIndex < 3),
         update = objects.ships.update,
-        cleanup = objects.ships.cleanup,
         circColor = love.graphics.newColor(32,64,128),
         triColor = love.graphics.newColor(64,128,255),
         cryColor = love.graphics.newColor(255,255,255),

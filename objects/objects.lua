@@ -260,9 +260,5 @@ objects = {
       s.thruster:setIntensity(geom.dotProduct(targVx-vx,targVy-vy,pointX, pointY)*10)
       s.thruster:update(dt)
     end,
-    cleanup = function(s)
-      s.shape:destroy()
-      s.body:destroy()
-    end
   },
 }

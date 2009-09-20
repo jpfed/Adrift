@@ -1,8 +1,10 @@
+love.filesystem.require("util/geom.lua")
 love.filesystem.require("objects/WarpCrystal.lua")
 love.filesystem.require("objects/WarpPortal.lua")
 love.filesystem.require("objects/EnergyPowerup.lua")
 love.filesystem.require("objects/SimpleBullet.lua")
 love.filesystem.require("objects/DamageableObject.lua")
+love.filesystem.require("objects/Thruster.lua")
 love.filesystem.require("objects/Ship.lua")
 love.filesystem.require("objects/Hornet.lua")
 
@@ -169,26 +171,9 @@ objects = {
         collisionShock = 0,
         collisionReaction = 1,
         explosionSound = love.audio.newSound("sound/hornetDeath.ogg"),
-        thruster = {
-          fire = love.graphics.newImage("graphics/fire.png"),
-          fire_color = love.graphics.newColor(255, 128, 64, 255),
-          fade_color = love.graphics.newColor(255, 0, 0, 0),
-        }
-      }
 
-      -- init partical system
-      result.thruster.system = love.graphics.newParticleSystem(result.thruster.fire, 100)
-      local t = result.thruster.system
-      t:setEmissionRate(30)
-      t:setLifetime(-1)
-      t:setParticleLife(0.5)
-      t:setDirection(90)
-      t:setSpread(40)
-      t:setSpeed(80)
-      t:setGravity(0)
-      t:setSize(2, 0.1, 1.0)
-      t:setColor(result.thruster.fire_color, result.thruster.fade_color)
-      t:start()
+      }
+      result.thruster = FireThruster:create(result, 90)
 
       result.collisionReaction = math.random(2)*2-3
       if result.friendly then 
@@ -250,7 +235,7 @@ objects = {
 
 
       local vx, vy = s.body:getVelocity()
-      local theta = math.pi*s.body:getAngle()/180 + math.pi/2
+      local theta = math.rad(s.body:getAngle()+90)
       local spin = s.body:getSpin()
       local targVx, targVy, targetSpin, isFiring = s.control.getAction(s,vx,vy,theta,spin)
 
@@ -280,15 +265,9 @@ objects = {
         s.heat = s.heat + bullet.heat
       end
       
-      local wx, wy = s.body:getWorldVector(0, 0)
-
-      s.thruster.system:setEmissionRate(s.body:getInertia() * 30)
-      s.thruster.system:setSpeed((math.abs(targVx) + math.abs(targVy)) * 10)
-      local vx2,vy2 = s.body:getVelocity()
-      local deltaX,deltaY = vx-vx2, vy-vy2
-      s.thruster.system:setDirection(math.deg(math.atan2(deltaY,deltaX)))
-      s.thruster.system:setPosition(wx, wy)
-      s.thruster.system:update(dt)
+      local pointX, pointY = math.cos(theta), math.sin(theta)
+      s.thruster:setIntensity(geom.dotProduct(targVx-vx,targVy-vy,pointX, pointY)*10)
+      s.thruster:update(dt)
     end,
     cleanup = function(s)
       s.shape:destroy()

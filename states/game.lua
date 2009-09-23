@@ -119,6 +119,12 @@ state.game = {
       function(projectile, whatever) projectile.dead = true end
     ) then return end
     
+    if tryCollideInteraction( a, b,
+      function(maybeEel) return AisInstanceOfB(maybeEel, Eel) end,
+      function(maybeShip) return AisInstanceOfB(maybeShip, Ship) end,
+      function(eel, ship) eel:shock(ship) end    
+    ) then return end
+    
     -- let the ship collect things
     if tryCollideInteraction( a, b,
       function(maybeCollectible) return AisInstanceOfB(maybeCollectible,CollectibleObject) end, 

@@ -23,7 +23,7 @@ end
 draw = function()
   state.current:draw()
   
-  --logger:draw()
+  logger:draw()
 end
 
 mousepressed = function(x, y, button)

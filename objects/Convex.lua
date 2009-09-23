@@ -13,6 +13,8 @@ Convex = {
     result.pointArray = pointArray
     result._rotatedPoints = {}
     result._projectedPoints = {}
+    result.shape = love.physics.newPolygonShape(parent.body,unpack(pointArray))
+    result.shape:setData(parent)
     result.lineColor = lineColor
     result.fillColor = fillColor
     return result

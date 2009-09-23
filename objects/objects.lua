@@ -7,7 +7,7 @@ love.filesystem.require("objects/DamageableObject.lua")
 love.filesystem.require("objects/Thruster.lua")
 love.filesystem.require("objects/Ship.lua")
 love.filesystem.require("objects/Hornet.lua")
-
+love.filesystem.require("objects/Eel.lua")
 
 objects = {
   
@@ -20,7 +20,8 @@ objects = {
   end,
 
   getEnemy = function(obs,world, node)
-    return objects.ships.getShip(world,node.x,node.y,3)
+    if math.random(2)==2 then return objects.ships.getShip(world,node.x,node.y,3) end
+    return Eel:create(world,node.x,node.y, 3)
   end,
 
   getPowerup = function(obs,world, node)
@@ -160,7 +161,7 @@ objects = {
         update = objects.ships.update,
       }
       mixin(result,properties)
-      result.thruster = FireThruster:create(result, 90)
+      result.thruster = FireThruster:create(result, 0)
 
       if result.friendly then 
         result.hasCrystal = false

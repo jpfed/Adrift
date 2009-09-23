@@ -7,11 +7,12 @@ Thruster = {
     mixin(result, Thruster)
     result.parent = parent
     result.system = love.graphics.newParticleSystem(particleImage, 150)
+    result.directionOffset = direction
     local t = result.system
     t:setEmissionRate(30)
     t:setLifetime(-1)
     t:setParticleLife(0.5)
-    t:setDirection(90 + direction)
+    t:setDirection(direction)
     t:setSpread(40)
     t:setSpeed(80)
     t:setGravity(0)
@@ -32,7 +33,7 @@ Thruster = {
   update = function(self, dt)
     local dir = self.parent.angle - 90
     if self.sign == -1 then dir = dir + 180 end
-    self.system:setDirection(dir)
+    self.system:setDirection(dir + self.directionOffset)
     self.system:update(dt)
   end,
   

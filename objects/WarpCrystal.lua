@@ -9,7 +9,10 @@ WarpCrystal = {
   
   effect = function(self, collector) 
     collector.hasCrystal = true
-    if collector == state.game.ship then state.game.score = state.game.score + 10000 end
+    if collector == state.game.ship then 
+      state.game.score = state.game.score + 10000 
+      logger:add("You found the crystal! Return to the warp portal!")
+    end
   end,
   
   create = function(self,world,node)

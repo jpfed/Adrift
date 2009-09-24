@@ -40,13 +40,22 @@ logger = {
   messages = {},
   
   add = function(l,message)
-    table.insert(l.messages,message)
+    table.insert(l.messages,{msg = message, time = os.time()})
     if table.getn(l.messages) > 20 then table.remove(l.messages,1) end
   end,
   
   draw = function(l)
     for k,v in ipairs(l.messages) do
-      love.graphics.draw(v, 10,k*30)
+      local timely = 255*math.exp((v.time - os.time())/3)
+      love.graphics.setColor(255,255,255,timely)
+      love.graphics.draw(v.msg, 10,k*20)
+      if timely < 32 then v.dead = true end 
     end
+    
+    local toKeep = {}
+    for k, v in ipairs(l.messages) do
+      if not v.dead then table.insert(toKeep, v) end
+    end
+    l.messages = toKeep
   end
 }

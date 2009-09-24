@@ -13,6 +13,7 @@ Convex = {
     result.pointArray = pointArray
     result._rotatedPoints = {}
     result._projectedPoints = {}
+    result:_rotatePoints(0)
     result.lineColor = lineColor
     result.fillColor = fillColor
     return result

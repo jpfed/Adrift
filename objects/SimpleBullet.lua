@@ -26,7 +26,7 @@ SimpleBullet = {
   end,
   
   create = function(sb, firer, originPoint, color)
-    local theta = math.rad(firer.angle + 90)
+    local theta = math.rad(firer.angle + originPoint.angle)
     local tipx,tipy = originPoint.x, originPoint.y
     local vx,vy = firer.body:getVelocity()
     local mx, my = SimpleBullet.speed*math.cos(theta), SimpleBullet.speed*math.sin(theta)

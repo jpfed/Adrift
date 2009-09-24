@@ -16,6 +16,7 @@ Eel = {
     
   
   thruster = nil,
+  engine = nil,
     thrust = 12,
     
   shockCounter = 0,
@@ -46,7 +47,7 @@ Eel = {
     result.class = Eel
     
     result.cvx = Convex:create(result, pointArray, self.lineColor, self.fillColor)
-    
+    result.engine = Engine:create(result, result.thrust, 2, 8)
     result.thruster = FireThruster:create(result, -90)
     
     return result
@@ -111,35 +112,14 @@ Eel = {
       
       local forceX, forceY = attractX + repelX + bulletX, attractY + repelY + bulletY
       local norm = math.max(0.01,math.sqrt(forceX*forceX + forceY*forceY))
-      forceX, forceY = self.thrust*forceX/norm, self.thrust*forceY/norm
+      forceX, forceY = forceX/norm, forceY/norm
       self.action = {x = forceX, y = forceY}
       self.actionClock = math.random()*math.min(0.25,geom.distance(self.x,self.y,tx,ty)/40)
     else
       self.actionClock = math.max(0,self.actionClock - dt)
     end
     
-    local theta, targetSpin, existingSpin = math.rad(self.angle), 0, self.body:getSpin()
-    local pointingX,pointingY = math.cos(theta), math.sin(theta)
-    local cp = geom.crossProduct(pointingX,pointingY,self.action.x,self.action.y)
-    if cp > 0 then
-      targetSpin = 360
-    else
-      targetSpin = -360
-    end
-    
-    local spinRetain = math.exp(-8*dt)
-    local spinChange = 1 - spinRetain
-    
-    self.body:setSpin(existingSpin * spinRetain + targetSpin * spinChange)
-    
-    local velRetain = math.exp(-2*dt)
-    local velChange = 1 - velRetain
-    
-    local overallThrust = pointingX * self.action.x + pointingY * self.action.y
-    local thrustX, thrustY = pointingX * overallThrust, pointingY * overallThrust
-    
-    local vx, vy = self.body:getVelocity()
-    self.body:setVelocity(vx * velRetain + thrustX * velChange, vy * velRetain + thrustY * velChange)
+    local overallThrust = self.engine:vector(self.action.x, self.action.y, dt)
     
     self.thruster:setIntensity(overallThrust*5)
     self.thruster:update(dt)

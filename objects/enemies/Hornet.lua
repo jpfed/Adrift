@@ -1,8 +1,10 @@
 love.filesystem.require("oo.lua")
 love.filesystem.require("objects/composable/Convex.lua")
 love.filesystem.require("objects/composable/Engine.lua")
+love.filesystem.require("objects/composable/SimpleGun.lua")
 love.filesystem.require("objects/composable/DamageableObject.lua")
 love.filesystem.require("objects/composable/SimplePhysicsObject.lua")
+
 
 Hornet = {
   super = SimplePhysicsObject,
@@ -19,8 +21,7 @@ Hornet = {
   collisionShock = 0,
   collisionReaction = 1,
   
-  heat = 0,
-  coolRate = 1,
+  gun = nil,
   
   deathSound = love.audio.newSound("sound/hornetDeath.ogg"),
   
@@ -49,6 +50,7 @@ Hornet = {
     
     result.engine = Engine:create(result, Hornet.thrust, 2,8)
     result.thruster = FireThruster:create(result, -90)
+    result.gun = SimpleGun:create(result, pointArray[1], pointArray[2], 0, 1, Hornet.bulletColor)
     
     result.collisionReaction = math.random()*90-45
     result.coolRate = math.random()+0.5
@@ -81,15 +83,8 @@ Hornet = {
     self.thruster:update(dt)
     
     -- shoot at all times
-    if self.heat == 0 then 
-      local theta = math.rad(self.angle)
-      local tipx, tipy = 0.4*math.cos(theta) + self.x, 0.4*math.sin(theta) + self.y
-      local bullet = SimpleBullet:create(self,{x=tipx,y=tipy, angle = 0},self.bulletColor)
-      table.insert(state.game.objects,bullet)
-      self.heat = self.heat + 1
-    end
-    
-    self.heat = math.max(0,self.heat - dt*self.coolRate)
+    self.gun:fire()
+    self.gun:update(dt)
   end,
   
   draw = function(self)

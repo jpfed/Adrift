@@ -109,7 +109,7 @@ objects = {
       sh:setRestitution(0.125)
       bd:setAngle(180)
       local result = SimplePhysicsObject:create(bd,sh)
-      mixin(result, DamageableObject:prepareAttribute(state.game.difficulty,nil,love.audio.newSound("sound/hornetDeath.ogg"),1000))
+      mixin(result, DamageableObject:prepareAttribute(20,nil,love.audio.newSound("sound/hornetDeath.ogg"),0))
       
       local properties = {
         thrust = 10,
@@ -122,17 +122,18 @@ objects = {
       }
       mixin(result,properties)
       result.thruster = FireThruster:create(result, 0)
-
+      result.engine = Engine:create(result,result.thrust,2,8)
+      
+      result.gun = SimpleGun:create(result, 0, 0.5, 90, 5, love.graphics.newColor(0,0,255))
+      
       result.hasCrystal = false
       result.circColor = love.graphics.newColor(32,64,128)
       result.triColor = love.graphics.newColor(64,128,255)
       result.cryColor = love.graphics.newColor(255,255,255)
       result.healthColor = love.graphics.newColor(255,255,255)
-      result.armor = 20 
-      result.coolRate = 5
       result.super = Ship
       result.class = Ship
-      result.engine = Engine:create(result,result.thrust,2,8)
+      
       result.shape:setData(result)
      
       return result
@@ -189,17 +190,8 @@ objects = {
       
       s.heat = math.max(0,s.heat - dt*s.coolRate)
       
-      if isFiring and s.heat == 0 then 
-        local bulletColor
-        if s.friendly then bulletColor = love.graphics.newColor(0,0,255)
-        else bulletColor = love.graphics.newColor(255,0,0) end
-        
-        local tipx, tipy = objects.ships.getPoints(s.x,s.y,theta)
-        
-        local bullet = SimpleBullet:create(s,{x=tipx,y=tipy, angle = 90},bulletColor)
-        table.insert(state.game.objects,bullet)
-        s.heat = s.heat + bullet.heat
-      end
+      if isFiring then s.gun:fire() end
+      s.gun:update(dt)
       
       local pointX, pointY = math.cos(theta), math.sin(theta)
       s.thruster:setIntensity(geom.dotProduct(targVx-vx,targVy-vy,pointX, pointY)*10)

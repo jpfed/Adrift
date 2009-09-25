@@ -1,5 +1,5 @@
 love.filesystem.require("oo.lua")
-love.filesystem.require("objects/DamageableObject.lua")
+love.filesystem.require("objects/composable/SimplePhysicsObject.lua")
 Ship = {
-  super = DamageableObject
+  super = SimplePhysicsObject
 }

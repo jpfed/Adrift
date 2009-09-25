@@ -1,3 +1,8 @@
+love.filesystem.require("oo.lua")
+love.filesystem.require("objects/composable/DamageableObject.lua")
+love.filesystem.require("objects/composable/CollectibleObject.lua")
+love.filesystem.require("objects/goodies/WarpPortal.lua")
+
 state.game = {
   
   spColor = love.graphics.newColor(0,0,255),
@@ -109,7 +114,7 @@ state.game = {
 
     if tryCollideInteraction( a, b,
       function(maybeProjectile) return AisInstanceOfB(maybeProjectile,Projectile) end,
-      function(maybeDamageable) return AisInstanceOfB(maybeDamageable, DamageableObject) end,
+      function(maybeDamageable) return AhasAttributeB(maybeDamageable, DamageableObject) end,
       function(projectile, damageable) projectile:strike(damageable) end
     ) then return end
     

@@ -1,13 +1,13 @@
 love.filesystem.require("util/geom.lua")
-love.filesystem.require("objects/WarpCrystal.lua")
-love.filesystem.require("objects/WarpPortal.lua")
-love.filesystem.require("objects/EnergyPowerup.lua")
+love.filesystem.require("objects/goodies/WarpCrystal.lua")
+love.filesystem.require("objects/goodies/WarpPortal.lua")
+love.filesystem.require("objects/goodies/EnergyPowerup.lua")
 love.filesystem.require("objects/SimpleBullet.lua")
-love.filesystem.require("objects/DamageableObject.lua")
-love.filesystem.require("objects/Thruster.lua")
+love.filesystem.require("objects/composable/DamageableObject.lua")
+love.filesystem.require("objects/composable/Thruster.lua")
 love.filesystem.require("objects/Ship.lua")
-love.filesystem.require("objects/Hornet.lua")
-love.filesystem.require("objects/Eel.lua")
+love.filesystem.require("objects/enemies/Hornet.lua")
+love.filesystem.require("objects/enemies/Eel.lua")
 
 objects = {
   
@@ -108,7 +108,9 @@ objects = {
       bd:setAllowSleep(false)
       sh:setRestitution(0.125)
       bd:setAngle(180)
-      local result = DamageableObject:create(bd,sh,state.game.difficulty,nil,love.audio.newSound("sound/hornetDeath.ogg"),1000)
+      local result = SimplePhysicsObject:create(bd,sh)
+      mixin(result, DamageableObject:prepareAttribute(state.game.difficulty,nil,love.audio.newSound("sound/hornetDeath.ogg"),1000))
+      
       local properties = {
         thrust = 10,
         heat = 0,

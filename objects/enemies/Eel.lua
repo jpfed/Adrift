@@ -51,7 +51,7 @@ Eel = {
     
     result.cvx = Convex:create(result, pointArray, self.lineColor, self.fillColor)
     result.engine = Engine:create(result, result.thrust, 2, 8)
-    result.thruster = FireThruster:create(result, -90)
+    result.thruster = FireThruster:create(result, 180)
     
     return result
   end,

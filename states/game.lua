@@ -36,7 +36,11 @@ state.game = {
     s.level.colors = coloration(1)
     s.background.colors = coloration(0.25)
     s.objects = getObjects(s.world, s.level.nodes,s.difficulty*10)
-    s.ship = objects.ships.getShip(s.world, s.level.nodes[1].x, s.level.nodes[1].y,state.options.controlScheme)
+    if s.ship ~= nil then
+      s.ship:cleanup()
+      s.ship:warp(s.world, s.level.nodes[1].x, s.level.nodes[1].y)
+    end
+    s.ship = Ship:create(s.world, s.level.nodes[1].x, s.level.nodes[1].y, state.options.controlScheme)
     camera.x = s.ship.body:getX()
     camera.y = s.ship.body:getY()
   end,

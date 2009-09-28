@@ -49,7 +49,7 @@ Hornet = {
     result.cvx = Convex:create(result, pointArray, self.color, self.color)
     
     result.engine = Engine:create(result, Hornet.thrust, 2,8)
-    result.thruster = FireThruster:create(result, -90)
+    result.thruster = FireThruster:create(result, 180)
     result.gun = SimpleGun:create(result, pointArray[1], pointArray[2], 0, 1, Hornet.bulletColor)
     
     result.collisionReaction = math.random()*90-45

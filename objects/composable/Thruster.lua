@@ -31,7 +31,7 @@ Thruster = {
   end,
   
   update = function(self, dt)
-    local dir = self.parent.angle - 90
+    local dir = self.parent.angle 
     if self.sign == -1 then dir = dir + 180 end
     self.system:setDirection(dir + self.directionOffset)
     self.system:update(dt)

@@ -18,6 +18,7 @@ SimplePhysicsObject = {
   
   update = function(self,dt)
     GameObject.update(self,dt)
+    self.body:setSleep(false)
     self.x = self.body:getX()
     self.y = self.body:getY()
     self.angle = self.body:getAngle()

@@ -106,6 +106,11 @@ state.game = {
   keypressed = function(s,key) 
     if key==love.key_p then state.current = state.pause end
     if key==love.key_v then state.current = state.victory end
+    if key==love.key_x then
+      -- DAN'S EXPLOSION TESTER
+      local explosion = FireyExplosion:create(s.ship.x,s.ship.y,60,3.0)
+      table.insert(state.game.objects,explosion)
+    end
   end,
   
   collision = function(a,b,c)

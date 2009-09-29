@@ -10,16 +10,17 @@ Explosion = {
     local x, y, scale = camera:xy(self.x, self.y, 0)
     
     love.graphics.setColorMode(love.color_modulate)
+    love.graphics.draw(self.smoke,x,y)
     love.graphics.setBlendMode(love.blend_additive)
     love.graphics.draw(self.fire,x,y)
-    love.graphics.setBlendMode(love.blend_normal)
-    love.graphics.draw(self.smoke,x,y)
     love.graphics.setColorMode(love.color_normal)
+    love.graphics.setBlendMode(love.blend_normal)
+    love.graphics.circle(love.draw_line,x,y,10)
   end,
 
   update = function(self, dt)
     self.life = self.life + dt
-    if self.life > self.duration then
+    if self.life * 10 > self.duration then
       self.dead = true
     else
       self.fire:update(dt)
@@ -27,34 +28,38 @@ Explosion = {
     end
   end,
   
-  create = function(self,x,y,duration,brightImage,darkImage,brightStart,brightFade, darkStart, darkFade)
+  create = function(self,x,y,duration,size,brightImage,darkImage,brightStart,brightFade, darkStart, darkFade)
     local result = GameObject:create(x,y)
     mixin(result, Explosion)
     result.class = Explosion
     
     result.duration = duration
+    result.size = size
+
     result.fire = love.graphics.newParticleSystem(brightImage, 300)
     local f = result.fire
-    f:setEmissionRate(math.floor(100/duration))
-    f:setLifetime(0.125)
-    f:setParticleLife(0.25,0.75)
+    f:setEmissionRate(40)
+    f:setLifetime(duration/90)
+    f:setParticleLife(0.75,1.0)
     f:setDirection(0)
     f:setSpread(360)
-    f:setSpeed(1,360)
+    f:setSpeed(50 * size,70 * size)
+    f:setSpin(0,360,4.0)
+    f:setRadialAcceleration(-100,-100)
     f:setGravity(0)
-    f:setSize(4, 0.5, 1.0)
+    f:setSize(2 * size, 0.2 * size, 0.1)
     f:setColor(brightStart, brightFade)
     
     result.smoke = love.graphics.newParticleSystem(darkImage, 300)
     local s = result.smoke
-    s:setEmissionRate(math.floor(100/duration))
-    s:setLifetime(0.5)
-    s:setParticleLife(0.75,1.5)
+    s:setEmissionRate(6)
+    s:setLifetime(duration/60)
+    s:setParticleLife(2,5)
     s:setDirection(0)
     s:setSpread(360)
-    s:setSpeed(1,60)
+    s:setSpeed(30*size)
     s:setGravity(0)
-    s:setSize(0.5, 4, 1.0)
+    s:setSize(5.0*size, 2.0*size, 2.0)
     s:setColor(darkStart, darkFade)
     
     s:start()
@@ -64,15 +69,15 @@ Explosion = {
 }
 
 FireyExplosion = {
-  fireImage = love.graphics.newImage("graphics/fire.png"),
-  fireStart = love.graphics.newColor(255, 128, 64, 255),
-  fireFade = love.graphics.newColor(255, 0, 0, 0),
+  fireImage = love.graphics.newImage("graphics/spark.png"),
+  fireStart = love.graphics.newColor(255, 216, 192, 255),
+  fireFade = love.graphics.newColor(220, 64, 0, 200),
   
   smokeImage = love.graphics.newImage("graphics/smoke.png"),
-  smokeStart = love.graphics.newColor(0,0,0,128),
-  smokeFade = love.graphics.newColor(0,0,0,0),
+  smokeStart = love.graphics.newColor(128,128,128,200),
+  smokeFade = love.graphics.newColor(64,64,64,0),
   
-  create = function(self, x, y, duration)
-    return Explosion:create(x, y, duration, self.fireImage, self.smokeImage, self.fireStart, self.fireFade, self.smokeStart, self.smokeFade)
+  create = function(self, x, y, duration, size)
+    return Explosion:create(x, y, duration, size, self.fireImage, self.smokeImage, self.fireStart, self.fireFade, self.smokeStart, self.smokeFade)
   end
 }

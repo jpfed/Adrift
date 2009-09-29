@@ -15,7 +15,6 @@ Explosion = {
     love.graphics.draw(self.fire,x,y)
     love.graphics.setColorMode(love.color_normal)
     love.graphics.setBlendMode(love.blend_normal)
-    love.graphics.circle(love.draw_line,x,y,10)
   end,
 
   update = function(self, dt)

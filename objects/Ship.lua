@@ -38,7 +38,7 @@ Ship = {
     result.class = Ship
     
     result.thruster = FireThruster:create(result, 180)
-    result.engine = Engine:create(result,Ship.thrust,2,8)
+    result.engine = Engine:create(result,Ship.thrust,2,4)
     result.controller = ControlSchemes[controlSchemeNumber]
     result.gun = SimpleGun:create(result, 0.5, 0, 0, 5, Ship.bulletColor)
     

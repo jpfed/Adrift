@@ -40,6 +40,11 @@ Thruster = {
   draw = function(self)
     local x, y, scale = camera:xy(self.parent.x, self.parent.y, 0)
     love.graphics.draw(self.system,x,y)
+  end,
+  
+  cleanup = function(self)
+    self.system:stop()
+    self.system = nil
   end
 }
 

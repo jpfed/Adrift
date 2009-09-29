@@ -54,12 +54,13 @@ state.game = {
     for k,v in ipairs(s.objects) do
       v:update(dt)
     end
-    s.world:update(dt)
-    
+
     if s.ship ~= nil then
       camera.x = camera.x * 0.75 + s.ship.body:getX() * 0.25
       camera.y = camera.y * 0.75 + s.ship.body:getY() * 0.25
     end
+    
+    s.world:update(dt)
     
     s:collectGarbage(s.waitingForNewLevel)
     if s.waitingForNewLevel then s:startNewLevel() end
@@ -74,11 +75,11 @@ state.game = {
         local found = false
         local objectsToKeep = {}
         for k,v in ipairs(s.objects) do
-          if not v.dead then 
-            table.insert(objectsToKeep, v) 
-          else
+          if v.dead then 
             found = true
             if v.cleanup ~= nil then v:cleanup() end
+          else
+            table.insert(objectsToKeep, v) 
           end
         end
         s.objects = objectsToKeep
@@ -109,6 +110,11 @@ state.game = {
   end,
   
   collision = function(a,b,c)
+    if tryCollideInteraction(a, b,
+      function(maybeDead) return a.dead end,
+      function(anythingElse) return true end,
+      function(maybeDead, anythingElse) end
+    ) then return end
   
     if tryCollideInteraction( a, b,
       function(maybeWall) return maybeWall == 0 end,
@@ -124,7 +130,7 @@ state.game = {
     
     if tryCollideInteraction( a, b,
       function(maybeProjectile) return AisInstanceOfB(maybeProjectile,Projectile) end,
-      function(whatever) return true end,
+      function(whatever) return whatever ~= nil end,
       function(projectile, whatever) projectile.dead = true end
     ) then return end
     

@@ -25,7 +25,10 @@ SimplePhysicsObject = {
   
   cleanup = function(self)
     GameObject.cleanup(self)
+    self.shape:setData(nil)
     self.shape:destroy()
+    self.shape = nil
     self.body:destroy()
+    self.body = nil
   end
 }

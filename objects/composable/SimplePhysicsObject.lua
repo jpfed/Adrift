@@ -18,6 +18,7 @@ SimplePhysicsObject = {
   
   update = function(self,dt)
     GameObject.update(self,dt)
+    self.body:setSleep(false)
     self.x = self.body:getX()
     self.y = self.body:getY()
     self.angle = self.body:getAngle()
@@ -25,7 +26,10 @@ SimplePhysicsObject = {
   
   cleanup = function(self)
     GameObject.cleanup(self)
+    self.shape:setData(nil)
     self.shape:destroy()
+    self.shape = nil
     self.body:destroy()
+    self.body = nil
   end
 }

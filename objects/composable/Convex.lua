@@ -54,6 +54,12 @@ Convex = {
     love.graphics.polygon(love.draw_fill, unpack(self._projectedPoints))
     love.graphics.setColor(self.lineColor)
     love.graphics.polygon(love.draw_line, unpack(self._projectedPoints))
+  end,
+  
+  cleanup = function(self)
+    self.pointArray = nil
+    self._rotatedPoints = nil
+    self._projectedPoints = nil
   end
   
 }

@@ -19,11 +19,7 @@ Engine = {
     targetSpin = cp*360
     
     local spinRetain = math.exp(-self.turnRate*dt*4)
-    local spinMagnitude = math.abs(existingSpin)
     local spinChange = 1 - spinRetain
-    if spinMagnitude < 20 then
-      targetSpin = targetSpin / (20 - spinMagnitude)
-    end
     
     self.parent.body:setSpin(existingSpin * spinRetain + targetSpin * spinChange)
     

@@ -7,7 +7,7 @@ LUA=lua
 all: clean tests build run
 
 clean:
-	rm $(NAME).love
+	rm -f $(NAME).love
 
 tests:
 	cd test && $(LUA) test_Explosion.lua

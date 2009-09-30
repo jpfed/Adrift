@@ -1,13 +1,16 @@
 # This is OSX specific in places (open, etc.) but might be useful?
 NAME=adrift
+LUA=lua
 
-all: clean test build run
+#.SILENT:
+
+all: clean tests build run
 
 clean:
 	rm $(NAME).love
 
-test:
-	echo "Yeah, right..."
+tests:
+	cd test && $(LUA) test_Explosion.lua
 
 build: clean
 	cd love && zip -q -r ../$(NAME).zip .

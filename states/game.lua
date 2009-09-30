@@ -18,7 +18,9 @@ state.game = {
     s.levelNumber = 0
     s.difficulty = state.options.difficulty
     s.score = 0
+    s.ship = nil
     s:startNewLevel()
+    
   end,
   
   enqueueNextLevel = function(s)
@@ -35,35 +37,41 @@ state.game = {
     s.level.physics = solidify(s.world,s.level.tiles)
     s.level.colors = coloration(1)
     s.background.colors = coloration(0.25)
+    
     s.objects = getObjects(s.world, s.level.nodes,s.difficulty*10)
-    if s.ship ~= nil then
+    
+    if s.ship == nil then
+      s.ship = Ship:create(s.world, s.level.nodes[1].x, s.level.nodes[1].y, state.options.controlScheme)
+    else
       s.ship:cleanup()
       s.ship:warp(s.world, s.level.nodes[1].x, s.level.nodes[1].y)
     end
-    s.ship = Ship:create(s.world, s.level.nodes[1].x, s.level.nodes[1].y, state.options.controlScheme)
+    
     camera.x = s.ship.body:getX()
     camera.y = s.ship.body:getY()
   end,
   
   update = function(s,dt) 
-    s.ship:update(dt)
-    if s.ship.armor <= 0 then
-    state.current = state.loss
-    state.loss.ct = 0
-    end
-    for k,v in ipairs(s.objects) do
-      v:update(dt)
-    end
+    if s.waitingForNewLevel then
+      s:startNewLevel()
+    else
+      s.ship:update(dt)
+      if s.ship.armor <= 0 then
+      state.current = state.loss
+      state.loss.ct = 0
+      end
+      for k,v in ipairs(s.objects) do
+        v:update(dt)
+      end
 
-    if s.ship ~= nil then
-      camera.x = camera.x * 0.75 + s.ship.body:getX() * 0.25
-      camera.y = camera.y * 0.75 + s.ship.body:getY() * 0.25
+      if s.ship ~= nil then
+        camera.x = camera.x * 0.75 + s.ship.body:getX() * 0.25
+        camera.y = camera.y * 0.75 + s.ship.body:getY() * 0.25
+      end
+      
+      s.world:update(dt)
+      s:collectGarbage(s.waitingForNewLevel)
     end
-    
-    s.world:update(dt)
-    
-    s:collectGarbage(s.waitingForNewLevel)
-    if s.waitingForNewLevel then s:startNewLevel() end
     
   end,
   
@@ -106,7 +114,7 @@ state.game = {
   
   keypressed = function(s,key) 
     if key==love.key_p then state.current = state.pause end
-    if key==love.key_v then state.current = state.victory end
+    if key==love.key_v then s.ship.hasCrystal = true end
     if key==love.key_x then
       -- DAN'S EXPLOSION TESTER
       local explosion = FireyExplosion:create(s.ship.x,s.ship.y,60,3.0)
@@ -116,7 +124,7 @@ state.game = {
   
   collision = function(a,b,c)
     if tryCollideInteraction(a, b,
-      function(maybeDead) return a.dead end,
+      function(maybeDead) return a == nil or a.dead end,
       function(anythingElse) return true end,
       function(maybeDead, anythingElse) end
     ) then return end

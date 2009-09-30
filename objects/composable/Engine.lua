@@ -13,14 +13,10 @@ Engine = {
   vector = function(self, forceX, forceY, dt)
     local theta, targetSpin, existingSpin = math.rad(self.parent.angle), 0, self.parent.body:getSpin()
     local pointingX,pointingY = math.cos(theta), math.sin(theta)
-    local cp = geom.crossProduct(pointingX,pointingY,forceX,forceY)
-    if cp == 0 then
-      targetSpin = 0
-    elseif cp > 0 then
-      targetSpin = 360
-    else
-      targetSpin = -360
-    end
+    local forceNormX, forceNormY = geom.normalize(forceX, forceY)
+    local cp = geom.crossProduct(pointingX,pointingY,forceNormX,forceNormY)
+
+    targetSpin = cp*360
     
     local spinRetain = math.exp(-self.turnRate*dt*4)
     local spinMagnitude = math.abs(existingSpin)

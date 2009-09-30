@@ -20,7 +20,7 @@ objects = {
   end,
 
   getEnemy = function(obs,world, node)
-    if math.random(2)==2 then return Hornet:create(world, node.x, node.y, state.game.difficulty) end --objects.ships.getShip(world,node.x,node.y,3) end
+    if math.random(2)==2 then return Hornet:create(world, node.x, node.y, state.game.difficulty) end 
     return Eel:create(world,node.x,node.y, 3)
   end,
 

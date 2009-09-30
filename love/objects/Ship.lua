@@ -84,9 +84,11 @@ Ship = {
     end
     self.cvx:draw()
     
-    love.graphics.setColor(self.healthColor)
-    love.graphics.rectangle(love.draw_fill,100,590, 700 * self.armor / self.maxArmor,10)
-    love.graphics.draw("HP: " .. tostring(self.armor) .. " / " .. tostring(self.maxArmor), 15,598)
+    if state.current == state.game then
+      love.graphics.setColor(self.healthColor)
+      love.graphics.rectangle(love.draw_fill,100,590, 700 * self.armor / self.maxArmor,10)
+      love.graphics.draw("HP: " .. tostring(self.armor) .. " / " .. tostring(self.maxArmor), 15,598)
+    end
   end,
   
   update = function(self, dt)

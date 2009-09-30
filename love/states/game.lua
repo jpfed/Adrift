@@ -103,7 +103,7 @@ state.game = {
         v:draw()
       end
       love.graphics.setColor(s.scoreColor)
-      if state.current == state.game then love.graphics.draw("Score: " .. tostring(s.score),20,580) end
+      if state.current == state.game then love.graphics.draw("Score: " .. tostring(s.score),15,580) end
       s.ship:draw()
     end
   end,

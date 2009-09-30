@@ -36,7 +36,7 @@ Eel = {
     bd:setAllowSleep(false)
     bd:setAngle(0)
     
-    local s = 0.1
+    local s = 0.15
     local pointArray = {2*s,0*s, 1*s,1*s, -1*s,1*s, -2*s,0*s, -1*s,-1*s, 1*s,-1*s}
     
     local sh = love.physics.newPolygonShape(bd,unpack(pointArray))
@@ -139,7 +139,10 @@ Eel = {
       self.cvx.lineColor = Eel.lineColor
     end
     self.thruster:draw()
+    local w = love.graphics.getLineWidth()
+    love.graphics.setLineWidth(w*3)
     self.cvx:draw()
+    love.graphics.setLineWidth(w)
   end,
   
   shock = function(self, other)

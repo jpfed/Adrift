@@ -11,6 +11,17 @@ SimpleBullet = {
   
   update = function(self, dt)
     SimplePhysicsObject.update(self,dt)
+    local vx, vy = self.body:getVelocity()
+    local orientation = math.atan2(vy,vx)
+    local speed = geom.distance(vx,vy,0,0)
+    local speedRatio = speed/SimpleBullet.speed
+    local s = self.sparks
+    s:setDirection(math.deg(orientation) - 180)
+    s:setRotation(orientation + math.pi / 2)
+    s:setSpeed(speed*2,speed*3)
+    s:setSize(1.5*speedRatio, 0.5*speedRatio, 0.5)
+    s:setSpread(20/math.max(1/18,speedRatio))
+    s:setEmissionRate(200/math.max(1,speed))
     self.sparks:update(dt)
   end,
   
@@ -19,6 +30,8 @@ SimpleBullet = {
     love.graphics.setColorMode(love.color_modulate)
     love.graphics.draw(b.sparks,x,y)
     love.graphics.setColorMode(love.color_normal)
+    love.graphics.setColor(b.color)
+    love.graphics.circle(love.draw_fill,x,y,b.radius*scale/2,16)
   end,
   
   create = function(sb, firer, originPoint, color, highlightColor)
@@ -44,8 +57,9 @@ SimpleBullet = {
     local s = result.sparks
     s:setEmissionRate(20)
     s:setParticleLife(0.8,0.9)
-    s:setDirection(originPoint.angle - 180)
-    s:setRotation(theta + math.pi / 2)
+    local orientation = math.atan2(vy,vx)
+    s:setDirection(math.deg(orientation) - 180)
+    s:setRotation(orientation + math.pi / 2)
     s:setSpread(25)
     s:setSpeed(20,30)
     s:setRadialAcceleration(80,80)

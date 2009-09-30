@@ -43,6 +43,7 @@ Explosion = {
     f:setDirection(0)
     f:setSpread(360)
     f:setSpeed(50 * size,70 * size)
+    f:setRotation(0,360)
     f:setSpin(0,360,4.0)
     f:setRadialAcceleration(-100,-100)
     f:setGravity(0)

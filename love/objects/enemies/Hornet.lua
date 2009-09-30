@@ -41,6 +41,7 @@ Hornet = {
     
     local result = SimplePhysicsObject:create(bd,sh)
     result.superUpdate = result.update
+    result.superCleanup = result.cleanup
     
     mixin(result, DamageableObject:prepareAttribute(difficulty,nil,Hornet.deathSound, 1000))
     
@@ -91,6 +92,11 @@ Hornet = {
   draw = function(self)
     self.thruster:draw()
     self.cvx:draw()
+  end,
+  
+cleanup = function(self)
+    self:superCleanup()
+    if math.random() < 0.25 then table.insert(state.game.objects, EnergyPowerup:create(state.game.world,self)) end
   end
   
 }

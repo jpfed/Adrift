@@ -11,6 +11,7 @@ DamageableObject = {
     result.attributes[DamageableObject] = true
     
     result.damage = DamageableObject.damage
+    result.maxArmor = hp
     result.armor = hp
     result.damageSound = damageSound
     result.deathSound = deathSound

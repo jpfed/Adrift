@@ -4,6 +4,7 @@ love.filesystem.require("objects/composable/DamageableObject.lua")
 love.filesystem.require("objects/composable/Convex.lua")
 love.filesystem.require("objects/composable/Thruster.lua")
 love.filesystem.require("objects/composable/Projectile.lua")
+love.filesystem.require("objects/goodies/EnergyPowerup.lua")
 
 Eel = {
   super = SimplePhysicsObject,
@@ -43,6 +44,7 @@ Eel = {
     
     local result = SimplePhysicsObject:create(bd, sh)
     result.superUpdate = result.update
+    result.superCleanup = result.cleanup
     
     mixin(result,DamageableObject:prepareAttribute(3+difficulty,nil,Eel.deathSound, 1000))
     
@@ -152,4 +154,9 @@ Eel = {
       other:damage(1)
     end
   end,
+  
+  cleanup = function(self)
+    self:superCleanup()
+    if math.random() < 0.25 then table.insert(state.game.objects, EnergyPowerup:create(state.game.world,self)) end
+  end
 }

@@ -1,16 +1,13 @@
 mock = function() 
   local t = {}
-  setmetatable(t, {__call = mock})
+  setmetatable(t, {__call = mock, __index = mock, __newindex = mock})
   return t
 end
 
 love = {}
 love.filesystem = {}
-love.graphics = {}
+love.graphics = mock()
 
-love.graphics.newColor = mock
-love.graphics.newImage = mock
-love.graphics.newParticleSystem = mock
 
 -- code originally from http://lua-users.org/wiki/LuaModulesLoader
 local function love_load(path)

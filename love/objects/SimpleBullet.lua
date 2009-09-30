@@ -28,6 +28,7 @@ SimpleBullet = {
     local mx, my = SimpleBullet.speed*math.cos(theta), SimpleBullet.speed*math.sin(theta)
     vx = vx + mx
     vy = vy + my
+    local v = vx + vy
     local sbBody = love.physics.newBody(state.game.world, tipx+mx/60,tipy+my/60,0.01)
     local sbShape = love.physics.newCircleShape(sbBody, SimpleBullet.radius)
     sbBody:setBullet(true)
@@ -47,8 +48,8 @@ SimpleBullet = {
     s:setDirection(originPoint.angle - 180)
     s:setRotation(theta + math.pi / 2)
     s:setSpread(25)
-    s:setSpeed(20,30)
-    s:setRadialAcceleration(80,80)
+    s:setSpeed(v,v+10)
+    s:setRadialAcceleration(20,20)
     s:setGravity(0)
     s:setSize(1.5, 0.5, 0.5)
     s:setColor(highlightColor, color)

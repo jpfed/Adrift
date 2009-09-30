@@ -10,9 +10,10 @@ Hornet = {
   super = SimplePhysicsObject,
   
   cvx = nil,
-    color = love.graphics.newColor(255,0,0),
+  color = love.graphics.newColor(255,0,0),
   
   bulletColor = love.graphics.newColor(255,0,0),
+  bulletHighlightColor = love.graphics.newColor(255,100,100,200),
   
   thruster = nil,
   engine = nil,
@@ -50,7 +51,7 @@ Hornet = {
     
     result.engine = Engine:create(result, Hornet.thrust, 2,8)
     result.thruster = FireThruster:create(result, 180)
-    result.gun = SimpleGun:create(result, pointArray[1], pointArray[2], 0, 1, Hornet.bulletColor)
+    result.gun = SimpleGun:create(result, pointArray[1], pointArray[2], 0, 1, Hornet.bulletColor, Hornet.bulletHighlightColor)
     
     result.collisionReaction = math.random()*90-45
     result.coolRate = math.random()+0.5

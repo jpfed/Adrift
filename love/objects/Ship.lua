@@ -11,7 +11,8 @@ Ship = {
   controller = nil,
   
   gun = nil,
-    bulletColor = love.graphics.newColor(0,0,255),
+  bulletColor = love.graphics.newColor(0,0,255),
+  bulletHighlightColor = love.graphics.newColor(100,100,255,200),
   
   
   circColor = love.graphics.newColor(32,64,128),
@@ -43,7 +44,7 @@ Ship = {
     result.controller = ControlSchemes[controlSchemeNumber]
     if result.controller.eightDirectional then result.engine.turnRate = 32 end
     
-    result.gun = SimpleGun:create(result, 0.5, 0, 0, 5, Ship.bulletColor)
+    result.gun = SimpleGun:create(result, 0.5, 0, 0, 5, Ship.bulletColor, Ship.bulletHighlightColor)
     
     local s = 0.375
     local pointArray = {1*s,0*s, s*math.cos(math.pi*5/6),s*math.sin(math.pi*5/6), s*math.cos(math.pi*7/6),s*math.sin(math.pi*7/6)}

@@ -8,7 +8,7 @@ EnergyPowerup = {
   sound = love.audio.newSound("sound/energyPowerup.ogg"),
   
   effect = function(self, collector) 
-    if AisInstanceOfB(collector, DamageableObject) then
+    if AhasAttributeB(collector, DamageableObject) then
       collector.armor = collector.armor + 1
       if collector == state.game.ship then state.game.score = state.game.score + 100 end
     end

@@ -12,7 +12,7 @@ SimpleGun = {
   heat = 0,
   shotsPerSecond = 1,
   
-  create = function(self, parent, mountX, mountY, mountAngle, shotsPerSecond, bulletColor) 
+  create = function(self, parent, mountX, mountY, mountAngle, shotsPerSecond, bulletColor, bulletHighlightColor) 
     local result = {}
     mixin(result, SimpleGun)
     result.class = SimpleGun
@@ -24,6 +24,7 @@ SimpleGun = {
     result.shotsPerSecond = shotsPerSecond
   
     result.bulletColor = bulletColor
+    result.bulletHighlightColor = bulletHighlightColor
   
     return result
   end,
@@ -41,7 +42,7 @@ SimpleGun = {
       local muzzleAngle = self.parent.angle + self.mountAngle
       
       
-      local bullet = SimpleBullet:create(self.parent,{x = muzzleX, y = muzzleY, angle = muzzleAngle}, self.bulletColor)
+      local bullet = SimpleBullet:create(self.parent,{x = muzzleX, y = muzzleY, angle = muzzleAngle}, self.bulletColor, self.bulletHighlightColor)
       table.insert(state.game.objects,bullet)
       self.heat = self.heat + 1
         

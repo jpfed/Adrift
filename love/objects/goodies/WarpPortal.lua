@@ -85,7 +85,7 @@ WarpPortal = {
     d:start()
     d:update(2)
 
-    result.image = love.graphics.newImage("graphics/WarpPortal.png")
+    result.image = love.graphics.newImage("graphics/warpPortal.png")
     
     return result
   end

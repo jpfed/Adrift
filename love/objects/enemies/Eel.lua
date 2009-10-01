@@ -46,7 +46,7 @@ Eel = {
     result.superUpdate = result.update
     result.superCleanup = result.cleanup
     
-    mixin(result,DamageableObject:prepareAttribute(3+difficulty,nil,Eel.deathSound, 1000))
+    mixin(result,DamageableObject:prepareAttribute(difficulty,nil,Eel.deathSound, 1000))
     
     mixin(result,Eel)
     result.class = Eel
@@ -72,7 +72,7 @@ Eel = {
       -- avoid walls
       local wallRepulsion = 1
       
-      local searchRadius = 1
+      local searchRadius = 2
       local minX, maxX = math.max(1,math.floor(self.x-searchRadius)), math.min(levelGenerator.maxCol,math.ceil(self.x+searchRadius))
       local minY, maxY = math.max(1,math.floor(self.y-searchRadius)), math.min(levelGenerator.maxRow,math.ceil(self.y+searchRadius))
       
@@ -86,8 +86,21 @@ Eel = {
             if geom.distToLine(point, self, state.game.ship) < 2 then
               local rdx, rdy = self.x - x, self.y - y
              
-              rnorm = math.max(0.01,rdx*rdx + rdy*rdy)
-              local rForceX, rForceY = rdx / rnorm, rdy / rnorm
+              local dir1x, dir1y = -rdy + rdx/2, rdx + rdy/2
+              local dir2x, dir2y = rdy + rdx/2, -rdx + rdy/2
+              
+              local dir1dp = dir1x*dx + dir1y*dy
+              local dir2dp = dir2x*dx + dir2y*dy
+              
+              local dirX, dirY
+              if dir1dp > dir2dp then 
+                dirX, dirY = dir1x, dir1y
+              else
+                dirX, dirY = dir2x, dir2y
+              end
+              
+              rnorm = math.max(0.01,dirX*dirX + dirY*dirY)
+              local rForceX, rForceY = dirX / rnorm, dirY / rnorm
               repelX, repelY = repelX + rForceX, repelY + rForceY 
             end
           end

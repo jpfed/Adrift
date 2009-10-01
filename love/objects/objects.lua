@@ -21,7 +21,7 @@ objects = {
 
   getEnemy = function(obs,world, node)
     if math.random(2)==2 then return Hornet:create(world, node.x, node.y, state.game.difficulty) end 
-    return Eel:create(world,node.x,node.y, 3)
+    return Eel:create(world,node.x,node.y, state.game.difficulty)
   end,
 
   getPowerup = function(obs,world, node)

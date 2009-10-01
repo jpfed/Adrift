@@ -163,8 +163,8 @@ Eel = {
   shock = function(self, other)
     if self.shockCounter == 0 then
       love.audio.play(Eel.shockSound)
-      self.shockCounter = 1
-      other:damage(1)
+      self.shockCounter = 0.75
+      other:damage(2)
     end
   end,
   

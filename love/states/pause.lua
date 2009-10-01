@@ -51,5 +51,9 @@ state.pause = {
   
   keypressed = function(s,key) 
     state.current = state.game
+  end,
+  
+  joystickpressed = function(s,j,b)
+    state.current = state.game
   end
 }

@@ -122,6 +122,10 @@ state.game = {
     end
   end,
   
+  joystickpressed = function(s,j,b)
+    if b == 1 then state.current = state.pause end
+  end,
+  
   collision = function(a,b,c)
     if tryCollideInteraction(a, b,
       function(maybeDead) return a == nil or a.dead end,

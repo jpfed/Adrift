@@ -1,5 +1,7 @@
 love.filesystem.require("oo.lua")
 love.filesystem.require("objects/composable/SimplePhysicsObject.lua")
+love.filesystem.require("objects/ControlSchemes.lua")
+
 Ship = {
   super = SimplePhysicsObject,
   
@@ -42,7 +44,7 @@ Ship = {
     result.engine = Engine:create(result,Ship.thrust,2,12)
     
     result.controller = ControlSchemes[controlSchemeNumber]
-    if result.controller.eightDirectional then result.engine.turnRate = 32 end
+    if result.controller.directional then result.engine.turnRate = 32 end
     
     result.gun = SimpleGun:create(result, 0.5, 0, 0, 5, Ship.bulletColor, Ship.bulletHighlightColor)
     
@@ -104,51 +106,3 @@ Ship = {
   end,
 }
 
-ControlSchemes = {
-  -- radial keyboard control
-  {
-    radial = true,
-    leftT = 0,
-    rightT = 0,
-    getAction = function(self,parent,dt)
-      local targVx, targVy, isFiring = 0, 0, false
-      local theta = math.rad(parent.angle)
-      if love.keyboard.isDown(love.key_up) then targVx, targVy = targVx + math.cos(theta), targVy + math.sin(theta) end
-      if love.keyboard.isDown(love.key_down) then targVx, targVy = targVx - math.cos(theta), targVy - math.sin(theta) end
-      
-      if love.keyboard.isDown(love.key_left) then 
-        self.leftT = self.leftT + dt
-        local leftTurnPower = 1 - math.exp(-10*self.leftT)
-        targVx, targVy = targVx + leftTurnPower*math.cos(theta-math.pi/2), targVy + leftTurnPower*math.sin(theta-math.pi/2) 
-      else
-        self.leftT = 0
-      end
-      
-      if love.keyboard.isDown(love.key_right) then 
-        self.rightT = self.rightT + dt
-        local rightTurnPower = 1 - math.exp(-10*self.rightT)
-        targVx, targVy = targVx + rightTurnPower*math.cos(theta+math.pi/2), targVy + rightTurnPower*math.sin(theta+math.pi/2) 
-      else
-        self.rightT = 0
-      end
-      isFiring = love.keyboard.isDown(love.key_f)
-      targVx, targVy = geom.normalize(targVx, targVy)
-      return targVx, targVy, isFiring
-    end,
-  },
-  
-  -- eight-directional control
-  {
-    eightDirectional = true,
-    getAction = function(self, parent,dt)
-      local targVx, targVy, isFiring = 0, 0, false
-      if love.keyboard.isDown(love.key_up) then targVy = targVy - 1 end
-      if love.keyboard.isDown(love.key_down) then targVy = targVy + 1 end
-      if love.keyboard.isDown(love.key_left) then targVx = targVx - 1 end
-      if love.keyboard.isDown(love.key_right) then targVx = targVx + 1 end
-      isFiring = love.keyboard.isDown(love.key_f)
-      targVx, targVy = geom.normalize(targVx, targVy)
-      return targVx, targVy, isFiring
-    end
-  },
-}

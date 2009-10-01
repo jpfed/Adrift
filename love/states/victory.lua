@@ -24,6 +24,14 @@ state.victory = {
   mousepressed = function(s,x,y,button) end,
   
   keypressed = function(s,key) 
+    s:done()
+  end,
+  
+  joystickpressed = function(s,j,b)
+    s:done()
+  end,
+  
+  done = function(s)
     state.game:enqueueNextLevel()
     state.current = state.game
     love.graphics.setFont(love.default_font,12)

@@ -86,22 +86,24 @@ Eel = {
             if geom.distToLine(point, self, state.game.ship) < 2 then
               local rdx, rdy = self.x - x, self.y - y
              
-              local dir1x, dir1y = -rdy + rdx/2, rdx + rdy/2
-              local dir2x, dir2y = rdy + rdx/2, -rdx + rdy/2
-              
-              local dir1dp = dir1x*dx + dir1y*dy
-              local dir2dp = dir2x*dx + dir2y*dy
-              
-              local dirX, dirY
-              if dir1dp > dir2dp then 
-                dirX, dirY = dir1x, dir1y
-              else
-                dirX, dirY = dir2x, dir2y
+              if rdx*dx + rdy+dy < 0 then
+                local dir1x, dir1y = -rdy + rdx/2, rdx + rdy/2
+                local dir2x, dir2y = rdy + rdx/2, -rdx + rdy/2
+                
+                local dir1dp = dir1x*dx + dir1y*dy
+                local dir2dp = dir2x*dx + dir2y*dy
+                
+                local dirX, dirY
+                if dir1dp > dir2dp then 
+                  dirX, dirY = dir1x, dir1y
+                else
+                  dirX, dirY = dir2x, dir2y
+                end
+                
+                rnorm = math.max(0.01,dirX*dirX + dirY*dirY)
+                local rForceX, rForceY = dirX / rnorm, dirY / rnorm
+                repelX, repelY = repelX + rForceX, repelY + rForceY 
               end
-              
-              rnorm = math.max(0.01,dirX*dirX + dirY*dirY)
-              local rForceX, rForceY = dirX / rnorm, dirY / rnorm
-              repelX, repelY = repelX + rForceX, repelY + rForceY 
             end
           end
         end

@@ -11,6 +11,7 @@ clean:
 
 tests:
 	cd test && $(LUA) test_Explosion.lua
+	cd test && $(LUA) test_Triangle.lua
 
 build: clean
 	cd love && zip -q -r ../$(NAME).zip .

@@ -18,8 +18,34 @@ function test_LengthsComplex()
 end
 
 function test_Area()
-  -- Need an assertWithin for floats
-  assertTrue( Triangle.area({0,0,3,0,3,4}), 6 )
+  assertEqual( Triangle.area({0,0,3,0,3,4}), 6 )
+  assertEqual( Triangle.area({0,0,3,4,3,0}), 6 )
+  assertWithin( Triangle.area({0,0,0.3,0,0.3,0.4}), 0.06, 0.001 )
+end
+
+function test_PointInside()
+  local t1 = Triangle:create(0,0,3,0,3,4)
+  assertTrue(  Triangle.has_point_inside(t1, 2, 0.1) )
+  assertFalse( Triangle.has_point_inside(t1, 0, 1) )
+  assertTrue(  Triangle.has_point_inside(t1, 0, 0) )
+end
+
+function test_Inside()
+  local t1 = Triangle:create(-10,-1,10,-1,10,10)
+  local t2 = Triangle:create(0,0,3,0,3,4)
+  assertTrue( Triangle.has_inside(t1, t2) )
+end
+
+function test_InsideSame()
+  local t2 = Triangle:create(0,0,3,0,3,4)
+  local t2 = Triangle:create(1,0,3,0,3,4)
+  assertTrue( Triangle.has_inside(t1, t2) )
+end
+
+function test_NotInside()
+  local t1 = Triangle:create(0,0,2,0,2,1)
+  local t2 = Triangle:create(0,0,3,0,3,4)
+  assertFalse( Triangle.has_inside(t1, t2) )
 end
 
 function test_NotOverlapping()
@@ -38,24 +64,6 @@ function test_OverlappingByContains()
   local t1 = Triangle:create(0,0,3,0,3,4)
   local t2 = Triangle:create(-10,-1,10,-1,10,10)
   assertTrue( Triangle.has_overlap(t1, t2) )
-end
-
-function test_Inside()
-  local t1 = Triangle:create(-10,-1,10,-1,10,10)
-  local t2 = Triangle:create(0,0,3,0,3,4)
-  assertTrue( Triangle.has_inside(t1, t2) )
-end
-
-function test_InsideSame()
-  local t2 = Triangle:create(0,0,3,0,3,4)
-  local t2 = Triangle:create(0,0,3,0,3,4)
-  assertTrue( Triangle.has_inside(t1, t2) )
-end
-
-function test_NotInside()
-  local t1 = Triangle:create(0,0,2,0,2,1)
-  local t2 = Triangle:create(0,0,3,0,3,4)
-  assertFalse( Triangle.has_inside(t1, t2) )
 end
 
 runTests { useANSI = false }

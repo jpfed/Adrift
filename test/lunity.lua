@@ -100,6 +100,21 @@ function assertEqual( actual, expected, msg )
 	return __assertionSucceeded()
 end
 
+function assertWithin( actual, expected, tolerance, msg )
+  local diff = math.abs(actual - expected)
+	if diff > tolerance then
+		if not msg then
+			msg = string.format( "assertWithin() failed: expected within %s of %s, got %s",
+				tostring(tolerance),
+				tostring(expected),
+				tostring(actual)
+			)
+		end
+		error( msg, 2 )
+	end
+	return __assertionSucceeded()
+end
+
 function assertTableEquals( actual, expected, msg, keyPath )
 	-- Easy out
 	if actual == expected then

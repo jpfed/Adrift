@@ -24,7 +24,32 @@ Triangle = {
     return false
   end,
 
+  has_point_inside = function(t, x, y)
+    -- This is a cheesy algorithm, but it makes sense if you draw it out: if 
+    -- you sum up the areas of the triangle replacing one point with the 
+    -- input point, the sum should be <= the triangle's area if the point is 
+    -- inside the triangle.
+    local actual_area = Triangle.area(t)
+    local a1 = Triangle.area(Triangle:create(x,y,t[1],t[2],t[3],t[4]))
+    local a2 = Triangle.area(Triangle:create(x,y,t[3],t[4],t[5],t[6]))
+    local a3 = Triangle.area(Triangle:create(x,y,t[5],t[6],t[1],t[2]))
+    local sum = (a1 + a2 + a3)
+    -- I don't understand lua floats... I was trying to debug this but it was 
+    -- easier to add a fudge factor to the result
+    -- print( string.format ( "a: %s sum: %s a1: %s a2: %s a3: %s", actual_area, sum, a1, a2, a3 ) )
+    return sum <= actual_area + 0.0000001
+  end,
+
   has_inside = function(t1, t2)
-    return false
+    -- A triangle t2 can only be inside triangle t1 if each of its points is inside t1
+    --print( string.format ( "has_inside called on %s and %s", t1.tostring, t2.tostring ) )
+    local is_inside = (
+      Triangle.has_point_inside(t1, t2[1], t2[2])
+      and
+      Triangle.has_point_inside(t1, t2[3], t2[4])
+      and
+      Triangle.has_point_inside(t1, t2[5], t2[6])
+    )
+    return is_inside
   end
 }

@@ -9,15 +9,16 @@ function test_MakesTriangles()
 end
 
 function test_LengthsSimple()
-  assertTableEquals( Triangle.lengths({0,0,3,0,3,4}), {3,4,5} )
+  assertTableEquals( Triangle.lengths(Triangle:create(0,0,3,0,3,4)), {3,4,5} )
 end
 
 function test_LengthsComplex()
-  local lengths = Triangle.lengths({0,0,3,3,0,4})
+  local lengths = Triangle.lengths(Triangle:create(0,0,3,3,0,4))
   assertEqual( lengths[1], math.sqrt(18) )
 end
 
 function test_Area()
+  -- Need an assertWithin for floats
   assertTrue( Triangle.area({0,0,3,0,3,4}), 6 )
 end
 

@@ -1,6 +1,7 @@
 love.filesystem.require("util/geom.lua")
 
 Triangle = {
+  -- using this in case we want to do caching
   create = function(self,p1,p2,p3,p4,p5,p6)
     return {p1,p2,p3,p4,p5,p6}
   end,
@@ -13,7 +14,10 @@ Triangle = {
   end,
 
   area = function(t)
-    return 3
+    local l = Triangle.lengths(t) 
+    local semi = ( l[1] + l[2] + l[3] ) / 2
+    local stuff = semi * (semi-l[1]) * (semi-l[2]) * (semi-l[3])
+    return math.sqrt(stuff)
   end,
 
   has_overlap = function(t1, t2)

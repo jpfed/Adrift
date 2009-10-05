@@ -14,11 +14,19 @@ function test_MaxMin()
   assertEqual( p:min_x(), 1 )
   assertEqual( p:max_y(), 5 )
   assertEqual( p:min_y(), 2 )
+  assertTableEquals( p:min_x_point(), {x=1,y=2} )
 end
 
 function test_BoundingBox()
   local p = Poly:create( {{x=1,y=2},{x=4,y=3},{x=2,y=5}} )
   assertTableEquals( p:bounding_box(), {{x=1,y=2},{x=4,y=5}} )
+end
+
+function test_Intersect()
+  local p = Poly:create( {{x=1,y=2},{x=4,y=3},{x=2,y=5}} )
+  local result = p:intersections_with( {x=1,y=3.5}, {x=5,y=3.5} )
+  assertEqual( #result, 2 )
+  assertTableEquals( result, {{x=4,y=3}, {x=2,y=5}} )
 end
 
 runTests { useANSI = true }

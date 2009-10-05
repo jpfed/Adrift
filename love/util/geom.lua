@@ -64,7 +64,7 @@ geom = {
     )
   end,
 
-  -- check if the bounding boxes specified overlap
+  -- check if the bounding boxes specified overlap at all
   box_overlap = function(a, b, c, d)
     return (
       geom.range_overlap(a.x, b.x, c.x, d.x)

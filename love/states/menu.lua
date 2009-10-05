@@ -24,14 +24,16 @@ getMenu = function(opts, extras)
     supplemental = extras,
     
     update = function(s,dt)
-      local x,y = love.joystick.getAxes(0)
-      local gamepad = love.joystick.getHat(0,0)
       local c = s.cursor
-      
-      local up = gamepad == love.joystick_hat_up or y < -0.25 or love.keyboard.isDown(love.key_up)
-      local down = gamepad == love.joystick_hat_down or y > 0.25 or love.keyboard.isDown(love.key_down)
-      local left = gamepad == love.joystick_hat_left or x < -0.25 or love.keyboard.isDown(love.key_left)
-      local right = gamepad == love.joystick_hat_right or x > 0.25 or love.keyboard.isDown(love.key_right)
+      if useJoystick then
+        local x,y = love.joystick.getAxes(0)
+        local gamepad = love.joystick.getHat(0,0)
+        
+        local up = gamepad == love.joystick_hat_up or y < -0.25 or love.keyboard.isDown(love.key_up)
+        local down = gamepad == love.joystick_hat_down or y > 0.25 or love.keyboard.isDown(love.key_down)
+        local left = gamepad == love.joystick_hat_left or x < -0.25 or love.keyboard.isDown(love.key_left)
+        local right = gamepad == love.joystick_hat_right or x > 0.25 or love.keyboard.isDown(love.key_right)
+      end
       
       local select = love.keyboard.isDown(love.key_return) 
       

@@ -3,54 +3,74 @@ local opts = {
   {text = "Radial Keyboard Controls", x = 100, y = 125, w = 180, h = 20,
     action = function()  
       state.options.controlScheme = 1
-  end},
+  end,
+  up = 6, down = 2, left = 7, right = 7, 
+  },
 
   {text = "Eight-directional Keyboard Controls", x = 100, y = 175, w = 245, h = 20,
     action = function()  
       state.options.controlScheme = 2
-  end},
+  end,
+  up = 1, down = 3, left = 7, right = 7,
+  },
 
   {text = "Radial Gamepad Controls", x = 100, y = 225, w = 180, h = 20,
     action = function()  
       state.options.controlScheme = 3
-  end},
+  end,
+  up = 2, down = 4, left = 7, right = 7,
+  },
 
   {text = "Eight-directional Gamepad Controls", x = 100, y = 275, w = 245, h = 20,
     action = function()  
       state.options.controlScheme = 4
-  end},
+  end,
+  up = 3, down = 5, left = 7, right = 7,
+  },
   
   {text = "Radial Joystick Controls", x = 100, y = 325, w = 165, h = 20,
     action = function()  
       state.options.controlScheme = 5
-  end},
+  end,
+  up = 4, down = 6, left = 7, right = 7,
+  },
 
-  {text = "Eight-directional Joystick Controls", x = 100, y = 375, w = 230, h = 20,
+  {text = "Omni-directional Joystick Controls", x = 100, y = 375, w = 230, h = 20,
     action = function()  
       state.options.controlScheme = 6
-  end},
+  end,
+  up = 5, down = 1, left = 7, right = 7,
+  },
   
   
   
   {text = "Normal", x = 500, y = 200, w = 75, h = 20,
     action = function()
       state.options.difficulty = 1
-  end},
+  end,
+  up = 10, down = 8, left = 1, right = 1,
+  },
   
   {text = "Hard", x = 500, y = 250, w = 60, h = 20,
     action = function() 
       state.options.difficulty = 2
-  end},
+  end,
+  up = 7, down = 9, left = 1, right = 1,
+  },
   
   {text = "Insane", x = 500, y = 300, w = 75, h = 20,
     action = function() 
       state.options.difficulty = 3
-  end},
+  end,
+  up = 8, down = 10, left = 1, right = 1,
+  },
   
   {text = "Done", x = 500, y = 500, w = 60, h = 20,
     action = function() 
       state.current = state.menu
-  end},
+  end,
+  up = 9, down = 7, left = 1, right = 1,
+  },
 }
 
 local supplemental = {

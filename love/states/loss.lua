@@ -9,8 +9,13 @@ state.loss = {
     love.graphics.setColor(love.graphics.newColor(255,255,255))
     love.graphics.draw("Game Over", 350,300)
   end,
-  mousepressed = function(s,x,y,button) end,
+  mousepressed = function(s,x,y,button) 
+    state.current = state.menu
+  end,
   keypressed = function(s,key) 
+    state.current = state.menu
+  end,
+  joystickpressed = function(s,j,b)
     state.current = state.menu
   end
 }

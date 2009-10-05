@@ -36,7 +36,7 @@ getMenu = function(opts, extras)
       local select = love.keyboard.isDown(love.key_return) 
       
       if c.cooldown == 0 then
-        if select then s.options[c.selected].action(); return end
+        if select then c.cooldown = c.cooldown + 0.125; s.options[c.selected].action(); return end
         if up then c.selected = s.options[c.selected].up; c.cooldown = c.cooldown + 0.125
         elseif down then c.selected = s.options[c.selected].down; c.cooldown = c.cooldown + 0.125
         elseif left then c.selected = s.options[c.selected].left; c.cooldown = c.cooldown + 0.125

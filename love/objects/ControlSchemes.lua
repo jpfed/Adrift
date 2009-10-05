@@ -12,20 +12,28 @@ keyboardInput = function()
 end
 
 gamepadInput = function()
-  local dpad = love.joystick.getHat(0,0)
-  local up = dpad == love.joystick_hat_leftup or dpad == love.joystick_hat_up or dpad == love.joystick_hat_rightup
-  local left = dpad == love.joystick_hat_leftdown or dpad == love.joystick_hat_left or dpad == love.joystick_hat_leftup
-  local right = dpad == love.joystick_hat_rightup or dpad == love.joystick_hat_right or dpad == love.joystick_hat_rightdown
-  local down = dpad == love.joystick_hat_rightdown or dpad == love.joystick_hat_down or dpad == love.joystick_hat_leftdown
-  local fire = love.joystick.isDown(0,0)
-  return up, left, down, right, fire
+  if useJoystick then
+    local dpad = love.joystick.getHat(0,0)
+    local up = dpad == love.joystick_hat_leftup or dpad == love.joystick_hat_up or dpad == love.joystick_hat_rightup
+    local left = dpad == love.joystick_hat_leftdown or dpad == love.joystick_hat_left or dpad == love.joystick_hat_leftup
+    local right = dpad == love.joystick_hat_rightup or dpad == love.joystick_hat_right or dpad == love.joystick_hat_rightdown
+    local down = dpad == love.joystick_hat_rightdown or dpad == love.joystick_hat_down or dpad == love.joystick_hat_leftdown
+    local fire = love.joystick.isDown(0,0)
+    return up, left, down, right, fire
+  else
+    return false, false, false, false, false
+  end
 end
 
 -- return x, y, fire
 joystickInput = function()
-  local axis1, axis2 = love.joystick.getAxes(0)
-  local fire = love.joystick.isDown(0,0)
-  return axis1, axis2, fire
+  if useJoystick then
+    local axis1, axis2 = love.joystick.getAxes(0)
+    local fire = love.joystick.isDown(0,0)
+    return axis1, axis2, fire
+  else
+    return 0,0,false
+  end
 end
 
 discreteTurnAndThrust = function(self, parent, inputFunc, dt)

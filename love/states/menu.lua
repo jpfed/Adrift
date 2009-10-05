@@ -24,8 +24,10 @@ getMenu = function(opts, extras)
     supplemental = extras,
     
     update = function(s,dt)
-      local x,y = love.joystick.getAxes(0)
-      local gamepad = love.joystick.getHat(0,0)
+      local x,y = 0,0
+      if useJoystick then x, y = love.joystick.getAxes(0) end
+      local gamepad = -1
+      if useJoystick then gamepad = love.joystick.getHat(0,0) end
       local c = s.cursor
       
       local up = gamepad == love.joystick_hat_up or y < -0.25 or love.keyboard.isDown(love.key_up)

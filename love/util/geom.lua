@@ -56,11 +56,25 @@ geom = {
     return (c.y-a.y)*(b.x-a.x) > (b.y-a.y)*(c.x-a.x)
   end,
 
-  intersect_raw = function(ax, ay, bx, by, cx, cy, dx, dy)
-    return geom.intersect({x=ax, y=ay}, {x=bx, y=by}, {x=cx, y=cy}, {x=dx, y=dy})
+  range_overlap = function(t, u, v, w)
+    return not (
+      math.max(t, u) < math.min(v, w)
+      or
+      math.min(t, u) > math.max(v, w)
+    )
+  end,
+
+  -- check if the bounding boxes specified overlap
+  box_overlap = function(a, b, c, d)
+    return (
+      geom.range_overlap(a.x, b.x, c.x, d.x)
+      and
+      geom.range_overlap(a.y, b.y, c.y, d.y)
+    )
   end,
 
   intersect = function(a, b, c, d)
+    if not geom.box_overlap(a, b, c, d) then return false end
     return (geom.ccw(a,c,d) ~= geom.ccw(b,c,d) and geom.ccw(a,b,c) ~= geom.ccw(a,b,d))
   end
 }

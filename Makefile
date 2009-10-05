@@ -9,11 +9,12 @@ all: clean tests build run
 clean:
 	rm -f $(NAME).love
 
+# Not sure how to make this run over each test_*.lua file because I am 
+# makefile-stupid
 tests:
-	# Not sure how to make this run over each test_*.lua file because I am 
-	# makefile-stupid
 	cd test && $(LUA) test_Explosion.lua
 	cd test && $(LUA) test_Geom.lua
+	cd test && $(LUA) test_Poly.lua
 	cd test && $(LUA) test_Triangle.lua
 
 build: clean

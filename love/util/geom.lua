@@ -49,5 +49,18 @@ geom = {
       if (0.01 < u1 and u1 < 0.99 and 0.01 < u2 and u2 < 0.99) then return intersectPoint end
     end
     return nil
+  end,
+
+  -- checks if three points are in counterclockwise order or not
+  ccw = function(a, b, c)
+    return (c.y-a.y)*(b.x-a.x) > (b.y-a.y)*(c.x-a.x)
+  end,
+
+  intersect_raw = function(ax, ay, bx, by, cx, cy, dx, dy)
+    return geom.intersect({x=ax, y=ay}, {x=bx, y=by}, {x=cx, y=cy}, {x=dx, y=dy})
+  end,
+
+  intersect = function(a, b, c, d)
+    return (geom.ccw(a,c,d) ~= geom.ccw(b,c,d) and geom.ccw(a,b,c) ~= geom.ccw(a,b,d))
   end
 }

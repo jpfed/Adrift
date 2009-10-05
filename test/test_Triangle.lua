@@ -66,4 +66,4 @@ function test_OverlappingByContains()
   assertTrue( Triangle.has_overlap(t1, t2) )
 end
 
-runTests { useANSI = false }
+runTests { useANSI = true }

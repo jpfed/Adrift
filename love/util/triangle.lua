@@ -21,6 +21,15 @@ Triangle = {
   end,
 
   has_overlap = function(t1, t2)
+    -- I'm not sure if it's cheaper to check if any of the points in t2 is in 
+    -- t1 first and vice versa, or not...
+    --
+    -- So, considering just checking each possible combination of line segments
+    --
+    -- One thing I *am* sure of: I am terrible at math code!
+    --
+    -- TODO: Should check bounding boxes of triangles first
+
     return false
   end,
 

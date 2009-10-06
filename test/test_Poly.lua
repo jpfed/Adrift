@@ -22,11 +22,18 @@ function test_BoundingBox()
   assertTableEquals( p:bounding_box(), {{x=1,y=2},{x=4,y=5}} )
 end
 
-function test_Intersect()
+function test_IntersectSquare()
+  local p = Poly:create( {{x=0,y=0},{x=4,y=0},{x=4,y=4},{x=0,y=4}} )
+  local result = p:intersections_with( {x=-1,y=2}, {x=2,y=5} )
+  assertEqual( #result, 2 )
+  assertTableEquals( result, {{x=1,y=4}, {x=0,y=3}} )
+end
+
+function test_IntersectTriangle()
   local p = Poly:create( {{x=1,y=2},{x=4,y=3},{x=2,y=5}} )
   local result = p:intersections_with( {x=1,y=3.5}, {x=5,y=3.5} )
   assertEqual( #result, 2 )
-  assertTableEquals( result, {{x=4,y=3}, {x=2,y=5}} )
+  assertTableEquals( result, {{x=3.5,y=3.5}, {x=1.5,y=3.5}} )
 end
 
 runTests { useANSI = true }

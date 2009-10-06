@@ -22,18 +22,37 @@ function test_BoundingBox()
   assertTableEquals( p:bounding_box(), {{x=1,y=2},{x=4,y=5}} )
 end
 
-function test_IntersectSquare()
+function test_IntersectSquareSegment()
   local p = Poly:create( {{x=0,y=0},{x=4,y=0},{x=4,y=4},{x=0,y=4}} )
   local result = p:intersections_with( {x=-1,y=2}, {x=2,y=5} )
   assertEqual( #result, 2 )
-  assertTableEquals( result, {{x=1,y=4}, {x=0,y=3}} )
+  assertTableEquals( result, 
+    {
+      {{x=4,y=4},{x=0,y=4},{x=1,y=4}},
+      {{x=0,y=4},{x=0,y=0},{x=0,y=3}}
+    } )
 end
 
-function test_IntersectTriangle()
+function test_IntersectTriangleSegment()
   local p = Poly:create( {{x=1,y=2},{x=4,y=3},{x=2,y=5}} )
   local result = p:intersections_with( {x=1,y=3.5}, {x=5,y=3.5} )
   assertEqual( #result, 2 )
-  assertTableEquals( result, {{x=3.5,y=3.5}, {x=1.5,y=3.5}} )
+end
+
+function test_UnionRectangleTriangle()
+  local p = Poly:create( {{x=0,y=1},{x=4,y=1},{x=4,y=3},{x=0,y=2}} )
+  local r = Poly:create( {{x=1,y=2},{x=3,y=2},{x=2,y=4}} )
+  local result = p:union_with(r)
+  pp ("result", result.points)
+  assertTableEquals( result.points, {{x=0,y=1}} )
+end
+
+function test_UnionRectangles()
+  local p = Poly:create( {{x=0,y=1},{x=4,y=1},{x=4,y=3},{x=0,y=3}} )
+  local r = Poly:create( {{x=1,y=0},{x=3,y=0},{x=3,y=4},{x=1,y=4}} )
+  local result = p:union_with(r)
+  pp ("result", result.points)
+  assertTableEquals( result.points, {{x=0,y=1}} )
 end
 
 runTests { useANSI = true }

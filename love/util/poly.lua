@@ -97,11 +97,10 @@ Poly = {
     local s_index = s.inverse[minsx]
     local cursor_next = s:next_point(s_index)
 
-    table.insert(points, cursor)
-    
-    while (#points <= 1 or cursor ~= start) do
+    while (#points == 0 or cursor ~= start) do
       --pp ("cursor", cursor)
       --pp ("cursor_next", cursor_next)
+      table.insert(points, cursor)
 
       local intersections = p:intersections_with(cursor, cursor_next)
       if (#intersections > 0) then
@@ -122,14 +121,12 @@ Poly = {
         end
         cursor = point
         cursor_next = destination
-        table.insert(points, cursor)
         -- Now we're operating on the other polygon, so swap
         p, s = s, p
       else
         cursor = cursor_next
         s_index = s.inverse[cursor]
         cursor_next = s:next_point(s_index)
-        table.insert(points, cursor)
       end
     end
 

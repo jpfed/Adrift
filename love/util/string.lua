@@ -7,20 +7,20 @@ function table_print (tt, indent, done)
       table.insert(sb, string.rep (" ", indent)) -- indent it
       if type (value) == "table" and not done [value] then
         done [value] = true
-        table.insert(sb, "{\n");
+        table.insert(sb, "{ ");
         table.insert(sb, table_print (value, indent + 2, done))
         table.insert(sb, string.rep (" ", indent)) -- indent it
-        table.insert(sb, "}\n");
+        table.insert(sb, "} ");
       elseif "number" == type(key) then
-        table.insert(sb, string.format("\"%s\"\n", tostring(value)))
+        table.insert(sb, string.format("\"%s\" ", tostring(value)))
       else
         table.insert(sb, string.format(
-            "%s = \"%s\"\n", tostring (key), tostring(value)))
+            "%s = \"%s\" ", tostring (key), tostring(value)))
        end
     end
     return table.concat(sb)
   else
-    return tt .. "\n"
+    return tt .. " "
   end
 end
 
@@ -37,5 +37,7 @@ function to_string( tbl )
 end
 
 function pp ( name, thing )
-  print ( name .. ":\n" .. to_string(thing) )
+  if debug then 
+    print ( name .. ":\n" .. to_string(thing) )
+  end
 end

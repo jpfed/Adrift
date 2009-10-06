@@ -2,6 +2,8 @@ love.filesystem.require("oo.lua")
 love.filesystem.require("util/geom.lua")
 love.filesystem.require("util/string.lua")
 
+debug = false
+
 function table.shallow_copy(t)
   local t2 = {}
   for k,v in pairs(t) do
@@ -77,6 +79,28 @@ Poly = {
     return intersections
   end,
 
+  closest_intersection = function(poly, p1, p2)
+    local intersections = poly:intersections_with(p1, p2)
+    if (#intersections > 0) then
+      pp ("checking intersections", intersections)
+      local ip = {}
+      -- compute distances -- maybe there is a cheaper way?
+      -- also, sometimes we may be past a segment of the line that intersects
+      for i,v in ipairs(intersections) do
+        if v[3] ~= nil then
+          ip[i] = {v[1],v[2],v[3], geom.distance(p1.x,p1.y,v[3].x,v[3].y)}
+        else
+          ip[i] = {v[1],v[2],nil,10000}
+        end
+      end
+      local f = function(a,b) return a[4] < b[4] end
+      table.sort(ip, f)
+      return ip[1]
+    else
+      return nil
+    end
+  end,
+
   union_with = function(s, p)
     local points = {}
 
@@ -98,26 +122,25 @@ Poly = {
     local cursor_next = s:next_point(s_index)
 
     while (#points == 0 or cursor ~= start) do
-      --pp ("cursor", cursor)
-      --pp ("cursor_next", cursor_next)
+      pp ("cursor", cursor)
+      pp ("cursor_next", cursor_next)
+
       table.insert(points, cursor)
 
-      local intersections = p:intersections_with(cursor, cursor_next)
-      if (#intersections > 0) then
-        -- TODO: pick the closest one by distance from cursor
-        local closest = intersections[1]
-        local end1, end2, point = closest[1], closest[2], closest[3]
+      local intersection = p:closest_intersection(cursor, cursor_next)
+      if (intersection) then
+        local end1, end2, point = intersection[1], intersection[2], intersection[3]
 
-        --pp ("end1", end1)
-        --pp ("end2", end2)
-        --pp ("point", point)
+        pp ("end1", end1)
+        pp ("end2", end2)
+        pp ("point", point)
 
         local destination 
         -- Which endpoint do we move towards?
         if geom.ccw(cursor, point, end1) then
-          destination = end1
-        else
           destination = end2
+        else
+          destination = end1
         end
         cursor = point
         cursor_next = destination

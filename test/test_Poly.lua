@@ -40,19 +40,19 @@ function test_IntersectTriangleSegment()
 end
 
 function test_UnionRectangleTriangle()
-  local p = Poly:create( {{x=0,y=1},{x=4,y=1},{x=4,y=3},{x=0,y=2}} )
+  local p = Poly:create( {{x=0,y=1},{x=4,y=1},{x=4,y=3},{x=0,y=3}} )
   local r = Poly:create( {{x=1,y=2},{x=3,y=2},{x=2,y=4}} )
   local result = p:union_with(r)
-  pp ("result", result.points)
-  assertTableEquals( result.points, {{x=0,y=1}} )
+  assertEqual( #result.points, 7 )
+  --assertTableEquals( result.points, {{x=0,y=1}...} )
 end
 
 function test_UnionRectangles()
   local p = Poly:create( {{x=0,y=1},{x=4,y=1},{x=4,y=3},{x=0,y=3}} )
   local r = Poly:create( {{x=1,y=0},{x=3,y=0},{x=3,y=4},{x=1,y=4}} )
   local result = p:union_with(r)
-  pp ("result", result.points)
-  assertTableEquals( result.points, {{x=0,y=1}} )
+  assertEqual( #result.points, 12 )
+  --assertTableEquals( result.points, {{x=0,y=1}...} )
 end
 
 runTests { useANSI = true }

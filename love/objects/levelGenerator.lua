@@ -125,7 +125,7 @@ noIntersections = function(arcSet1, arcSet2)
   for k1,v1 in ipairs(arcSet1) do
     for k2,v2 in ipairs(arcSet2) do
       if not (v1.head == v2.head or v1.head == v2.tail or v1.tail == v2.head or v1.tail == v2.tail) then
-        if geom.intersectionPoint(v1.head,v1.tail, v2.head,v2.tail, true) ~= nil then return false end
+        if geom.intersection_point_t(v1.head,v1.tail, v2.head,v2.tail, true) ~= nil then return false end
       end
     end
   end
@@ -134,11 +134,11 @@ end
 
 enoughDistance = function(nodeSet, arcSet, node, arc, minDist)
   for k,v in ipairs(nodeSet) do
-    if node~=nil and v~=node and geom.length(v,node)<minDist then return false end
-    if v~=arc.head and v~=arc.tail and geom.distToLine(v,arc.head, arc.tail)<minDist then return false end
+    if node~=nil and v~=node and geom.distance_t(v,node)<minDist then return false end
+    if v~=arc.head and v~=arc.tail and geom.dist_to_line_t(v,arc.head, arc.tail)<minDist then return false end
   end
   for k,v in ipairs(arcSet) do
-    if node~=nil and geom.distToLine(node, v.head, v.tail) < minDist then return false end
+    if node~=nil and geom.dist_to_line_t(node, v.head, v.tail) < minDist then return false end
   end
   return true
 end
@@ -165,7 +165,7 @@ rasterize = function(nodes, arcs)
   
   for k,v in ipairs(arcs) do
     local t = 0
-    local inc = v.thickness/(2*geom.length(v.head,v.tail))
+    local inc = v.thickness/(2*geom.distance_t(v.head,v.tail))
     while t <= 1 do
       local m = util.interpolate2d(v.head,v.tail,t)
       local minX, maxX = math.max(1+levelGenerator.margin,math.floor(m.x - v.thickness)), math.min(levelGenerator.maxCol-levelGenerator.margin,math.ceil(m.x + v.thickness))

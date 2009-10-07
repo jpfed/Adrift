@@ -11,12 +11,12 @@ Graph = {
       for lowNodeIndex = 1,highNodeIndex-1 do
         local lowNode = result.nodes[lowNodeIndex]
         local possibleArc = GraphArc:create(lowNode,highNode)
-        local len = geom.length(lowNode, highNode)
+        local len = geom.distance_t(lowNode, highNode)
         local conflicts = {}
         local allowArc = true
         for k,v in pairs(result.arcs) do
-          if geom.intersectionPoint(v.tail, v.head, lowNode, highNode, false) ~= nil then
-            if geom.length(v.tail, v.head) < len then 
+          if geom.intersection_point_t(v.tail, v.head, lowNode, highNode, false) ~= nil then
+            if geom.distance_t(v.tail, v.head) < len then 
               allowArc = false
               break
             else

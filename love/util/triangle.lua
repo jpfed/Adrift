@@ -20,16 +20,23 @@ Triangle = {
     return math.sqrt(stuff)
   end,
 
+  -- doesn't catch nested triangles yet
   has_overlap = function(t1, t2)
-    -- I'm not sure if it's cheaper to check if any of the points in t2 is in 
-    -- t1 first and vice versa, or not...
-    --
-    -- So, considering just checking each possible combination of line segments
-    --
-    -- One thing I *am* sure of: I am terrible at math code!
-    --
-    -- TODO: Should check bounding boxes of triangles first
+    for e1 = 1,3 do
+      
+      local w1 = e1 % 3 + 1
+      local edge1tail = {x = t1[e1*2-1], y = t1[e1*2]}
+      local edge1head = {x = t1[w1*2-1], y = t1[w1*2]}
+      
+      for e2 = 1,3 do
+        local w2 = e2 % 3 + 1
+        local edge2tail = {x = t2[e2*2-1], y = t2[e2*2]}
+        local edge2head = {x = t2[w2*2-1], y = t2[w2*2]}
 
+        if geom.intersect_t(edge1tail,edge1head, edge2tail, edge2head) then return true end
+      end
+    end
+    
     return false
   end,
 

@@ -67,12 +67,12 @@ Poly = {
 
     local box = self:bounding_box()
 
-    if not geom.box_overlap(box[1], box[2], p1, p2) then return intersections end
+    if not geom.box_overlap_t(box[1], box[2], p1, p2) then return intersections end
 
     for i,v in ipairs(self.points) do
       local w = self:next_point(i)
-      if geom.intersect(v, w, p1, p2) then
-        local intersection = {v,w,geom.intersectionPoint(v, w, p1, p2, false)}
+      if geom.intersect_t(v, w, p1, p2) then
+        local intersection = {v,w,geom.intersection_point_t(v, w, p1, p2, false)}
         table.insert(intersections, intersection)
       end 
     end
@@ -137,7 +137,7 @@ Poly = {
 
         local destination 
         -- Which endpoint do we move towards?
-        if geom.ccw(cursor, point, end1) then
+        if geom.ccw_t(cursor, point, end1) then
           destination = end2
         else
           destination = end1

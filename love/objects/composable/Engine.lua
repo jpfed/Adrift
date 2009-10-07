@@ -14,7 +14,7 @@ Engine = {
     local theta, targetSpin, existingSpin = math.rad(self.parent.angle), 0, self.parent.body:getSpin()
     local pointingX,pointingY = math.cos(theta), math.sin(theta)
     local forceNormX, forceNormY = geom.normalize(forceX, forceY)
-    local cp = geom.crossProduct(pointingX,pointingY,forceNormX,forceNormY)
+    local cp = geom.cross_product(pointingX,pointingY,forceNormX,forceNormY)
 
     targetSpin = cp*360
     

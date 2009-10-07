@@ -37,7 +37,7 @@ function test_Inside()
 end
 
 function test_InsideSame()
-  local t2 = Triangle:create(0,0,3,0,3,4)
+  local t1 = Triangle:create(0,0,3,0,3,4)
   local t2 = Triangle:create(1,0,3,0,3,4)
   assertTrue( Triangle.has_inside(t1, t2) )
 end

@@ -83,7 +83,7 @@ Eel = {
         for y = minY, maxY do
           if tiles[x][y] ~= nil and tiles[x][y] ~= 0 then
             point.x, point.y = x, y
-            if geom.distToLine(point, self, state.game.ship) < 2 then
+            if geom.dist_to_line_t(point, self, state.game.ship) < 2 then
               local rdx, rdy = self.x - x, self.y - y
              
               if rdx*dx + rdy+dy < 0 then

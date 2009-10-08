@@ -33,11 +33,7 @@ Poly = {
   end,
 
   next_point = function(self, i)
-    if i == #self.points then 
-      return self.points[1]
-    else
-      return self.points[i+1]
-    end
+    return self.points[i % #self.points + 1]
   end,
 
   sort_first = function(self, f)
@@ -71,8 +67,9 @@ Poly = {
 
     for i,v in ipairs(self.points) do
       local w = self:next_point(i)
-      if geom.intersect_t(v, w, p1, p2) then
-        local intersection = {v,w,geom.intersection_point_t(v, w, p1, p2, false)}
+      local intersect_point = geom.intersection_point_t(v,w,p1,p2,false)
+      if intersect_point~=nil then
+        local intersection = {v,w,intersect_point}
         table.insert(intersections, intersection)
       end 
     end
@@ -87,13 +84,9 @@ Poly = {
       -- compute distances -- maybe there is a cheaper way?
       -- also, sometimes we may be past a segment of the line that intersects
       for i,v in ipairs(intersections) do
-        if v[3] ~= nil then
-          ip[i] = {v[1],v[2],v[3], geom.distance(p1.x,p1.y,v[3].x,v[3].y)}
-        else
-          ip[i] = {v[1],v[2],nil,10000}
-        end
+        table.insert(ip,{v[1],v[2],v[3], geom.distance_t(p1,v[3])})
       end
-      local f = function(a,b) return a[4] < b[4] end
+      local f = function(h,i) return h[4] < i[4] end
       table.sort(ip, f)
       return ip[1]
     else
@@ -103,11 +96,11 @@ Poly = {
 
   union_with = function(s, p)
     local points = {}
-
+    
     local s_index, p_index = 0, 0
     local minsx = s:min_x_point()
     local minpx = p:min_x_point()
-
+    
     if minpx.x < minsx.x then
       -- start from the second poly instead
       p, s = s, p

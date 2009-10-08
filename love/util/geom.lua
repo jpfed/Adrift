@@ -1,3 +1,5 @@
+love.filesystem.require("util/string.lua")
+
 geom = {
 
 
@@ -96,11 +98,11 @@ geom = {
   
   -- checks if three points are in counterclockwise order or not
   ccw = function(ax,ay,bx,by,cx,cy)
-    return (cy-ay)*(bx-ax) > (by-ay)*(cx-ax)
+    return (cy-ay)*(bx-ax) >= (by-ay)*(cx-ax)
   end,
   
   ccw_t = function(a, b, c)
-    return (c.y-a.y)*(b.x-a.x) > (b.y-a.y)*(c.x-a.x)
+    return (c.y-a.y)*(b.x-a.x) >= (b.y-a.y)*(c.x-a.x)
   end,
 
   

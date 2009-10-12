@@ -16,6 +16,7 @@ tests:
 	cd test && $(LUA) test_Geom.lua
 	cd test && $(LUA) test_Poly.lua
 	cd test && $(LUA) test_Triangle.lua
+	cd test && $(LUA) test_QuadTree.lua
 
 build: clean
 	cd love && zip -q -r ../$(NAME).zip .

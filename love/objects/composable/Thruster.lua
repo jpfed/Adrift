@@ -11,12 +11,13 @@ Thruster = {
     local t = result.system
     t:setEmissionRate(30)
     t:setLifetime(-1)
-    t:setParticleLife(0.5)
+    t:setParticleLife(0.5,0.7)
     t:setDirection(direction)
-    t:setSpread(40)
+    t:setRotation(0,360)
+    t:setSpread(30)
     t:setSpeed(80)
-    t:setGravity(0)
-    t:setSize(2, 0.1, 1.0)
+    t:setGravity(20)
+    t:setSize(1.6, 0.2, 1.0)
     t:setColor(brightColor, fadeColor)
     t:start()
     return result
@@ -26,8 +27,8 @@ Thruster = {
     local magnitude = math.abs(intensity)
     if intensity == 0 then self.sign = 0 
     else self.sign = intensity/magnitude end
-    self.system:setEmissionRate(magnitude)
-    self.system:setSpeed(magnitude/2, magnitude*2)
+    --self.system:setEmissionRate(magnitude)
+    self.system:setSpeed(magnitude, magnitude*2)
   end,
   
   update = function(self, dt)
@@ -39,7 +40,9 @@ Thruster = {
   
   draw = function(self)
     local x, y, scale = camera:xy(self.parent.x, self.parent.y, 0)
+    love.graphics.setColorMode(love.color_modulate)
     love.graphics.draw(self.system,x,y)
+    love.graphics.setColorMode(love.color_normal)
   end,
   
   cleanup = function(self)
@@ -51,8 +54,8 @@ Thruster = {
 FireThruster = {
 
   fireImage = love.graphics.newImage("graphics/fire.png"),
-  fireColor = love.graphics.newColor(255, 128, 64, 255),
-  fadeColor = love.graphics.newColor(255, 0, 0, 0),
+  fireColor = love.graphics.newColor(255, 255, 64, 255),
+  fadeColor = love.graphics.newColor(255, 200, 0, 0),
 
   create = function(self, parent, direction)
     return Thruster:create(parent, direction, self.fireImage, self.fireColor, self.fadeColor)

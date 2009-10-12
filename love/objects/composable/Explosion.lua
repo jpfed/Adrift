@@ -37,12 +37,12 @@ Explosion = {
 
     result.fire = love.graphics.newParticleSystem(brightImage, 300)
     local f = result.fire
-    f:setEmissionRate(40)
-    f:setLifetime(duration/90)
-    f:setParticleLife(0.75,1.0)
+    f:setEmissionRate(60)
+    f:setLifetime(duration/240)
+    f:setParticleLife(0.25,0.4)
     f:setDirection(0)
     f:setSpread(360)
-    f:setSpeed(50 * size,70 * size)
+    f:setSpeed(75 * size,125 * size)
     f:setRotation(0,360)
     f:setSpin(0,360,4.0)
     f:setRadialAcceleration(-100,-100)

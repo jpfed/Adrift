@@ -11,26 +11,41 @@ love.filesystem.require("util/geom.lua")
 -- Initial starting point stolen from http://github.com/samuel/lua-quadtree/blob/master/quadtree.lua
 
 QuadTree = {
-  create = function(self, min_size, p1, p2)
-    local result = {}
-    mixin(result,QuadTree)
-    result.min_size = min_size
-    result.p1 = p1
-    result.p2 = p2
-    result.width  = p2.x - p1.x
-    result.height = p2.y - p1.y
-    result.objects = {}
-    return result
+  -- Can init with p1 and p2 as points, or p1 as a box {p1, p2}
+  create = function(self, min_size, arg1, arg2)
+    local r = {}
+    mixin(r,QuadTree)
+    r.min_size = min_size
+    if arg2 then
+      r.p1 = arg1
+      r.p2 = arg2
+    else
+      r.p1 = arg1.p1
+      r.p2 = arg1.p2
+    end
+    r.width  = r.p2.x - r.p1.x
+    r.height = r.p2.y - r.p1.y
+    r.mx = r.p1.x + r.width
+    r.my = r.p1.y + r.height
+    r.objects = {}
+    return r
   end,
 
-  insert = function(self, object)
-    -- wrong check here
-    -- instead, check if object fits better in a subquad of this and create it/subdivide as necessary, if not already <= min_size
-    if not self.children then
-      table.insert(self.objects, object)
-    else
-      self:check(object, function(child) child:insert(object) end)
-    end
+  has_children = function(self)
+    return (children ~= nil)
+  end,
+
+  overlaps = function(self, object)
+    return geom.box_overlap_t(self.p1, self.p2, object.p1, object.p2)
+  end,
+
+  should_subdivide_for = function(self, object)
+    return (
+      (object.p1.x <= self.mx and object.p2.x <= self.mx) or
+      (object.p1.x >= self.mx and object.p2.x >= self.mx) or
+      (object.p1.y <= self.my and object.p2.y <= self.my) or
+      (object.p1.y >= self.my and object.p2.y >= self.my)
+    ) and (self.width > self.min_size)
   end,
 
   subdivide = function(self)
@@ -41,40 +56,61 @@ QuadTree = {
     else
       local x1 = self.p1.x
       local y1 = self.p1.y
+      local x2 = self.p2.x
+      local y2 = self.p2.y
       local w = math.floor(self.width / 2)
       local h = math.floor(self.height / 2)
       self.children = {
-        QuadTree:create(min_size, {x=p1.x, y=p1.y}, {x=p1.x+w, y=p1.y+h}), 
-        QuadTree:create(min_size, {x=p1.x+w, y=p1.y}, {x=p2.x, y=p1.y+h}), 
-        QuadTree:create(min_size, {x=p1.x, y=p1.y+h}, {x=p1.x+w, y=p2.y}), 
-        QuadTree:create(min_size, {x=p1.x+w, y=p1.y+h}, {x=p2.x, y=p2.y}), 
+        QuadTree:create(min_size, geom.B(x1, y1, x1+w, y1+h)), 
+        QuadTree:create(min_size, geom.B(x1+w, y1, x2, y1+h)), 
+        QuadTree:create(min_size, geom.B(x1, y1+h, x1+w, y2)), 
+        QuadTree:create(min_size, geom.B(x1+w, y1+h, x2, y2))
       }
     end
   end,
 
+  -- TODO: Should probably scrap everything from here down
+
+  insert = function(self, object)
+    if self:overlaps(object) then
+      if not self.children then
+        if self:should_subdivide_for(object) then
+          self:subdivide()
+        else
+          table.insert(self.objects, object)
+          return
+        end
+      end
+      self:check(object, function(quad, x) table.insert(quad.objects, object) end)
+    end
+  end,
+
   check = function(self, object, func)
-    for i,child in pairs(self.children) do
-      if geom.box_overlap_t(self.p1, self.p2, object.p1, object.p2) then
-        func(child)
+    -- First check that we overlap at all 
+    if self:overlaps(object) then
+      -- If so, send any objects at this level
+      for i,x in pairs(self.objects) do func(self, x) end
+
+      if self.children then
+        -- Check children for overlaps recursively
+        for i,child in pairs(self.children) do
+          child:check(object, func)
+        end
       end
     end
   end,
 
   remove = function(self, object)
     if not self.children then
-        self.objects[object] = nil
+      self.objects[object] = nil
     else
-        self:check(object, function(child) child:remove(object) end)
+      self:check(object, function(quad, x) if object == x then quad:remove(x) end end)
     end
   end,
 
   collisions = function(self, object)
-    if not self.children then
-      return self.objects
-    else
-      local matches = {}
-      self:check(object, function(child) matches[child] = child end)
-      return matches
-    end
+    local matches = {}
+    self:check(object, function(quad, x) table.insert(matches, x) end)
+    return matches
   end,
 }

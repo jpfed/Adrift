@@ -3,6 +3,9 @@ love.filesystem.require("util/string.lua")
 geom = {
 
 
+  T = function (x,y) return {x=x,y=y} end,
+  B = function (x1,y1,x2,y2) return {p1={x=x1,y=y1},p2={x=x2,y=y2}} end,
+
 
   dist_to_line = function(px,py,tx,ty,hx,hy)
     return geom.dist_to_line_t({x=px,y=py},{x=tx,y=ty},{x=hx,y=hy})
@@ -122,6 +125,10 @@ geom = {
       and
       geom.range_overlap(a.y, b.y, c.y, d.y)
     )
+  end,
+
+  box_overlap_b = function(a, b)
+    return box_overlap_t(a.x, a.y, b.x, b.y)
   end,
 
   

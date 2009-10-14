@@ -81,6 +81,13 @@ Ship = {
   
   draw = function(self)
     self.thruster:draw()
+
+    if self.teleport_system then
+      local x, y, s = camera:xy(self.teleport_system.x, self.teleport_system.y, 0)
+      self.teleport_system:draw(x,y)
+      local x, y, s = camera:xy(self.teleport_system.ex, self.teleport_system.ey, 0)
+      self.teleport_system:draw(x,y)
+    end
     
     love.graphics.setColor(self.circColor)
     local cx, cy, radius = camera:xy(self.x,self.y,0)
@@ -106,6 +113,8 @@ Ship = {
   
   update = function(self, dt)
     self:superUpdate(dt)
+
+    if self.teleport_system then self.teleport_system:update(dt) end
 
     for k,power in pairs(self.powers) do
       power:update(dt)

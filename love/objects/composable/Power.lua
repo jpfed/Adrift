@@ -97,8 +97,10 @@ TeleportPower = {
   end,
 
   shipDraw = function(self)
+    local x, y, s = camera:xy(self.teleport_system.x, self.teleport_system.y, 0)
+    self.teleport_system:draw(x,y)
     local x, y, s = camera:xy(self.x, self.y, 0)
-    love.graphics.setColor(255,255,255,64)
+    self.teleport_system:draw(x,y)
     love.graphics.circle(love.draw_line, x, y, math.random()*s, 32)
     self:drawHUD()
   end,
@@ -116,6 +118,8 @@ TeleportPower = {
     local angle = math.rad(ship.angle)
     local svx, svy = math.cos(angle), math.sin(angle)
     
+    ship.teleport_system = PortalTeleportSystem:create(originX,originY,ship.angle)
+
     local vx, vy = geom.normalize(-svx, -svy)   
     
     local found, distanceExceeded, distanceLimit = false, false, 8
@@ -150,8 +154,11 @@ TeleportPower = {
   end,
   
   fend = function(self, ship)
+    ship.teleport_system.ex = self.target.x
+    ship.teleport_system.ey = self.target.y
     ship.draw = self.drawBackup
     ship.update = self.updateBackup
+    self.system = nil
     ship.shape:setSensor(false)
     ship.shape:setData(ship)
     ship.body:setPosition(self.target.x, self.target.y)

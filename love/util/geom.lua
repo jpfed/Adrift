@@ -4,7 +4,7 @@ geom = {
 
 
   T = function (x,y) return {x=x,y=y} end,
-  B = function (x1,y1,x2,y2) return {p1={x=x1,y=y1},p2={x=x2,y=y2}} end,
+  B  = function (x1,y1,x2,y2) return {p1={x=x1,y=y1},p2={x=x2,y=y2}} end,
 
 
   dist_to_line = function(px,py,tx,ty,hx,hy)

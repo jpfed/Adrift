@@ -31,6 +31,14 @@ Thruster = {
     self.system:setSpeed(magnitude, magnitude*2)
   end,
   
+  setBoost = function(self, boost)
+    if boost then
+      self.system:setSize(3.0, 0.2, 1.0)
+    else
+      self.system:setSize(1.6, 0.2, 1.0)
+    end
+  end,
+
   update = function(self, dt)
     local dir = self.parent.angle 
     if self.sign == -1 then dir = dir + 180 end

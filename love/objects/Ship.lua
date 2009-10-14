@@ -1,12 +1,13 @@
 love.filesystem.require("oo.lua")
 love.filesystem.require("objects/composable/SimplePhysicsObject.lua")
+love.filesystem.require("objects/composable/Power.lua")
 love.filesystem.require("objects/ControlSchemes.lua")
 
 Ship = {
   super = SimplePhysicsObject,
   
   thrust = 10,
-  
+
   cvx = nil,
   thruster = nil,
   engine = nil,
@@ -52,6 +53,20 @@ Ship = {
     local pointArray = {1*s,0*s, s*math.cos(math.pi*5/6),s*math.sin(math.pi*5/6), s*math.cos(math.pi*7/6),s*math.sin(math.pi*7/6)}
     result.cvx = Convex:create(result, pointArray, Ship.triColor, Ship.triColor)
     
+    result.powers = {
+      boost = Power:create(result, 2, 0.2,
+        function(self, ship)
+          self.originalThrust = ship.engine.thrust
+          ship.engine.thrust = ship.engine.thrust + 20
+          ship.thruster:setBoost(true)
+        end,
+        nil,
+        function(self, ship)
+          ship.engine.thrust = self.originalThrust
+          ship.thruster:setBoost(false)
+        end)
+    }
+
     return result
   end,
 
@@ -95,10 +110,41 @@ Ship = {
   
   update = function(self, dt)
     self:superUpdate(dt)
+
+    for k,power in pairs(self.powers) do
+      power:update(dt)
+    end
   
-    local targVx, targVy, isFiring = self.controller:getAction(self,dt)
-    local overallThrust = self.engine:vector(targVx, targVy, dt)
-    self.thruster:setIntensity(overallThrust*7.5)
+    local targVx, targVy, isFiring, isMod1 = self.controller:getAction(self,dt)
+    local applyThrust = true
+    if isMod1 then
+      -- TODO: Totally cheating here, because ControlSchemes doesn't have a 
+      -- way to send back the discrete keystrokes yet
+      local up, left, down, right, fire, mod1 = self.controller.input()
+      if up then
+        self.powers.boost:trigger()
+      end
+      if left or right then
+        applyThrust = false
+        local theta = math.rad(self.angle)
+        local strafe 
+        if left then
+          strafe = theta + math.pi / 4
+        else
+          strafe = theta - math.pi / 4
+        end
+        -- TODO: uhhh....
+      end
+      if down then
+        applyThrust = false
+        -- TODO: teleport?
+      end
+    end
+
+    if applyThrust then
+      local overallThrust = self.engine:vector(targVx, targVy, dt)
+      self.thruster:setIntensity(overallThrust*7.5)
+    end
     self.thruster:update(dt)
   
     if isFiring then self.gun:fire() end

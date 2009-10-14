@@ -8,7 +8,8 @@ keyboardInput = function()
   local down = love.keyboard.isDown(love.key_down)
   local right = love.keyboard.isDown(love.key_right)
   local fire = love.keyboard.isDown(love.key_f)
-  return up,left,down,right,fire
+  local mod1 = love.keyboard.isDown(love.key_space)
+  return up,left,down,right,fire,mod1
 end
 
 gamepadInput = function()
@@ -19,9 +20,10 @@ gamepadInput = function()
     local right = dpad == love.joystick_hat_rightup or dpad == love.joystick_hat_right or dpad == love.joystick_hat_rightdown
     local down = dpad == love.joystick_hat_rightdown or dpad == love.joystick_hat_down or dpad == love.joystick_hat_leftdown
     local fire = love.joystick.isDown(0,0)
-    return up, left, down, right, fire
+    local mod1 = love.joystick.isDown(0,1)
+    return up, left, down, right, fire, mod1
   else
-    return false, false, false, false, false
+    return false, false, false, false, false, false
   end
 end
 
@@ -30,16 +32,17 @@ joystickInput = function()
   if useJoystick then
     local axis1, axis2 = love.joystick.getAxes(0)
     local fire = love.joystick.isDown(0,0)
-    return axis1, axis2, fire
+    local mod1 = love.joystick.isDown(0,1)
+    return axis1, axis2, fire, mod1
   else
-    return 0,0,false
+    return 0,0,false,false
   end
 end
 
 discreteTurnAndThrust = function(self, parent, inputFunc, dt)
   local targVx, targVy = 0, 0
   local theta = math.rad(parent.angle)
-  local up, left, down, right, fire = inputFunc()
+  local up, left, down, right, fire, mod1 = inputFunc()
   
   if up then targVx, targVy = targVx + math.cos(theta), targVy + math.sin(theta) end
   if down then targVx, targVy = targVx - math.cos(theta), targVy - math.sin(theta) end
@@ -61,13 +64,13 @@ discreteTurnAndThrust = function(self, parent, inputFunc, dt)
   end
   
   targVx, targVy = geom.normalize(targVx, targVy)
-  return targVx, targVy, fire
+  return targVx, targVy, fire, mod1
 end
 
 continuousTurnAndThrust = function(self, parent, inputFunc, dt)
   local targVx, targVy = 0, 0
   local theta = math.rad(parent.angle)
-  local turn, thrust, fire = inputFunc() 
+  local turn, thrust, fire, mod1 = inputFunc() 
   
   if math.abs(thrust) < 0.25 then 
     thrust = 0
@@ -99,31 +102,35 @@ continuousTurnAndThrust = function(self, parent, inputFunc, dt)
   targVx, targVy = targVx - thrust*math.cos(theta), targVy - thrust*math.sin(theta)
   targVx, targVy = targVx + turn*math.cos(theta + math.pi/2), targVy + turn*math.sin(theta + math.pi/2)
   targVx, targVy = geom.normalize(targVx, targVy)
-  return targVx, targVy, fire
+  return targVx, targVy, fire, mod1
 end
 
 discreteDirectional = function(self, parent, inputFunc, dt)
   local targVx, targVy = 0, 0
-  local up, left, down, right, fire = inputFunc()
+  local up, left, down, right, fire, mod1 = inputFunc()
   if up then targVy = targVy - 1 end
   if down then targVy = targVy + 1 end
   if left then targVx = targVx - 1 end
   if right then targVx = targVx + 1 end
   targVx, targVy = geom.normalize(targVx, targVy)
-  return targVx, targVy, fire
+  return targVx, targVy, fire, mod1
 end
 
 continuousDirectional = function(self, parent, inputFunc, dt)
   return inputFunc()
 end
 
+local action = function(f,input)
+  return function(self, parent, dt) return f(self,parent,input,dt) end
+end
+
 ControlSchemes = {
 
-  {leftT = 0, rightT = 0, getAction = function(self, parent, dt) return discreteTurnAndThrust(self,parent,keyboardInput,dt) end},
-  {directional = true, getAction = function(self, parent, dt) return discreteDirectional(self, parent, keyboardInput, dt) end},
-  {leftT = 0, rightT = 0, getAction = function(self, parent, dt) return discreteTurnAndThrust(self,parent,gamepadInput,dt) end},
-  {directional = true, getAction = function(self, parent, dt) return discreteDirectional(self, parent, gamepadInput, dt) end},
-  {leftT = 0, rightT = 0, getAction = function(self, parent, dt) return continuousTurnAndThrust(self,parent,joystickInput,dt) end},
-  {directional = true, getAction = function(self, parent, dt) return continuousDirectional(self, parent, joystickInput, dt) end},
+  {leftT = 0, rightT = 0, input = keyboardInput, getAction = action(discreteTurnAndThrust, keyboardInput)},
+  {directional = true,    input = keyboardInput, getAction = action(discreteDirectional, keyboardInput)},
+  {leftT = 0, rightT = 0, input = gamepadInput,  getAction = action(discreteTurnAndThrust, gamepadInput)},
+  {directional = true,    input = gamepadInput,  getAction = action(discreteDirectional, gamepadInput)},
+  {leftT = 0, rightT = 0, input = joystickInput, getAction = action(continuousTurnAndThrust, joystickInput)},
+  {directional = true,    input = joystickInput, getAction = action(continuousDirectional, joystickInput)},
   
 }

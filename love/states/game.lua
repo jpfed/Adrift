@@ -123,7 +123,7 @@ state.game = {
   end,
   
   joystickpressed = function(s,j,b)
-    if b == 1 then state.current = state.pause end
+    if b == 2 then state.current = state.pause end
   end,
   
   collision = function(a,b,c)

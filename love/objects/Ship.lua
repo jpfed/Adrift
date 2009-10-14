@@ -54,17 +54,9 @@ Ship = {
     result.cvx = Convex:create(result, pointArray, Ship.triColor, Ship.triColor)
     
     result.powers = {
-      boost = Power:create(result, 2, 0.2,
-        function(self, ship)
-          self.originalThrust = ship.engine.thrust
-          ship.engine.thrust = ship.engine.thrust + 20
-          ship.thruster:setBoost(true)
-        end,
-        nil,
-        function(self, ship)
-          ship.engine.thrust = self.originalThrust
-          ship.thruster:setBoost(false)
-        end)
+      boost = BoostPower:create(result),
+      sidestep = SidestepPower:create(result),
+      teleport = TeleportPower:create(result)
     }
 
     return result
@@ -101,6 +93,10 @@ Ship = {
     end
     self.cvx:draw()
     
+    self:drawHUD()
+  end,
+  
+  drawHUD = function(self)
     if state.current == state.game then
       love.graphics.setColor(self.healthColor)
       love.graphics.rectangle(love.draw_fill,100,590, 700 * self.armor / self.maxArmor,10)
@@ -116,28 +112,33 @@ Ship = {
     end
   
     local targVx, targVy, isFiring, isMod1 = self.controller:getAction(self,dt)
+    local normVx, normVy = geom.normalize(targVx, targVy)
+    local angle = math.rad(self.angle)
+    local angX, angY = math.cos(angle), math.sin(angle)
+    if normX == 0 and normY == 0 then normX, normY = angX, angY end
     local applyThrust = true
     if isMod1 then
       -- TODO: Totally cheating here, because ControlSchemes doesn't have a 
       -- way to send back the discrete keystrokes yet
-      local up, left, down, right, fire, mod1 = self.controller.input()
-      if up then
-        self.powers.boost:trigger()
+      local forward = geom.dot_product(normVx, normVy, angX, angY) > 0.7
+      local left = geom.dot_product(normVx, normVy, angY, -angX) > 0.7
+      local right = geom.dot_product(normVx, normVy, -angY, angX) > 0.7
+      local back = geom.dot_product(normVx, normVy, angX, angY) < -0.7
+      
+      if forward then self.powers.boost:trigger() end
+      
+      if left then 
+        self.powers.sidestep.orientation = -1
+        self.powers.sidestep:trigger()
       end
-      if left or right then
-        applyThrust = false
-        local theta = math.rad(self.angle)
-        local strafe 
-        if left then
-          strafe = theta + math.pi / 4
-        else
-          strafe = theta - math.pi / 4
-        end
-        -- TODO: uhhh....
+      
+      if right then
+        self.powers.sidestep.orientation = 1
+        self.powers.sidestep:trigger()
       end
-      if down then
+      if back then
         applyThrust = false
-        -- TODO: teleport?
+        self.powers.teleport:trigger()
       end
     end
 

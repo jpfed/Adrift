@@ -56,6 +56,7 @@ Explosion = {
     s:setLifetime(duration/60)
     s:setParticleLife(2,5)
     s:setDirection(0)
+    s:setRotation(0,360)
     s:setSpread(360)
     s:setSpeed(30*size)
     s:setGravity(0)

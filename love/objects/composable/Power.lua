@@ -17,7 +17,7 @@ Power = {
   end,
 
   update = function(self, dt)
-    if self.cooldown_time < self.cooldown_speed then
+    if self.cooldown_speed > 0 and self.cooldown_time < self.cooldown_speed then
       self.cooldown_time = self.cooldown_time + dt
     end
     if self.active then
@@ -70,21 +70,37 @@ SidestepPower = {
   
   fstart = function(self, ship)
     self.vx, self.vy = ship.body:getVelocity()
+    if self.orientation == 1 then
+      ship.thruster.directionOffset = 270
+    else
+      ship.thruster.directionOffset = 90
+    end
   end,
   
   factive = function(self, ship, dt)
-    local thrust = ship.engine.thrust + 20
+    -- Toned down thrust a bunch to make strafing more controllable and 
+    -- hopefully less powerful
+    local thrust = ship.engine.thrust / 1.5
     local angle = math.rad(ship.angle)
     local thrustX, thrustY = geom.normalize(-math.sin(angle), math.cos(angle))
     thrustX, thrustY = thrust * self.orientation * thrustX, thrust * self.orientation * thrustY
     local velRetain = math.exp(-12*dt)
     local velChange = 1-velRetain
     ship.body:setVelocity(self.vx * velRetain + thrustX * velChange, self.vy * velRetain + thrustY * velChange)
-    ship.body:setSpin(0)
+    -- Make the strafing take on a circle-strafe arc
+    local existingSpin = ship.body:getSpin()
+    if existingSpin * self.orientation > -80 then   
+      ship.body:setSpin(existingSpin + self.orientation * -25)
+    end
+    ship.thruster:setIntensity(100)
+  end,
+  
+  fend = function(self, ship)
+    ship.thruster.directionOffset = 180
   end,
   
   create = function(self, parent)
-    return Power:create(parent, 0.5, 0.2, SidestepPower.fstart, SidestepPower.factive, nil)
+    return Power:create(parent, 0, 0.2, SidestepPower.fstart, SidestepPower.factive, SidestepPower.fend)
   end
 
 }

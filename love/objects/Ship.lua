@@ -127,8 +127,6 @@ Ship = {
     if normX == 0 and normY == 0 then normX, normY = angX, angY end
     local applyThrust = true
     if isMod1 then
-      -- TODO: Totally cheating here, because ControlSchemes doesn't have a 
-      -- way to send back the discrete keystrokes yet
       local forward = geom.dot_product(normVx, normVy, angX, angY) > 0.7
       local left = geom.dot_product(normVx, normVy, angY, -angX) > 0.7
       local right = geom.dot_product(normVx, normVy, -angY, angX) > 0.7
@@ -137,11 +135,13 @@ Ship = {
       if forward then self.powers.boost:trigger() end
       
       if left then 
+        applyThrust = false
         self.powers.sidestep.orientation = -1
         self.powers.sidestep:trigger()
       end
       
       if right then
+        applyThrust = false
         self.powers.sidestep.orientation = 1
         self.powers.sidestep:trigger()
       end

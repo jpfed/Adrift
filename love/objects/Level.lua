@@ -12,7 +12,7 @@ Level = {
   maxArcThickness = 20,
 
   camera = {
-    width = 32,
+    width = 40,
     x = 0,
     y = 0,
     z = -24,

@@ -16,8 +16,12 @@ Power = {
     end
   end,
 
+  isCooling = function(self)
+    return self.cooldown_speed > 0 and self.cooldown_time < self.cooldown_speed
+  end,
+
   update = function(self, dt)
-    if self.cooldown_speed > 0 and self.cooldown_time < self.cooldown_speed then
+    if self:isCooling() then
       self.cooldown_time = self.cooldown_time + dt
     end
     if self.active then
@@ -33,11 +37,12 @@ Power = {
     end
   end,
   
-  create = function(self,parent,cooldown_speed,duration,fstart,factive,finactive,fend,fdraw)
+  create = function(self,parent,color,cooldown_speed,duration,fstart,factive,finactive,fend,fdraw)
     local r = {}
     mixin(r, Power)
     r.class = Power
     r.parent = parent
+    r.color = color
     r.cooldown_speed = cooldown_speed
     r.cooldown_time = 0
     r.active_time = 0
@@ -49,6 +54,17 @@ Power = {
     r.finactive = finactive or Power.doNothing
     r.active = false
     return r
+  end,
+
+  draw_cooldown = function(self, x, y, s)
+    if not self.active and self:isCooling() then
+      love.graphics.setColorMode(love.color_modulate)
+      love.graphics.setBlendMode(love.blend_additive)
+      love.graphics.setColor(self.color)
+      love.graphics.circle(love.draw_line, x, y, s * 0.3 * (self.cooldown_time - self.cooldown_speed), 32)
+      love.graphics.setBlendMode(love.blend_normal)
+      love.graphics.setColorMode(love.color_normal)
+    end
   end
 }
 
@@ -64,9 +80,14 @@ BoostPower = {
     ship.engine.thrust = self.originalThrust
     ship.thruster:setBoost(false)
   end,
+
+  fdraw = function(self)
+    local x, y, s = L:xy(self.parent.x, self.parent.y, 0)
+    self:draw_cooldown(x, y, s)
+  end,
   
   create = function(self,parent)
-    return Power:create(parent, 2, 0.2, BoostPower.fstart, nil, nil, BoostPower.fend)
+    return Power:create(parent, love.graphics.newColor(255,200,20,50), 2, 0.2, BoostPower.fstart, nil, nil, BoostPower.fend, BoostPower.fdraw)
   end
 }
 
@@ -104,7 +125,7 @@ SidestepPower = {
   end,
   
   create = function(self, parent)
-    return Power:create(parent, 0, 0.2, SidestepPower.fstart, SidestepPower.factive, nil, SidestepPower.fend)
+    return Power:create(parent, love.graphics.newColor(100,100,255,50), 0, 0.2, SidestepPower.fstart, SidestepPower.factive, nil, SidestepPower.fend)
   end
 
 }
@@ -122,6 +143,10 @@ TeleportPower = {
       self.teleport_system:draw(x,y)
       local x, y, s = L:xy(self.teleport_system.ex, self.teleport_system.ey, 0)
       self.teleport_system:draw(x,y)
+      if not self.active then
+        local x, y, s = L:xy(self.parent.x, self.parent.y, 0)
+        self:draw_cooldown(x, y, s)
+      end
     end
   end,
   
@@ -186,6 +211,6 @@ TeleportPower = {
   end,
   
   create = function(self, ship)
-    return Power:create(ship, 5, 0.2, TeleportPower.fstart, TeleportPower.factive, TeleportPower.finactive, TeleportPower.fend, TeleportPower.fdraw)
+    return Power:create(ship, love.graphics.newColor(100,100,255,50), 5, 0.2, TeleportPower.fstart, TeleportPower.factive, TeleportPower.finactive, TeleportPower.fend, TeleportPower.fdraw)
   end
 }

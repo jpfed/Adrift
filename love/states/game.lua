@@ -29,21 +29,17 @@ state.game = {
   startNewLevel = function(s)
     s.waitingForNewLevel = false
     s.levelNumber = s.levelNumber + 1
-    s.world = love.physics.newWorld(-1,-1,Level.maxCol+1,Level.maxRow+1,0,1, true)
-    s.world:setCallback(state.game.collision)
     s.background = Level:create(s.difficulty*10 + s.levelNumber, 0.25)
-    s.level = Level:create(s.difficulty*10 + s.levelNumber, 1, true)
-    L = s.level
-    L:solidify(s.world)
+    L = Level:create(s.difficulty*10 + s.levelNumber, 1, true)
+    s.level = L
+    L:solidify()
     L:generateObjects(s.difficulty*10)
     
-    -- TODO: move world into the level also?
-    
     if s.ship == nil then
-      s.ship = Ship:create(s.world, L.nodes[1].x, L.nodes[1].y, state.options.controlScheme)
+      s.ship = Ship:create(L.nodes[1].x, L.nodes[1].y, state.options.controlScheme)
     else
       s.ship:cleanup()
-      s.ship:warp(s.world, L.nodes[1].x, L.nodes[1].y)
+      s.ship:warp(L.world, L.nodes[1].x, L.nodes[1].y)
     end
     
     camera.x = s.ship.body:getX()
@@ -68,7 +64,7 @@ state.game = {
         camera.y = camera.y * 0.75 + s.ship.body:getY() * 0.25
       end
       
-      s.world:update(dt)
+      L.world:update(dt)
       s:collectGarbage(s.waitingForNewLevel)
     end
     

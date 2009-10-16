@@ -24,8 +24,8 @@ WarpPortal = {
     self.system:update(dt)
   end,
 
-  create = function(self,world,node)
-    local ssBody = love.physics.newBody(world,node.x,node.y,0)
+  create = function(self,node)
+    local ssBody = love.physics.newBody(L.world,node.x,node.y,0)
     local ssShape = love.physics.newCircleShape(ssBody,0.75)
     ssShape:setSensor(true)
     

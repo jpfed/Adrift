@@ -11,21 +11,21 @@ love.filesystem.require("objects/enemies/Eel.lua")
 
 objects = {
   
-  getStartingSpot = function(obs,world, node)
-    return WarpPortal:create(world, node)
+  getStartingSpot = function(obs, node)
+    return WarpPortal:create(node)
   end,
   
-  getWarpCrystal = function(obs,world, node)
-    return WarpCrystal:create(world,node)
+  getWarpCrystal = function(obs, node)
+    return WarpCrystal:create(node)
   end,
 
-  getEnemy = function(obs,world, node)
-    if math.random(2)==2 then return Hornet:create(world, node.x, node.y, state.game.difficulty) end 
-    return Eel:create(world,node.x,node.y, state.game.difficulty)
+  getEnemy = function(obs, node)
+    if math.random(2)==2 then return Hornet:create(node.x, node.y, state.game.difficulty) end 
+    return Eel:create(node.x,node.y, state.game.difficulty)
   end,
 
-  getPowerup = function(obs,world, node)
-    return EnergyPowerup:create(world,node)
+  getPowerup = function(obs, node)
+    return EnergyPowerup:create(node)
   end,
   
 }

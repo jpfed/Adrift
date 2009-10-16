@@ -201,12 +201,13 @@ Level = {
     level.tiles = result
   end,
 
-  solidify = function(level, world)
-    level.world = world
-    local result = {type = "level", rows={}}
-    result.body = love.physics.newBody(world,0,0,0)
+  solidify = function(level)
+    level.world = love.physics.newWorld(-1,-1,level.maxCol+1,level.maxRow+1,0,1, true)
+    level.physics = {type = "level", rows={}}
+    local p = level.physics
+    p.body = love.physics.newBody(level.world,0,0,0)
     for row = 1,level.maxRow do
-      result.rows[row] = {}
+      p.rows[row] = {}
       local wasSolid = false
       local leftMost = 0
       for col = 1,level.maxCol+1 do
@@ -218,16 +219,16 @@ Level = {
         else
           if wasSolid then
             rightMost = col
-            local newShape = love.physics.newRectangleShape(result.body,(leftMost+rightMost)/2,row+0.5,rightMost-leftMost,1)
+            local newShape = love.physics.newRectangleShape(p.body,(leftMost+rightMost)/2,row+0.5,rightMost-leftMost,1)
             newShape:setRestitution(0.25)
-            newShape:setData(result)
-            table.insert(result.rows[row], newShape)
+            newShape:setData(p)
+            table.insert(p.rows[row], newShape)
           end
         end
         wasSolid = isSolid
       end
     end
-    level.physics = result
+    level.world:setCallback(state.game.collision)
   end,
 
   highlight = function(level)
@@ -265,19 +266,18 @@ Level = {
   end,
 
   generateObjects = function(level, difficulty)
-    local world = level.world
     for k,v in ipairs(level.nodes) do
       if v.startingSpot then 
-        table.insert(level.objects, objects:getStartingSpot(world, v)) 
+        table.insert(level.objects, objects:getStartingSpot(v)) 
       end
       if v.warpCrystal then 
-        table.insert(level.objects, objects:getWarpCrystal(world, v)) 
+        table.insert(level.objects, objects:getWarpCrystal(v)) 
       end
       if v.enemy then 
-        table.insert(level.objects, objects:getEnemy(world, v, difficulty)) 
+        table.insert(level.objects, objects:getEnemy(v, difficulty)) 
       end
       if v.powerup then 
-        table.insert(level.objects, objects:getPowerup(world, v, difficulty)) 
+        table.insert(level.objects, objects:getPowerup(v, difficulty)) 
       end
     end
   end,

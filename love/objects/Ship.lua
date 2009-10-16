@@ -26,8 +26,8 @@ Ship = {
   hasCrystal = false,
   hasFieldDetector = false,
   
-  create = function(self, world, x, y, controlSchemeNumber)
-    local bd = love.physics.newBody(world,x,y)
+  create = function(self, x, y, controlSchemeNumber)
+    local bd = love.physics.newBody(L.world,x,y)
     local sh = love.physics.newCircleShape(bd,0.375)
     bd:setMass(0,0,1,1)
     bd:setDamping(0.1)

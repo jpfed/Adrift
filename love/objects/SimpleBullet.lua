@@ -44,7 +44,7 @@ SimpleBullet = {
     vx = vx + mx
     vy = vy + my
     local v = vx + vy
-    local sbBody = love.physics.newBody(state.game.world, tipx+mx/120,tipy+my/120,0.01)
+    local sbBody = love.physics.newBody(L.world, tipx+mx/120,tipy+my/120,0.01)
     local sbShape = love.physics.newCircleShape(sbBody, SimpleBullet.radius)
     sbBody:setBullet(true)
     sbBody:setVelocity(vx,vy)

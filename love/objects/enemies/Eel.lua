@@ -29,8 +29,8 @@ Eel = {
   deathSound = love.audio.newSound("sound/hornetDeath.ogg"),
     
   
-  create = function(self, world, x, y, difficulty)
-    local bd = love.physics.newBody(world,x,y,1)
+  create = function(self, x, y, difficulty)
+    local bd = love.physics.newBody(L.world,x,y,1)
     bd:setMass(0,0,1,1)
     bd:setDamping(0.01)
     bd:setAngularDamping(0.01)
@@ -172,6 +172,6 @@ Eel = {
   
   cleanup = function(self)
     self:superCleanup()
-    if math.random() < 0.25 then L:addObject(EnergyPowerup:create(state.game.world,self)) end
+    if math.random() < 0.25 then L:addObject(EnergyPowerup:create(self)) end
   end
 }

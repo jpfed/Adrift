@@ -96,7 +96,7 @@ Hornet = {
   
 cleanup = function(self)
     self:superCleanup()
-    if math.random() < 0.25 then state.game.level:addObject(EnergyPowerup:create(state.game.world,self)) end
+    if math.random() < 0.25 then L:addObject(EnergyPowerup:create(state.game.world,self)) end
   end
   
 }

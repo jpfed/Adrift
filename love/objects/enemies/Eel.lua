@@ -73,12 +73,12 @@ Eel = {
       local wallRepulsion = 1
       
       local searchRadius = 2
-      local minX, maxX = math.max(1,math.floor(self.x-searchRadius)), math.min(state.game.level.maxCol,math.ceil(self.x+searchRadius))
-      local minY, maxY = math.max(1,math.floor(self.y-searchRadius)), math.min(state.game.level.maxRow,math.ceil(self.y+searchRadius))
+      local minX, maxX = math.max(1,math.floor(self.x-searchRadius)), math.min(L.maxCol,math.ceil(self.x+searchRadius))
+      local minY, maxY = math.max(1,math.floor(self.y-searchRadius)), math.min(L.maxRow,math.ceil(self.y+searchRadius))
       
       local repelX, repelY, rnorm = 0,0,1
       local point = {x = 0, y = 0}
-      local tiles = state.game.level.tiles
+      local tiles = L.tiles
       for x=minX,maxX do
         for y = minY, maxY do
           if tiles[x][y] ~= nil and tiles[x][y] ~= 0 then
@@ -115,7 +115,7 @@ Eel = {
       local bulletRepulsion = 1
       local selfVx, selfVy = self.body:getVelocity()
       local bulletX, bulletY, bnorm = 0, 0, 1
-      for k,v in pairs(state.game.level.objects) do
+      for k,v in pairs(L.objects) do
         if AisInstanceOfB(v,Projectile) then
           local bx, by = self.x - v.x, self.y - v.y
           local bvx, bvy = v.body:getVelocity()
@@ -172,6 +172,6 @@ Eel = {
   
   cleanup = function(self)
     self:superCleanup()
-    if math.random() < 0.25 then state.game.level:addObject(EnergyPowerup:create(state.game.world,self)) end
+    if math.random() < 0.25 then L:addObject(EnergyPowerup:create(state.game.world,self)) end
   end
 }

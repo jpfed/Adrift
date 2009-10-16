@@ -139,7 +139,7 @@ TeleportPower = {
     local vx, vy = geom.normalize(-svx, -svy)   
     
     local found, distanceExceeded, distanceLimit = false, false, 8
-    local tiles = state.game.level.tiles
+    local tiles = L.tiles
     local currentX, currentY = originX, originY
     local lastX, lastY
     while (not found) and (not distanceExceeded) do

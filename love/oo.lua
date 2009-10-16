@@ -18,6 +18,7 @@ AisInstanceOfB = function(object, class)
 end
 
 AhasAttributeB = function(object, attrib)
+  if object == nil then return false end
   if object.attributes == nil then return false end
   return object.attributes[attrib] ~= nil
 end

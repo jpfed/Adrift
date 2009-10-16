@@ -78,10 +78,9 @@ Eel = {
       
       local repelX, repelY, rnorm = 0,0,1
       local point = {x = 0, y = 0}
-      local tiles = L.tiles
       for x=minX,maxX do
         for y = minY, maxY do
-          if tiles[x][y] ~= nil and tiles[x][y] ~= 0 then
+          if L:solidTileAt(x,y) then
             point.x, point.y = x, y
             if geom.dist_to_line_t(point, self, state.game.ship) < 2 then
               local rdx, rdy = self.x - x, self.y - y
@@ -115,6 +114,7 @@ Eel = {
       local bulletRepulsion = 1
       local selfVx, selfVy = self.body:getVelocity()
       local bulletX, bulletY, bnorm = 0, 0, 1
+      -- TODO: better method of asking level for its projectiles 
       for k,v in pairs(L.objects) do
         if AisInstanceOfB(v,Projectile) then
           local bx, by = self.x - v.x, self.y - v.y

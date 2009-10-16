@@ -387,6 +387,11 @@ Level = {
     end
   end,
 
+  solidTileAt = function(level, x, y)
+    local tile = level.tiles[x][y] 
+    return tile ~= nil and tile ~= 0
+  end,
+
   coloration = function(level, brightness)
     level.colors = {}
     local fineVariations = util.randomVector(level.maxRow,0.125)

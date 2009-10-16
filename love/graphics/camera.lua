@@ -48,15 +48,15 @@ camera = {
 
   renderMap = function(c,tiles, displayFull) 
     local tlx,tly, sc = c:xyMap(1,1)
-    local brx,bry, sc = c:xyMap(levelGenerator.maxCol,levelGenerator.maxRow)
+    local brx,bry, sc = c:xyMap(Level.maxCol,Level.maxRow)
     local subsampling = 1
     sc = sc * subsampling
-    for col = 1,levelGenerator.maxCol,subsampling do
+    for col = 1,Level.maxCol,subsampling do
       local column = tiles[col]
-      local xVal = util.interpolate(tlx,brx,col/levelGenerator.maxCol)
-      for square = 1,levelGenerator.maxRow,subsampling do
+      local xVal = util.interpolate(tlx,brx,col/Level.maxCol)
+      for square = 1,Level.maxRow,subsampling do
         if column[square]~=nil and (column[square] >= c.EXPLORED or displayFull) then
-          local yVal = util.interpolate(tly,bry,square/levelGenerator.maxRow)
+          local yVal = util.interpolate(tly,bry,square/Level.maxRow)
           local sq = column[square] % c.EXPLORED
           if sq == 1 then
             love.graphics.setColor(c.solidMapColor)
@@ -79,21 +79,21 @@ camera = {
   
   xyMap = function(c, wx, wy)
     if wx == nil or wy == nil then return 0,0,1 end
-    local tilesAspectRatio = levelGenerator.maxCol / levelGenerator.maxRow
+    local tilesAspectRatio = Level.maxCol / Level.maxRow
     local mapAspectRatio = 800/600
     local xOffset, yOffset, scale
     
     if tilesAspectRatio > mapAspectRatio then
-      scale = 800/levelGenerator.maxCol
+      scale = 800/Level.maxCol
       xOffset = 0
-      yOffset = (600-levelGenerator.maxRow*scale)/2
+      yOffset = (600-Level.maxRow*scale)/2
     elseif tilesAspectRatio == mapAspectRatio then
-      scale = 600/levelGenerator.maxRow
+      scale = 600/Level.maxRow
       xOffset = 0
       yOffset = 0
     else
-      scale = 600/levelGenerator.maxRow
-      xOffset = (800-levelGenerator.maxCol*scale)/2
+      scale = 600/Level.maxRow
+      xOffset = (800-Level.maxCol*scale)/2
       yOffset = 0
     end
     

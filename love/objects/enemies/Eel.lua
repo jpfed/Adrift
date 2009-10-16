@@ -73,8 +73,8 @@ Eel = {
       local wallRepulsion = 1
       
       local searchRadius = 2
-      local minX, maxX = math.max(1,math.floor(self.x-searchRadius)), math.min(levelGenerator.maxCol,math.ceil(self.x+searchRadius))
-      local minY, maxY = math.max(1,math.floor(self.y-searchRadius)), math.min(levelGenerator.maxRow,math.ceil(self.y+searchRadius))
+      local minX, maxX = math.max(1,math.floor(self.x-searchRadius)), math.min(state.game.level.maxCol,math.ceil(self.x+searchRadius))
+      local minY, maxY = math.max(1,math.floor(self.y-searchRadius)), math.min(state.game.level.maxRow,math.ceil(self.y+searchRadius))
       
       local repelX, repelY, rnorm = 0,0,1
       local point = {x = 0, y = 0}

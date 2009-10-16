@@ -1,4 +1,10 @@
-levelGenerator = {
+love.filesystem.require("oo.lua")
+
+-- levelGenerator is now Level
+-- getLevel is now Level:create
+-- TODO: Change Level refs to state.game.level, or internalize them
+
+Level = {
   margin = 1,
   maxCol = 100,
   maxRow = 100,
@@ -6,106 +12,112 @@ levelGenerator = {
   maxNodeRadius = 100,
   minArcThickness = 5,
   maxArcThickness = 20,
-}
-getLevel = function(difficulty)
-  local enemyProbability = 1-math.exp(-difficulty/10)
-  local powerupProbability = (0.25 + math.exp(-difficulty/20))/2
-  
-  local _nodes = {}
-  local _arcs = {}
-  
-  local start = createNode(-1000,-1000,1000,-1000)
-  start.startingSpot = true
-  start.dist = 0
-  table.insert(_nodes, start)
-  
-  local elaboration = 1
-  local tries = 0
-  local maxTries = 1000
-  local minStep = 25
-  local maxStep = 100
-  while elaboration<difficulty do
-    local oIndex = math.random(table.getn(_nodes))
-    local origin = _nodes[oIndex]
- 
-    local angle = 2*math.random()*math.pi
-    local dist = math.random()*(maxStep-minStep) + minStep
-    local x,y = origin.x + dist*math.cos(angle), origin.y + dist*math.sin(angle)
 
-    local target = createNode(x,y,x,y)
-    if math.random()<enemyProbability then target.enemy = true end
-    if math.random()<powerupProbability then target.powerup = true end
+  create = function(self, difficulty)
+    local r = {}
+    mixin(r, Level)
+
+    local enemyProbability = 1-math.exp(-difficulty/10)
+    local powerupProbability = (0.25 + math.exp(-difficulty/20))/2
     
-    target.dist = origin.dist + 1
-    local path = createArc(origin, target)
+    local _nodes = {}
+    local _arcs = {}
     
-    if noIntersections(_arcs, {path}) and enoughDistance(_nodes, _arcs, target, path, minStep) then
-      table.insert(_nodes,target)
-      table.insert(_arcs,path)
-      elaboration = elaboration + 1
-    else
-      tries = tries + 1
-      if tries > maxTries then 
+    local start = createNode(-1000,-1000,1000,-1000)
+    start.startingSpot = true
+    start.dist = 0
+    table.insert(_nodes, start)
+    
+    local elaboration = 1
+    local tries = 0
+    local maxTries = 1000
+    local minStep = 25
+    local maxStep = 100
+    while elaboration<difficulty do
+      local oIndex = math.random(table.getn(_nodes))
+      local origin = _nodes[oIndex]
+  
+      local angle = 2*math.random()*math.pi
+      local dist = math.random()*(maxStep-minStep) + minStep
+      local x,y = origin.x + dist*math.cos(angle), origin.y + dist*math.sin(angle)
+
+      local target = createNode(x,y,x,y)
+      if math.random()<enemyProbability then target.enemy = true end
+      if math.random()<powerupProbability then target.powerup = true end
+      
+      target.dist = origin.dist + 1
+      local path = createArc(origin, target)
+      
+      if noIntersections(_arcs, {path}) and enoughDistance(_nodes, _arcs, target, path, minStep) then
+        table.insert(_nodes,target)
+        table.insert(_arcs,path)
         elaboration = elaboration + 1
-        tries = 0
+      else
+        tries = tries + 1
+        if tries > maxTries then 
+          elaboration = elaboration + 1
+          tries = 0
+        end
       end
     end
-  end
-  
-  -- add a few random connections just to be interesting
-  local cycles = 0
-  local maxCycles = 6
-  tries = 0
-  while cycles<maxCycles do
-    local niA = _nodes[math.random(table.getn(_nodes))]
-    local niB
-    repeat
-      niB = _nodes[math.random(table.getn(_nodes))]
-    until niB~=niA
     
-    local cycleArc = createArc(niA, niB)
-    
-    if noIntersections(_arcs, {cycleArc}) and enoughDistance(_nodes, _arcs, nil, cycleArc, minStep) then
-      table.insert(_arcs, cycleArc)
-      cycles = cycles + 1
-    else
-      tries = tries + 1
-      if tries > maxTries then 
+    -- add a few random connections just to be interesting
+    local cycles = 0
+    local maxCycles = 6
+    tries = 0
+    while cycles<maxCycles do
+      local niA = _nodes[math.random(table.getn(_nodes))]
+      local niB
+      repeat
+        niB = _nodes[math.random(table.getn(_nodes))]
+      until niB ~= niA
+      
+      local cycleArc = createArc(niA, niB)
+      
+      if noIntersections(_arcs, {cycleArc}) and enoughDistance(_nodes, _arcs, nil, cycleArc, minStep) then
+        table.insert(_arcs, cycleArc)
         cycles = cycles + 1
-        tries = 0
+      else
+        tries = tries + 1
+        if tries > maxTries then 
+          cycles = cycles + 1
+          tries = 0
+        end
+      end
+      
+      
+    end
+    
+      -- normalization
+    local minX, maxX, minY, maxY = math.huge, -math.huge, math.huge, -math.huge
+    local minYindex, maxYindex = -1, -1
+    local maxDistIndex, maxDist = -1, -math.huge
+    for k,v in ipairs(_nodes) do
+      minX, maxX = math.min(minX, v.x-v.radius), math.max(maxX, v.x+v.radius)
+      minY, maxY = math.min(minY, v.y-v.radius), math.max(maxY, v.y+v.radius)
+      if v.dist > maxDist then
+        maxDist = v.dist
+        maxDistIndex = k
       end
     end
     
-    
-  end
-  
-    -- normalization
-  local minX, maxX, minY, maxY = math.huge, -math.huge, math.huge, -math.huge
-  local minYindex, maxYindex = -1, -1
-  local maxDistIndex, maxDist = -1, -math.huge
-  for k,v in ipairs(_nodes) do
-    minX, maxX = math.min(minX, v.x-v.radius), math.max(maxX, v.x+v.radius)
-    minY, maxY = math.min(minY, v.y-v.radius), math.max(maxY, v.y+v.radius)
-    if v.dist > maxDist then
-      maxDist = v.dist
-      maxDistIndex = k
+    local sizeX, sizeY = r.maxCol - r.margin, r.maxRow - r.margin
+    local scaleX, scaleY = sizeX / (maxX-minX), sizeY / (maxY - minY)
+    for k,v in ipairs(_nodes) do
+      v.x = (v.x-minX) * scaleX + r.margin
+      v.y = (v.y-minY) * scaleY + r.margin
     end
+    
+    _nodes[maxDistIndex].warpCrystal = true
+    camera.x = _nodes[1].x
+    camera_y = _nodes[1].y
+
+    r.nodes = _nodes
+    r.tiles = rasterize(_nodes, _arcs)
+    highlight(r.tiles)
+    return r
   end
-  
-  local sizeX, sizeY = levelGenerator.maxCol - levelGenerator.margin, levelGenerator.maxRow - levelGenerator.margin
-  local scaleX, scaleY = sizeX / (maxX-minX), sizeY / (maxY - minY)
-  for k,v in ipairs(_nodes) do
-    v.x = (v.x-minX) * scaleX + levelGenerator.margin
-    v.y = (v.y-minY) * scaleY + levelGenerator.margin
-  end
-  
-  _nodes[maxDistIndex].warpCrystal = true
-  camera.x = _nodes[1].x
-  camera_y = _nodes[1].y
-  local result = {nodes = _nodes, tiles = rasterize(_nodes,_arcs)}
-  highlight(result.tiles)
-  return result
-end
+}
 
 
 
@@ -113,11 +125,11 @@ createNode = function(lx,ly,ux,uy)
   local locX, locY = lx, ly
   if lx ~= ux then locX = math.random(lx, ux) end
   if ly ~= uy then locY = math.random(ly, uy) end
-  return {x = locX, y = locY, radius = math.random(levelGenerator.minNodeRadius,levelGenerator.maxNodeRadius)/10}
+  return {x = locX, y = locY, radius = math.random(Level.minNodeRadius,Level.maxNodeRadius)/10}
 end
 
 createArc = function(tl, hd)
-  return {tail = tl, head = hd, thickness = math.random(levelGenerator.minArcThickness,levelGenerator.maxArcThickness)/10}
+  return {tail = tl, head = hd, thickness = math.random(Level.minArcThickness,Level.maxArcThickness)/10}
 end
 
 
@@ -146,16 +158,16 @@ end
 rasterize = function(nodes, arcs)
   local result = {}
   
-  for col = 1,levelGenerator.maxCol do
+  for col = 1,Level.maxCol do
     table.insert(result,{})
-    for row = 1,levelGenerator.maxRow do
+    for row = 1,Level.maxRow do
       result[col][row] = 1
     end
   end
 
   for k,v in ipairs(nodes) do
-    local minX, maxX = math.max(1+levelGenerator.margin,math.floor(v.x - v.radius)), math.min(levelGenerator.maxCol-levelGenerator.margin,math.ceil(v.x + v.radius))
-    local minY, maxY = math.max(1+levelGenerator.margin,math.floor(v.y - v.radius)), math.min(levelGenerator.maxRow-levelGenerator.margin,math.ceil(v.y + v.radius))
+    local minX, maxX = math.max(1+Level.margin,math.floor(v.x - v.radius)), math.min(Level.maxCol-Level.margin,math.ceil(v.x + v.radius))
+    local minY, maxY = math.max(1+Level.margin,math.floor(v.y - v.radius)), math.min(Level.maxRow-Level.margin,math.ceil(v.y + v.radius))
     for x = minX, maxX do
       for y = minY, maxY do
         if geom.distance(v.x,v.y,x,y) <= v.radius then result[x][y] = 0 end
@@ -168,8 +180,8 @@ rasterize = function(nodes, arcs)
     local inc = v.thickness/(2*geom.distance_t(v.head,v.tail))
     while t <= 1 do
       local m = util.interpolate2d(v.head,v.tail,t)
-      local minX, maxX = math.max(1+levelGenerator.margin,math.floor(m.x - v.thickness)), math.min(levelGenerator.maxCol-levelGenerator.margin,math.ceil(m.x + v.thickness))
-      local minY, maxY = math.max(1+levelGenerator.margin,math.floor(m.y - v.thickness)), math.min(levelGenerator.maxRow-levelGenerator.margin,math.ceil(m.y + v.thickness))
+      local minX, maxX = math.max(1+Level.margin,math.floor(m.x - v.thickness)), math.min(Level.maxCol-Level.margin,math.ceil(m.x + v.thickness))
+      local minY, maxY = math.max(1+Level.margin,math.floor(m.y - v.thickness)), math.min(Level.maxRow-Level.margin,math.ceil(m.y + v.thickness))
       for x = minX, maxX do
         for y = minY, maxY do
           result[x][y] = 0
@@ -185,11 +197,11 @@ end
 solidify = function(world, tiles)
   local result = {type = "level", rows={}}
   result.body = love.physics.newBody(world,0,0,0)
-  for row = 1,levelGenerator.maxRow do
+  for row = 1,Level.maxRow do
     result.rows[row] = {}
     local wasSolid = false
     local leftMost = 0
-    for col = 1,levelGenerator.maxCol+1 do
+    for col = 1,Level.maxCol+1 do
       local isSolid = (tiles[col]~=nil and tiles[col][row]~=nil and tiles[col][row]>0)
       if isSolid then
         if not wasSolid then
@@ -225,10 +237,10 @@ end
 
 coloration = function(brightness)
   local strata = {}
-  local fineVariations = util.randomVector(levelGenerator.maxRow,0.125)
-  local bigVariationsR = util.randomVector(levelGenerator.maxRow/8,0.5)
-  local bigVariationsG = util.randomVector(levelGenerator.maxRow/8,0.5)
-  local bigVariationsB = util.randomVector(levelGenerator.maxRow/8,0.5)
+  local fineVariations = util.randomVector(Level.maxRow,0.125)
+  local bigVariationsR = util.randomVector(Level.maxRow/8,0.5)
+  local bigVariationsG = util.randomVector(Level.maxRow/8,0.5)
+  local bigVariationsB = util.randomVector(Level.maxRow/8,0.5)
   for k,v in ipairs(fineVariations) do
     local lumR = brightness*((v*0.25 + util.interpolatedVector(bigVariationsR,k/8)*0.75)*0.625+0.375)
     local lumG = brightness*((v*0.25 + util.interpolatedVector(bigVariationsG,k/8)*0.75)*0.625+0.375)

@@ -30,10 +30,10 @@ state.game = {
   startNewLevel = function(s)
     s.waitingForNewLevel = false
     s.levelNumber = s.levelNumber + 1
-    s.world = love.physics.newWorld(-1,-1,levelGenerator.maxCol+1,levelGenerator.maxRow+1,0,1, true)
+    s.world = love.physics.newWorld(-1,-1,Level.maxCol+1,Level.maxRow+1,0,1, true)
     s.world:setCallback(state.game.collision)
-    s.level = getLevel(s.difficulty*10 + s.levelNumber)
-    s.background = getLevel(s.difficulty*10 + s.levelNumber)
+    s.level = Level:create(s.difficulty*10 + s.levelNumber)
+    s.background = Level:create(s.difficulty*10 + s.levelNumber)
     s.level.physics = solidify(s.world,s.level.tiles)
     s.level.colors = coloration(1)
     s.background.colors = coloration(0.25)

@@ -13,12 +13,12 @@ state.pause = {
   
   draw = function(s) 
     local g = state.game
-    camera:renderMap(g.level.tiles,g.ship.hasFullMap)
+    L:renderMap(g.ship.hasFullMap)
     if g.ship.hasFieldDetector then
       for k,v in ipairs(g.level.objects) do
         if v.body ~= nil then
           local wx,wy = v.body:getPosition()
-          local x,y,w = camera:xyMap(wx,wy)
+          local x,y,w = L:xyMap(wx,wy)
           if v.type == objects.ships then
             if v.friendly then
               love.graphics.setColor(s.shipMapColor)
@@ -41,7 +41,7 @@ state.pause = {
       end
     end
     local wx,wy = g.ship.body:getPosition()
-    local x,y,w = camera:xyMap(wx,wy)
+    local x,y,w = L:xyMap(wx,wy)
     love.graphics.setColor(s.shipMapColor)
     love.graphics.rectangle(love.draw_fill,x-w,y-w,w*2,w*2)
 

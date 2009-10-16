@@ -113,9 +113,9 @@ TeleportPower = {
   end,
 
   shipDraw = function(self)
-    local x, y, s = camera:xy(self.teleport_system.x, self.teleport_system.y, 0)
+    local x, y, s = L:xy(self.teleport_system.x, self.teleport_system.y, 0)
     self.teleport_system:draw(x,y)
-    local x, y, s = camera:xy(self.x, self.y, 0)
+    local x, y, s = L:xy(self.x, self.y, 0)
     self.teleport_system:draw(x,y)
     love.graphics.circle(love.draw_line, x, y, math.random()*s, 32)
     self:drawHUD()

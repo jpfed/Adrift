@@ -8,7 +8,7 @@ WarpPortal = {
   sound = love.audio.newSound("sound/portal.ogg"),
   
   draw = function(self)
-    local x, y, scale = camera:xy(self.x, self.y, 0)
+    local x, y, scale = L:xy(self.x, self.y, 0)
     self.system:draw(x,y)
     love.graphics.draw(self.image,x,y,scale/25)
   end,

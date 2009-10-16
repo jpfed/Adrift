@@ -42,8 +42,8 @@ state.game = {
       s.ship:warp(L.world, L.nodes[1].x, L.nodes[1].y)
     end
     
-    camera.x = s.ship.body:getX()
-    camera.y = s.ship.body:getY()
+    L.camera.x = s.ship.body:getX()
+    L.camera.y = s.ship.body:getY()
   end,
   
   update = function(s,dt) 

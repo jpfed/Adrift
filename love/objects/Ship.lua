@@ -83,14 +83,14 @@ Ship = {
     self.thruster:draw()
 
     if self.teleport_system then
-      local x, y, s = camera:xy(self.teleport_system.x, self.teleport_system.y, 0)
+      local x, y, s = L:xy(self.teleport_system.x, self.teleport_system.y, 0)
       self.teleport_system:draw(x,y)
-      local x, y, s = camera:xy(self.teleport_system.ex, self.teleport_system.ey, 0)
+      local x, y, s = L:xy(self.teleport_system.ex, self.teleport_system.ey, 0)
       self.teleport_system:draw(x,y)
     end
     
     love.graphics.setColor(self.circColor)
-    local cx, cy, radius = camera:xy(self.x,self.y,0)
+    local cx, cy, radius = L:xy(self.x,self.y,0)
     love.graphics.circle(love.draw_fill,cx,cy,0.375*radius,32)
     
     if self.hasCrystal then 

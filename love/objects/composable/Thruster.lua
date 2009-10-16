@@ -47,7 +47,7 @@ Thruster = {
   end,
   
   draw = function(self)
-    local x, y, scale = camera:xy(self.parent.x, self.parent.y, 0)
+    local x, y, scale = L:xy(self.parent.x, self.parent.y, 0)
     love.graphics.setColorMode(love.color_modulate)
     love.graphics.draw(self.system,x,y)
     love.graphics.setColorMode(love.color_normal)

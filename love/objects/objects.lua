@@ -10,6 +10,7 @@ love.filesystem.require("objects/composable/Thruster.lua")
 love.filesystem.require("objects/Ship.lua")
 love.filesystem.require("objects/enemies/Hornet.lua")
 love.filesystem.require("objects/enemies/Eel.lua")
+love.filesystem.require("objects/enemies/HornetEgg.lua")
 
 objects = {
   
@@ -23,8 +24,10 @@ objects = {
 
   getEnemy = function(obs, node)
     local r = math.random()
-    if r<0.5 then return Hornet:create(node.x, node.y, state.game.difficulty) end 
+    if r<0.375 then return Hornet:create(node.x, node.y, state.game.difficulty) end 
+    if r<0.5 then return HornetEgg:create(node.x, node.y, state.game.difficulty) end
     return Eel:create(node.x,node.y, state.game.difficulty)
+    
   end,
 
   getPowerup = function(obs,node)

@@ -42,7 +42,7 @@ Convex = {
     local numPoints, x, y = table.getn(rotatedPoints)/2
     for point = 1,numPoints do
       x, y = cx + rotatedPoints[point*2-1], cy + rotatedPoints[point*2]
-      self._projectedPoints[point*2 -1], self._projectedPoints[point*2] = camera:xy(x,y,0)
+      self._projectedPoints[point*2 -1], self._projectedPoints[point*2] = L:xy(x,y,0)
     end
   end,
   

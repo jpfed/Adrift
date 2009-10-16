@@ -26,8 +26,8 @@ Hornet = {
   
   deathSound = love.audio.newSound("sound/hornetDeath.ogg"),
   
-  create = function(self, world, x, y, difficulty)
-    local bd = love.physics.newBody(world,x,y)
+  create = function(self, x, y, difficulty)
+    local bd = love.physics.newBody(L.world,x,y)
     bd:setMass(0,0,0.5,0.5)
     bd:setDamping(0.1)
     bd:setAngularDamping(0.1)
@@ -96,7 +96,7 @@ Hornet = {
   
 cleanup = function(self)
     self:superCleanup()
-    if math.random() < 0.25 then table.insert(state.game.objects, EnergyPowerup:create(state.game.world,self)) end
+    if math.random() < 0.25 then L:addObject(EnergyPowerup:create(self)) end
   end
   
 }

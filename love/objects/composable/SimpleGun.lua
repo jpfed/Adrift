@@ -43,7 +43,7 @@ SimpleGun = {
       
       
       local bullet = SimpleBullet:create(self.parent,{x = muzzleX, y = muzzleY, angle = muzzleAngle}, self.bulletColor, self.bulletHighlightColor)
-      table.insert(state.game.objects,bullet)
+      L:addObject(bullet)
       self.heat = self.heat + 1
         
     end

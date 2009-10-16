@@ -16,8 +16,12 @@ Power = {
     end
   end,
 
+  isCooling = function(self)
+    return self.cooldown_speed > 0 and self.cooldown_time < self.cooldown_speed
+  end,
+
   update = function(self, dt)
-    if self.cooldown_speed > 0 and self.cooldown_time < self.cooldown_speed then
+    if self:isCooling() then
       self.cooldown_time = self.cooldown_time + dt
     end
     if self.active then
@@ -28,14 +32,17 @@ Power = {
       else
         if not self.parent.dead then self.factive(self,self.parent, dt) end
       end
+    else
+      self.finactive(self, self.parent, dt)
     end
   end,
   
-  create = function(self,parent,cooldown_speed,duration,fstart,factive,fend)
+  create = function(self,parent,color,cooldown_speed,duration,fstart,factive,finactive,fend,fdraw)
     local r = {}
     mixin(r, Power)
     r.class = Power
     r.parent = parent
+    r.color = color
     r.cooldown_speed = cooldown_speed
     r.cooldown_time = 0
     r.active_time = 0
@@ -43,8 +50,21 @@ Power = {
     r.fstart  = fstart  or Power.doNothing
     r.factive = factive or Power.doNothing
     r.fend    = fend    or Power.doNothing
+    r.draw    = fdraw   or Power.doNothing
+    r.finactive = finactive or Power.doNothing
     r.active = false
     return r
+  end,
+
+  draw_cooldown = function(self, x, y, s)
+    if not self.active and self:isCooling() then
+      love.graphics.setColorMode(love.color_modulate)
+      love.graphics.setBlendMode(love.blend_additive)
+      love.graphics.setColor(self.color)
+      love.graphics.circle(love.draw_line, x, y, s * 0.3 * (self.cooldown_time - self.cooldown_speed), 32)
+      love.graphics.setBlendMode(love.blend_normal)
+      love.graphics.setColorMode(love.color_normal)
+    end
   end
 }
 
@@ -60,9 +80,14 @@ BoostPower = {
     ship.engine.thrust = self.originalThrust
     ship.thruster:setBoost(false)
   end,
+
+  fdraw = function(self)
+    local x, y, s = L:xy(self.parent.x, self.parent.y, 0)
+    self:draw_cooldown(x, y, s)
+  end,
   
   create = function(self,parent)
-    return Power:create(parent, 2, 0.2, BoostPower.fstart, nil, BoostPower.fend)
+    return Power:create(parent, love.graphics.newColor(255,200,20,50), 2, 0.2, BoostPower.fstart, nil, nil, BoostPower.fend, BoostPower.fdraw)
   end
 }
 
@@ -100,7 +125,7 @@ SidestepPower = {
   end,
   
   create = function(self, parent)
-    return Power:create(parent, 0, 0.2, SidestepPower.fstart, SidestepPower.factive, SidestepPower.fend)
+    return Power:create(parent, love.graphics.newColor(100,100,255,50), 0, 0.2, SidestepPower.fstart, SidestepPower.factive, nil, SidestepPower.fend)
   end
 
 }
@@ -114,22 +139,24 @@ TeleportPower = {
     self.powers.teleport:update(dt)
   end,
 
-  shipDraw = function(self)
-    local x, y, s = camera:xy(self.teleport_system.x, self.teleport_system.y, 0)
-    self.teleport_system:draw(x,y)
-    local x, y, s = camera:xy(self.x, self.y, 0)
-    self.teleport_system:draw(x,y)
-    love.graphics.circle(love.draw_line, x, y, math.random()*s, 32)
-    self:drawHUD()
+  fdraw = function(self)
+    if self.teleport_system then
+      local x, y, s = L:xy(self.teleport_system.x, self.teleport_system.y, 0)
+      self.teleport_system:draw(x,y)
+      local x, y, s = L:xy(self.teleport_system.ex, self.teleport_system.ey, 0)
+      self.teleport_system:draw(x,y)
+      if not self.active then
+        local x, y, s = L:xy(self.parent.x, self.parent.y, 0)
+        self:draw_cooldown(x, y, s)
+      end
+    end
   end,
   
   fstart = function(self, ship)
   
     love.audio.play(TeleportPower.sound)
   
-    self.drawBackup = ship.draw
     self.updateBackup = ship.update
-    ship.draw = TeleportPower.shipDraw
     ship.update = TeleportPower.shipUpdate
     ship.shape:setSensor(true)
     ship.shape:setData(nil)
@@ -138,12 +165,11 @@ TeleportPower = {
     local angle = math.rad(ship.angle)
     local svx, svy = math.cos(angle), math.sin(angle)
     
-    ship.teleport_system = PortalTeleportSystem:create(originX,originY,ship.angle)
+    self.teleport_system = PortalTeleportSystem:create(originX,originY,ship.angle)
 
     local vx, vy = geom.normalize(-svx, -svy)   
     
     local found, distanceExceeded, distanceLimit = false, false, 8
-    local tiles = state.game.level.tiles
     local currentX, currentY = originX, originY
     local lastX, lastY
     while (not found) and (not distanceExceeded) do
@@ -156,7 +182,7 @@ TeleportPower = {
       
       for x=minX,maxX do
         for y=minY,maxY do
-          found = found or (tiles[x][y] ~= 0)
+          found = found or L:solidTileAt(x,y)
         end
       end
       
@@ -164,19 +190,24 @@ TeleportPower = {
     end
     self.origin = {x = originX, y = originY}
     self.target = {x = lastX, y = lastY}
-    
   end,
   
   factive = function(self, ship, dt)
     local proportion = self.active_time / self.duration
     local interp = util.interpolate2d(self.origin, self.target, proportion)
     ship.body:setPosition(interp.x, interp.y)
+    self.teleport_system.ex = interp.x
+    self.teleport_system.ey = interp.y
+    if self.teleport_system then self.teleport_system:update(dt) end
+  end,
+
+  finactive = function(self, ship, dt)
+    if self.teleport_system then self.teleport_system:update(dt) end
   end,
   
   fend = function(self, ship)
-    ship.teleport_system.ex = self.target.x
-    ship.teleport_system.ey = self.target.y
-    ship.draw = self.drawBackup
+    self.teleport_system.ex = self.target.x
+    self.teleport_system.ey = self.target.y
     ship.update = self.updateBackup
     self.system = nil
     ship.shape:setSensor(false)
@@ -185,6 +216,6 @@ TeleportPower = {
   end,
   
   create = function(self, ship)
-    return Power:create(ship, 5, 0.2, TeleportPower.fstart, TeleportPower.factive, TeleportPower.fend)
+    return Power:create(ship, love.graphics.newColor(100,100,255,50), 5, 0.2, TeleportPower.fstart, TeleportPower.factive, TeleportPower.finactive, TeleportPower.fend, TeleportPower.fdraw)
   end
 }

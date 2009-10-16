@@ -15,8 +15,8 @@ WarpCrystal = {
     end
   end,
   
-  create = function(self,world,node)
-    local wcBody = love.physics.newBody(world,node.x,node.y,0.25)
+  create = function(self,node)
+    local wcBody = love.physics.newBody(L.world,node.x,node.y,0.25)
     local wcShape = love.physics.newRectangleShape(wcBody,1,1)
     local result = CollectibleObject:create(wcBody, wcShape, WarpCrystal.sound, WarpCrystal.effect)
     mixin(result,RepresentableAsImage)

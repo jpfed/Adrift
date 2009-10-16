@@ -26,8 +26,8 @@ SimpleBullet = {
   end,
   
   draw = function(b) 
-    local x,y,scale = camera:xy(b.body:getX(),b.body:getY(),0)
-    local ox,oy,scale = camera:xy(b.firer.x,b.firer.y,0)
+    local x,y,scale = L:xy(b.body:getX(),b.body:getY(),0)
+    local ox,oy,scale = L:xy(b.firer.x,b.firer.y,0)
     love.graphics.setColorMode(love.color_modulate)
     love.graphics.draw(b.sparks,x,y)
     love.graphics.draw(b.muzzleflash,ox,oy)
@@ -44,7 +44,7 @@ SimpleBullet = {
     vx = vx + mx
     vy = vy + my
     local v = vx + vy
-    local sbBody = love.physics.newBody(state.game.world, tipx+mx/120,tipy+my/120,0.01)
+    local sbBody = love.physics.newBody(L.world, tipx+mx/120,tipy+my/120,0.01)
     local sbShape = love.physics.newCircleShape(sbBody, SimpleBullet.radius)
     sbBody:setBullet(true)
     sbBody:setVelocity(vx,vy)

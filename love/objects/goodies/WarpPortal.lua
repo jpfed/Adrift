@@ -8,7 +8,7 @@ WarpPortal = {
   sound = love.audio.newSound("sound/portal.ogg"),
   
   draw = function(self)
-    local x, y, scale = camera:xy(self.x, self.y, 0)
+    local x, y, scale = L:xy(self.x, self.y, 0)
     self.system:draw(x,y)
     love.graphics.draw(self.image,x,y,scale/25)
   end,
@@ -24,8 +24,8 @@ WarpPortal = {
     self.system:update(dt)
   end,
 
-  create = function(self,world,node)
-    local ssBody = love.physics.newBody(world,node.x,node.y,0)
+  create = function(self,node)
+    local ssBody = love.physics.newBody(L.world,node.x,node.y,0)
     local ssShape = love.physics.newCircleShape(ssBody,0.75)
     ssShape:setSensor(true)
     

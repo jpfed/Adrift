@@ -26,8 +26,8 @@ Ship = {
   hasCrystal = false,
   hasFieldDetector = false,
   
-  create = function(self, world, x, y, controlSchemeNumber)
-    local bd = love.physics.newBody(world,x,y)
+  create = function(self, x, y, controlSchemeNumber)
+    local bd = love.physics.newBody(L.world,x,y)
     local sh = love.physics.newCircleShape(bd,0.375)
     bd:setMass(0,0,1,1)
     bd:setDamping(0.1)
@@ -82,15 +82,8 @@ Ship = {
   draw = function(self)
     self.thruster:draw()
 
-    if self.teleport_system then
-      local x, y, s = camera:xy(self.teleport_system.x, self.teleport_system.y, 0)
-      self.teleport_system:draw(x,y)
-      local x, y, s = camera:xy(self.teleport_system.ex, self.teleport_system.ey, 0)
-      self.teleport_system:draw(x,y)
-    end
-    
     love.graphics.setColor(self.circColor)
-    local cx, cy, radius = camera:xy(self.x,self.y,0)
+    local cx, cy, radius = L:xy(self.x,self.y,0)
     love.graphics.circle(love.draw_fill,cx,cy,0.375*radius,32)
     
     if self.hasCrystal then 
@@ -99,6 +92,10 @@ Ship = {
       self.cvx.fillColor = Ship.triColor
     end
     self.cvx:draw()
+
+    for k,power in pairs(self.powers) do
+      power:draw()
+    end
     
     self:drawHUD()
   end,
@@ -113,8 +110,6 @@ Ship = {
   
   update = function(self, dt)
     self:superUpdate(dt)
-
-    if self.teleport_system then self.teleport_system:update(dt) end
 
     for k,power in pairs(self.powers) do
       power:update(dt)

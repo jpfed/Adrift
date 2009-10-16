@@ -7,7 +7,7 @@ Explosion = {
   life = 0,
   
   draw = function(self)
-    local x, y, scale = camera:xy(self.x, self.y, 0)
+    local x, y, scale = L:xy(self.x, self.y, 0)
     
     love.graphics.setColorMode(love.color_modulate)
     love.graphics.draw(self.smoke,x,y)

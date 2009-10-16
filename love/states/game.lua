@@ -10,7 +10,6 @@ state.game = {
   scoreColor = love.graphics.newColor(255,255,255),
   normalArcColor = love.graphics.newColor(128,128,128),
   normalNodeColor = love.graphics.newColor(255,255,255),
-  objects = {},
   score = 0,
   
   load = function(s)
@@ -30,25 +29,21 @@ state.game = {
   startNewLevel = function(s)
     s.waitingForNewLevel = false
     s.levelNumber = s.levelNumber + 1
-    s.world = love.physics.newWorld(-1,-1,levelGenerator.maxCol+1,levelGenerator.maxRow+1,0,1, true)
-    s.world:setCallback(state.game.collision)
-    s.level = getLevel(s.difficulty*10 + s.levelNumber)
-    s.background = getLevel(s.difficulty*10 + s.levelNumber)
-    s.level.physics = solidify(s.world,s.level.tiles)
-    s.level.colors = coloration(1)
-    s.background.colors = coloration(0.25)
-    
-    s.objects = getObjects(s.world, s.level.nodes,s.difficulty*10)
+    s.background = Level:create(s.difficulty*10 + s.levelNumber, 0.25)
+    L = Level:create(s.difficulty*10 + s.levelNumber, 1, true)
+    s.level = L
+    L:solidify()
+    L:generateObjects(s.difficulty*10)
     
     if s.ship == nil then
-      s.ship = Ship:create(s.world, s.level.nodes[1].x, s.level.nodes[1].y, state.options.controlScheme)
+      s.ship = Ship:create(L.nodes[1].x, L.nodes[1].y, state.options.controlScheme)
     else
       s.ship:cleanup()
-      s.ship:warp(s.world, s.level.nodes[1].x, s.level.nodes[1].y)
+      s.ship:warp(L.world, L.nodes[1].x, L.nodes[1].y)
     end
     
-    camera.x = s.ship.body:getX()
-    camera.y = s.ship.body:getY()
+    L.camera.x = s.ship.body:getX()
+    L.camera.y = s.ship.body:getY()
   end,
   
   update = function(s,dt) 
@@ -60,48 +55,15 @@ state.game = {
       state.current = state.loss
       state.loss.ct = 0
       end
-      for k,v in ipairs(s.objects) do
-        v:update(dt)
-      end
-
-      if s.ship ~= nil then
-        camera.x = camera.x * 0.75 + s.ship.body:getX() * 0.25
-        camera.y = camera.y * 0.75 + s.ship.body:getY() * 0.25
-      end
-      
-      s.world:update(dt)
-      s:collectGarbage(s.waitingForNewLevel)
+      s.level:update(dt)
     end
     
   end,
   
-  collectGarbage = function(s,newLevel)
-    if newLevel then 
-      s.objects = {} 
-    else
-      repeat
-        local found = false
-        local objectsToKeep = {}
-        for k,v in ipairs(s.objects) do
-          if v.dead then 
-            found = true
-            if v.cleanup ~= nil then v:cleanup() end
-          else
-            table.insert(objectsToKeep, v) 
-          end
-        end
-        s.objects = objectsToKeep
-      until not found
-    end
-  end,
-  
   draw = function(s) 
     if not s.waitingForNextLevel then
-      camera:render(s.background.tiles, 12, s.background.colors)
-      camera:render(s.level.tiles, 0, s.level.colors)
-      for k,v in ipairs(s.objects) do
-        v:draw()
-      end
+      s.background:draw(12)
+      s.level:draw(0)
       love.graphics.setColor(s.scoreColor)
       if state.current == state.game then love.graphics.draw("Score: " .. tostring(s.score),15,580) end
       s.ship:draw()
@@ -115,11 +77,6 @@ state.game = {
   keypressed = function(s,key) 
     if key==love.key_p then state.current = state.pause end
     if key==love.key_v then s.ship.hasCrystal = true end
-    if key==love.key_x then
-      -- DAN'S EXPLOSION TESTER
-      local explosion = FireyExplosion:create(s.ship.x,s.ship.y,60,3.0)
-      table.insert(state.game.objects,explosion)
-    end
   end,
   
   joystickpressed = function(s,j,b)

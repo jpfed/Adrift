@@ -29,8 +29,8 @@ Eel = {
   deathSound = love.audio.newSound("sound/hornetDeath.ogg"),
     
   
-  create = function(self, world, x, y, difficulty)
-    local bd = love.physics.newBody(world,x,y,1)
+  create = function(self, x, y, difficulty)
+    local bd = love.physics.newBody(L.world,x,y,1)
     bd:setMass(0,0,1,1)
     bd:setDamping(0.01)
     bd:setAngularDamping(0.01)
@@ -73,15 +73,14 @@ Eel = {
       local wallRepulsion = 1
       
       local searchRadius = 2
-      local minX, maxX = math.max(1,math.floor(self.x-searchRadius)), math.min(levelGenerator.maxCol,math.ceil(self.x+searchRadius))
-      local minY, maxY = math.max(1,math.floor(self.y-searchRadius)), math.min(levelGenerator.maxRow,math.ceil(self.y+searchRadius))
+      local minX, maxX = math.max(1,math.floor(self.x-searchRadius)), math.min(L.maxCol,math.ceil(self.x+searchRadius))
+      local minY, maxY = math.max(1,math.floor(self.y-searchRadius)), math.min(L.maxRow,math.ceil(self.y+searchRadius))
       
       local repelX, repelY, rnorm = 0,0,1
       local point = {x = 0, y = 0}
-      local tiles = state.game.level.tiles
       for x=minX,maxX do
         for y = minY, maxY do
-          if tiles[x][y] ~= nil and tiles[x][y] ~= 0 then
+          if L:solidTileAt(x,y) then
             point.x, point.y = x, y
             if geom.dist_to_line_t(point, self, state.game.ship) < 2 then
               local rdx, rdy = self.x - x, self.y - y
@@ -115,7 +114,8 @@ Eel = {
       local bulletRepulsion = 1
       local selfVx, selfVy = self.body:getVelocity()
       local bulletX, bulletY, bnorm = 0, 0, 1
-      for k,v in pairs(state.game.objects) do
+      -- TODO: better method of asking level for its projectiles 
+      for k,v in pairs(L.objects) do
         if AisInstanceOfB(v,Projectile) then
           local bx, by = self.x - v.x, self.y - v.y
           local bvx, bvy = v.body:getVelocity()
@@ -172,6 +172,6 @@ Eel = {
   
   cleanup = function(self)
     self:superCleanup()
-    if math.random() < 0.25 then table.insert(state.game.objects, EnergyPowerup:create(state.game.world,self)) end
+    if math.random() < 0.25 then L:addObject(EnergyPowerup:create(self)) end
   end
 }

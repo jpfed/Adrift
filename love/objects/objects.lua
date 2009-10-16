@@ -2,6 +2,8 @@ love.filesystem.require("util/geom.lua")
 love.filesystem.require("objects/goodies/WarpCrystal.lua")
 love.filesystem.require("objects/goodies/WarpPortal.lua")
 love.filesystem.require("objects/goodies/EnergyPowerup.lua")
+love.filesystem.require("objects/goodies/MaxEnergyPowerup.lua")
+love.filesystem.require("objects/goodies/TeleportPowerup.lua")
 love.filesystem.require("objects/SimpleBullet.lua")
 love.filesystem.require("objects/composable/DamageableObject.lua")
 love.filesystem.require("objects/composable/Thruster.lua")
@@ -25,7 +27,11 @@ objects = {
   end,
 
   getPowerup = function(obs,world, node)
+    local r = math.random()
+    if r<0.1 then return TeleportPowerup:create(world, node) end
+    if r<0.25 then return MaxEnergyPowerup:create(world, node) end
     return EnergyPowerup:create(world,node)
+    
   end,
   
 }

@@ -4,8 +4,8 @@ love.filesystem.require("graphics/RepresentableAsImage.lua")
 
 EnergyPowerup = {
   super = CollectibleObject,
-  image = love.graphics.newImage("graphics/energyPowerup.png"),
-  sound = love.audio.newSound("sound/energyPowerup.ogg"),
+  image = love.graphics.newImage("graphics/HpPlus.png"),
+  sound = love.audio.newSound("sound/HpPlus.ogg"),
   
   effect = function(self, collector) 
     if AhasAttributeB(collector, DamageableObject) then

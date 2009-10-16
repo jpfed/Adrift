@@ -145,7 +145,7 @@ Ship = {
         self.powers.sidestep.orientation = 1
         self.powers.sidestep:trigger()
       end
-      if back then
+      if back and self.hasTeleport then
         applyThrust = false
         self.powers.teleport:trigger()
       end

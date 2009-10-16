@@ -107,6 +107,8 @@ SidestepPower = {
 
 TeleportPower = {
 
+  sound = love.audio.newSound("sound/teleport.ogg"),
+
   shipUpdate = function(self, dt)
     self:superUpdate(dt)
     self.powers.teleport:update(dt)
@@ -122,6 +124,8 @@ TeleportPower = {
   end,
   
   fstart = function(self, ship)
+  
+    love.audio.play(TeleportPower.sound)
   
     self.drawBackup = ship.draw
     self.updateBackup = ship.update

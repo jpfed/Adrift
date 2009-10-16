@@ -115,6 +115,7 @@ Level = {
   end,
 
   renderMap = function(level) 
+    local c = level.camera
     local tiles = level.tiles
     local tlx,tly, sc = level:xyMap(1,1)
     local brx,bry, sc = level:xyMap(level.maxCol,level.maxRow)

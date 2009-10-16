@@ -10,7 +10,6 @@ state.game = {
   scoreColor = love.graphics.newColor(255,255,255),
   normalArcColor = love.graphics.newColor(128,128,128),
   normalNodeColor = love.graphics.newColor(255,255,255),
-  objects = {},
   score = 0,
   
   load = function(s)
@@ -35,10 +34,9 @@ state.game = {
     s.level = Level:create(s.difficulty*10 + s.levelNumber, 1, true)
     s.background = Level:create(s.difficulty*10 + s.levelNumber, 0.25)
     s.level:solidify(s.world)
+    s.level:generateObjects(s.difficulty*10)
     
-    -- TODO: move these into the level proper
     -- TODO: move world into the level also?
-    s.objects = s.level:generateObjects(s.difficulty*10)
     
     if s.ship == nil then
       s.ship = Ship:create(s.world, s.level.nodes[1].x, s.level.nodes[1].y, state.options.controlScheme)
@@ -60,7 +58,7 @@ state.game = {
       state.current = state.loss
       state.loss.ct = 0
       end
-      for k,v in ipairs(s.objects) do
+      for k,v in ipairs(s.level.objects) do
         v:update(dt)
       end
 
@@ -75,14 +73,13 @@ state.game = {
     
   end,
   
+  -- TODO
   collectGarbage = function(s,newLevel)
-    if newLevel then 
-      s.objects = {} 
-    else
+    if not newLevel then 
       repeat
         local found = false
         local objectsToKeep = {}
-        for k,v in ipairs(s.objects) do
+        for k,v in ipairs(s.level.objects) do
           if v.dead then 
             found = true
             if v.cleanup ~= nil then v:cleanup() end
@@ -90,7 +87,7 @@ state.game = {
             table.insert(objectsToKeep, v) 
           end
         end
-        s.objects = objectsToKeep
+        s.level.objects = objectsToKeep
       until not found
     end
   end,
@@ -99,7 +96,7 @@ state.game = {
     if not s.waitingForNextLevel then
       camera:render(s.background.tiles, 12, s.background.colors)
       camera:render(s.level.tiles, 0, s.level.colors)
-      for k,v in ipairs(s.objects) do
+      for k,v in ipairs(s.level.objects) do
         v:draw()
       end
       love.graphics.setColor(s.scoreColor)
@@ -115,11 +112,6 @@ state.game = {
   keypressed = function(s,key) 
     if key==love.key_p then state.current = state.pause end
     if key==love.key_v then s.ship.hasCrystal = true end
-    if key==love.key_x then
-      -- DAN'S EXPLOSION TESTER
-      local explosion = FireyExplosion:create(s.ship.x,s.ship.y,60,3.0)
-      table.insert(state.game.objects,explosion)
-    end
   end,
   
   joystickpressed = function(s,j,b)

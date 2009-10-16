@@ -15,7 +15,7 @@ state.pause = {
     local g = state.game
     camera:renderMap(g.level.tiles,g.ship.hasFullMap)
     if g.ship.hasFieldDetector then
-      for k,v in ipairs(g.objects) do
+      for k,v in ipairs(g.level.objects) do
         if v.body ~= nil then
           local wx,wy = v.body:getPosition()
           local x,y,w = camera:xyMap(wx,wy)

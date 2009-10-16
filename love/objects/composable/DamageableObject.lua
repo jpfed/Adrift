@@ -26,7 +26,7 @@ DamageableObject = {
         if self.damageSound ~= nil then love.audio.play(self.damageSound) end
       else
         local explosion = FireyExplosion:create(self.x,self.y,60,1.0)
-        table.insert(state.game.objects,explosion)
+        state.game.level:addObject(explosion)
         love.audio.play(self.deathSound)
         state.game.score = state.game.score + self.points
         self.dead = true

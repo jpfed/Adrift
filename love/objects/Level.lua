@@ -1,9 +1,6 @@
 love.filesystem.require("oo.lua")
 
--- levelGenerator is now Level
--- getLevel is now Level:create
 -- TODO: Change Level refs to state.game.level, or internalize them
--- state.objects is now part of level
 
 Level = {
   margin = 1,
@@ -19,6 +16,7 @@ Level = {
     mixin(r, Level)
     r.nodes = {}
     r.arcs = {}
+    r.objects = {}
     r:generate(difficulty)
     r:rasterize()
     r:highlight()
@@ -268,25 +266,25 @@ Level = {
 
   generateObjects = function(level, difficulty)
     local world = level.world
-    local result = {}
     for k,v in ipairs(level.nodes) do
       if v.startingSpot then 
-        table.insert(result, objects:getStartingSpot(world, v)) 
+        table.insert(level.objects, objects:getStartingSpot(world, v)) 
       end
       if v.warpCrystal then 
-        table.insert(result, objects:getWarpCrystal(world, v)) 
+        table.insert(level.objects, objects:getWarpCrystal(world, v)) 
       end
       if v.enemy then 
-        table.insert(result, objects:getEnemy(world, v, difficulty)) 
+        table.insert(level.objects, objects:getEnemy(world, v, difficulty)) 
       end
       if v.powerup then 
-        table.insert(result, objects:getPowerup(world, v, difficulty)) 
+        table.insert(level.objects, objects:getPowerup(world, v, difficulty)) 
       end
     end
-    
-    return result
-  end
+  end,
 
+  addObject = function(level, o)
+    table.insert(level.objects,o)
+  end
 }
 
 

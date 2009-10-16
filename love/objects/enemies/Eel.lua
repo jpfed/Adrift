@@ -115,7 +115,7 @@ Eel = {
       local bulletRepulsion = 1
       local selfVx, selfVy = self.body:getVelocity()
       local bulletX, bulletY, bnorm = 0, 0, 1
-      for k,v in pairs(state.game.objects) do
+      for k,v in pairs(state.game.level.objects) do
         if AisInstanceOfB(v,Projectile) then
           local bx, by = self.x - v.x, self.y - v.y
           local bvx, bvy = v.body:getVelocity()
@@ -172,6 +172,6 @@ Eel = {
   
   cleanup = function(self)
     self:superCleanup()
-    if math.random() < 0.25 then table.insert(state.game.objects, EnergyPowerup:create(state.game.world,self)) end
+    if math.random() < 0.25 then state.game.level:addObject(EnergyPowerup:create(state.game.world,self)) end
   end
 }

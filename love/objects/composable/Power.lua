@@ -70,14 +70,24 @@ Power = {
 
 BoostPower = {
 
+  sound = love.audio.newSound("sound/booster.ogg"),
+
+  default_thrust_increment = 15,
+  powered_thrust_increment = 20,
+  
+  default_cooldown_speed = 2.5,
+  powered_cooldown_speed = 1.5,
+  
+  
   fstart = function(self,ship)
-    self.originalThrust = ship.engine.thrust
-    ship.engine.thrust = ship.engine.thrust + 20
+    self.original_thrust = ship.engine.thrust
+    ship.engine.thrust = ship.engine.thrust + self.thrust_increment
     ship.thruster:setBoost(true)
+    love.audio.play(BoostPower.sound)
   end,
 
   fend = function(self, ship)
-    ship.engine.thrust = self.originalThrust
+    ship.engine.thrust = self.original_thrust
     ship.thruster:setBoost(false)
   end,
 
@@ -87,7 +97,9 @@ BoostPower = {
   end,
   
   create = function(self,parent)
-    return Power:create(parent, love.graphics.newColor(255,200,20,50), 2, 0.2, BoostPower.fstart, nil, nil, BoostPower.fend, BoostPower.fdraw)
+    local result = Power:create(parent, love.graphics.newColor(255,200,20,50), BoostPower.default_cooldown_speed, 0.2, BoostPower.fstart, nil, nil, BoostPower.fend, BoostPower.fdraw)
+    result.thrust_increment = BoostPower.default_thrust_increment
+    return result
   end
 }
 

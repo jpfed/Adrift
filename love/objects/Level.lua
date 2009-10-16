@@ -114,7 +114,7 @@ Level = {
     end
   end,
 
-  renderMap = function(level) 
+  renderMap = function(level, displayFull) 
     local c = level.camera
     local tiles = level.tiles
     local tlx,tly, sc = level:xyMap(1,1)

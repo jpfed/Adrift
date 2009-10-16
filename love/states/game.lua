@@ -32,13 +32,13 @@ state.game = {
     s.levelNumber = s.levelNumber + 1
     s.world = love.physics.newWorld(-1,-1,Level.maxCol+1,Level.maxRow+1,0,1, true)
     s.world:setCallback(state.game.collision)
-    s.level = Level:create(s.difficulty*10 + s.levelNumber)
-    s.background = Level:create(s.difficulty*10 + s.levelNumber)
-    s.level.physics = solidify(s.world,s.level.tiles)
-    s.level.colors = coloration(1)
-    s.background.colors = coloration(0.25)
+    s.level = Level:create(s.difficulty*10 + s.levelNumber, 1, true)
+    s.background = Level:create(s.difficulty*10 + s.levelNumber, 0.25)
+    s.level:solidify(s.world)
     
-    s.objects = getObjects(s.world, s.level.nodes,s.difficulty*10)
+    -- TODO: move these into the level proper
+    -- TODO: move world into the level also?
+    s.objects = s.level:generateObjects(s.difficulty*10)
     
     if s.ship == nil then
       s.ship = Ship:create(s.world, s.level.nodes[1].x, s.level.nodes[1].y, state.options.controlScheme)

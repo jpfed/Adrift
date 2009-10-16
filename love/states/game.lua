@@ -55,47 +55,15 @@ state.game = {
       state.current = state.loss
       state.loss.ct = 0
       end
-      for k,v in ipairs(s.level.objects) do
-        v:update(dt)
-      end
-
-      if s.ship ~= nil then
-        camera.x = camera.x * 0.75 + s.ship.body:getX() * 0.25
-        camera.y = camera.y * 0.75 + s.ship.body:getY() * 0.25
-      end
-      
-      L.world:update(dt)
-      s:collectGarbage(s.waitingForNewLevel)
+      s.level:update(dt)
     end
     
   end,
   
-  -- TODO
-  collectGarbage = function(s,newLevel)
-    if not newLevel then 
-      repeat
-        local found = false
-        local objectsToKeep = {}
-        for k,v in ipairs(s.level.objects) do
-          if v.dead then 
-            found = true
-            if v.cleanup ~= nil then v:cleanup() end
-          else
-            table.insert(objectsToKeep, v) 
-          end
-        end
-        s.level.objects = objectsToKeep
-      until not found
-    end
-  end,
-  
   draw = function(s) 
     if not s.waitingForNextLevel then
-      camera:render(s.background.tiles, 12, s.background.colors)
-      camera:render(s.level.tiles, 0, s.level.colors)
-      for k,v in ipairs(s.level.objects) do
-        v:draw()
-      end
+      s.background:draw(12)
+      s.level:draw(0)
       love.graphics.setColor(s.scoreColor)
       if state.current == state.game then love.graphics.draw("Score: " .. tostring(s.score),15,580) end
       s.ship:draw()

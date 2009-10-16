@@ -25,6 +25,45 @@ Level = {
   end,
 
 
+  update = function(level, dt)
+    for k,v in ipairs(level.objects) do
+      v:update(dt)
+    end
+
+    if state.game.ship ~= nil then
+      camera.x = camera.x * 0.75 + state.game.ship.body:getX() * 0.25
+      camera.y = camera.y * 0.75 + state.game.ship.body:getY() * 0.25
+    end
+    
+    level.world:update(dt)
+    level:collectGarbage()
+  end,
+
+  collectGarbage = function(level)
+    if not state.game.waitingForNewLevel then 
+      repeat
+        local found = false
+        local objectsToKeep = {}
+        for k,v in ipairs(level.objects) do
+          if v.dead then 
+            found = true
+            if v.cleanup ~= nil then v:cleanup() end
+          else
+            table.insert(objectsToKeep, v) 
+          end
+        end
+        level.objects = objectsToKeep
+      until not found
+    end
+  end,
+  
+
+  draw = function(level, depth)
+    camera:render(level.tiles, depth, level.colors)
+    for k,v in ipairs(level.objects) do
+      v:draw()
+    end
+  end,
 
   generate = function(level, difficulty)    
     local enemyProbability = 1-math.exp(-difficulty/10)

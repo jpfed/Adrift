@@ -25,12 +25,12 @@ Leech = {
     mixin(r, Leech)
     r.class = Leech
 
-    local s = 0.1
-    local pointArray = {3*s,0*s, 2*s,1*s, -2*s,1*s, -3*s,0*s, -2*s,-1*s, 2*s,-1*s}
+    local leechPoints = {{x=3,y=0}, {x=2,y=1}, {x=-2,y=1}, {x=-3,y=0}, {x=-2,y=-1}, {x=2,y=-1}}
     r.part1 = r:addConvexBlob(
       { damping = 0.1, adamping = 0.1 },
       {
-        points = pointArray,
+        scale = 0.1,
+        points = leechPoints,
         color = self.color,
         color_edge = self.color_edge
       } )

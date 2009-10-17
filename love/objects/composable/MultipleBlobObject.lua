@@ -19,6 +19,7 @@ MultipleBlobObject = {
     b:addConvexShape(shapeParams)
     b.body:setMassFromShapes()
     table.insert(self.blobs, b)
+    if not self.body then self.body = b.body end
     return b
   end,
   

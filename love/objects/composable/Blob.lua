@@ -1,5 +1,6 @@
 love.filesystem.require("oo.lua")
 love.filesystem.require("objects/composable/GameObject.lua")
+love.filesystem.require("objects/composable/BlobPoly.lua")
 
 Blob = {
   super = GameObject,
@@ -27,19 +28,27 @@ Blob = {
   end,
 
   _createShape = function(b, p)
-    local shape = love.physics.newPolygonShape(b.body,unpack(p.points))
+    local shape = love.physics.newPolygonShape(b.body,unpack(p))
     shape:setData(b.parent)
     table.insert(b.shapes, shape)
     return shape
   end,
 
-  addConvexShape = function(b, p)
-    local shape = b:_createShape(p)
-    table.insert(b.polys,p.points)
+  addConvexShape = function(b, polyParams)
+    local poly = BlobPoly:create(polyParams)
+    local shape = b:_createShape(poly:listPoints())
+    table.insert(b.polys,poly)
+    return shape
   end,
 
   draw = function(self)
-    for k,points in self.polys do
+    for i,poly in ipairs(self.polys) do
+      local points = poly:projectPoints(self.body:getX(), self.body:getY(), self.body:getAngle())
+      love.graphics.setColor(poly.color)
+      love.graphics.circle(love.draw_fill, self.body:getX(), self.body:getY(), 10, 32)
+      love.graphics.polygon(love.draw_fill, unpack(points))
+      love.graphics.setColor(poly.color_edge)
+      love.graphics.polygon(love.draw_line, unpack(points))
     end
   end,
 

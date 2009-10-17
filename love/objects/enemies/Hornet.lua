@@ -36,6 +36,7 @@ Hornet = {
     
     local s = 0.2
     local pointArray = {2*s,0*s,-1*s,1*s,-1*s,-1*s}
+    -- TODO: The Convex:create call below already does this?
     local sh = love.physics.newPolygonShape(bd,unpack(pointArray))
     sh:setRestitution(1.5)
     
@@ -94,7 +95,7 @@ Hornet = {
     self.cvx:draw()
   end,
   
-cleanup = function(self)
+  cleanup = function(self)
     self:superCleanup()
     if math.random() < 0.25 then L:addObject(EnergyPowerup:create(self)) end
   end

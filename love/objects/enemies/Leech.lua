@@ -30,8 +30,10 @@ Leech = {
       { scale = 0.1, points = leechPoints, color = self.color, color_edge = self.color_edge, offset={x=10,y=0} } )
 
     -- Now to joint them together!
-    love.physics.newRevoluteJoint( r.part1.body, r.part2.body, 0.55, 0 ) 
-    love.physics.newRevoluteJoint( r.part2.body, r.part3.body, 1.1, 0 ) 
+    --love.physics.newRevoluteJoint( r.part1.body, r.part2.body, 0.55, 0 ) 
+    --love.physics.newRevoluteJoint( r.part2.body, r.part3.body, 1.1, 0 ) 
+    love.physics.newDistanceJoint( r.part1.body, r.part2.body, 0.45, 0, 0.55, 0 ) 
+    love.physics.newDistanceJoint( r.part2.body, r.part3.body, 0.95, 0, 1.05, 0 ) 
 
 
     mixin(r, DamageableObject:prepareAttribute(difficulty,nil,Leech.deathSound,1000))

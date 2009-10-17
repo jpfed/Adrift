@@ -37,6 +37,7 @@ Blob = {
     local poly = BlobPoly:create(polyParams)
     local shape = self:_createShape(poly:listPoints())
     table.insert(self.polys,poly)
+    self.body:setMassFromShapes()
     return shape
   end,
 

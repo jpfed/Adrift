@@ -13,6 +13,7 @@ love.filesystem.require("objects/enemies/Hornet.lua")
 love.filesystem.require("objects/enemies/Eel.lua")
 love.filesystem.require("objects/enemies/HornetEgg.lua")
 love.filesystem.require("objects/enemies/Leech.lua")
+love.filesystem.require("objects/enemies/Grasshopper.lua")
 
 objects = {
   

@@ -81,7 +81,10 @@ state.game = {
       table.insert(L.objects, objects:getEnemy(s.ship, difficulty)) 
     end
     if key==love.key_d then
-      table.insert(L.objects, Leech:create(s.ship.x, s.ship.y-1, state.game.difficulty)) 
+      table.insert(L.objects, Leech:create(s.ship.x, s.ship.y, state.game.difficulty)) 
+    end
+    if key==love.key_g then
+      table.insert(L.objects, Grasshopper:create(s.ship.x, s.ship.y, state.game.difficulty)) 
     end
   end,
   
@@ -100,6 +103,12 @@ state.game = {
       function(maybeWall) return maybeWall == 0 end,
       function(maybeHornet) return AisInstanceOfB(maybeHornet, Hornet) end,
       function(wall, hornet) hornet.collisionShock = 1 end
+    ) then return end
+
+    if tryCollideInteraction( a, b,
+      function(maybeWall) return maybeWall == 0 end,
+      function(maybeHopper) return AisInstanceOfB(maybeHopper, Grasshopper) end,
+      function(wall, hopper) hopper.touchedWall = true end
     ) then return end
 
     if tryCollideInteraction( a, b,

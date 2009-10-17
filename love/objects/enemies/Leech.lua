@@ -1,6 +1,4 @@
 love.filesystem.require("oo.lua")
-love.filesystem.require("objects/composable/Convex.lua")
-love.filesystem.require("objects/composable/Engine.lua")
 love.filesystem.require("objects/composable/DamageableObject.lua")
 love.filesystem.require("objects/composable/MultipleBlobObject.lua")
 
@@ -11,17 +9,11 @@ Leech = {
   color = love.graphics.newColor(30,200,60),
   color_edge = love.graphics.newColor(20,100,50),
   
-  thrust = 10,
-  collisionShock = 0,
-  collisionReaction = 1,
-  
   deathSound = love.audio.newSound("sound/hornetDeath.ogg"),
   
   create = function(self, x, y, difficulty)
     local r = MultipleBlobObject:create(x,y)
 
-    r.superUpdate = r.update
-    r.superDraw = r.draw
     r.superCleanup = r.cleanup
     mixin(r, Leech)
     r.class = Leech
@@ -44,8 +36,6 @@ Leech = {
 
     mixin(r, DamageableObject:prepareAttribute(difficulty,nil,Leech.deathSound,1000))
     
-    r.collisionReaction = math.random()*90-45
-    r.coolRate = math.random()+0.5
     return r
   end,
   

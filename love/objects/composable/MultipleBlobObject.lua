@@ -17,7 +17,6 @@ MultipleBlobObject = {
   addConvexBlob = function(self,bodyParams,shapeParams)
     local b = Blob:create(self,bodyParams)
     b:addConvexShape(shapeParams)
-    b.body:setMassFromShapes()
     table.insert(self.blobs, b)
     if not self.body then self.body = b.body end
     return b

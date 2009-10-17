@@ -77,6 +77,12 @@ state.game = {
   keypressed = function(s,key) 
     if key==love.key_p then state.current = state.pause end
     if key==love.key_v then s.ship.hasCrystal = true end
+    if key==love.key_e then
+      table.insert(L.objects, objects:getEnemy(s.ship, difficulty)) 
+    end
+    if key==love.key_d then
+      table.insert(L.objects, Leech:create(s.ship.x, s.ship.y-1, state.game.difficulty)) 
+    end
   end,
   
   joystickpressed = function(s,j,b)

@@ -5,9 +5,9 @@ love.filesystem.require("objects/composable/Blob.lua")
 MultipleBlobObject = {
   super = GameObject,
   
-  create = function(self)
+  create = function(self, x, y)
     -- we don't have x and y yet until blobs are added
-    local result = GameObject:create(0,0)
+    local result = GameObject:create(x,y)
     mixin(result,MultipleBlobObject)
     result.class = MultipleBlobObject
     result.blobs = {}

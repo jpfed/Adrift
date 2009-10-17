@@ -18,9 +18,10 @@ Leech = {
   deathSound = love.audio.newSound("sound/hornetDeath.ogg"),
   
   create = function(self, x, y, difficulty)
-    local r = MultipleBlobObject:create()
+    local r = MultipleBlobObject:create(x,y)
 
     r.superUpdate = r.update
+    r.superDraw = r.draw
     r.superCleanup = r.cleanup
     mixin(r, Leech)
     r.class = Leech
@@ -28,12 +29,13 @@ Leech = {
     local leechPoints = {{x=3,y=0}, {x=2,y=1}, {x=-2,y=1}, {x=-3,y=0}, {x=-2,y=-1}, {x=2,y=-1}}
     r.part1 = r:addConvexBlob(
       { damping = 0.1, adamping = 0.1 },
-      {
-        scale = 0.1,
-        points = leechPoints,
-        color = self.color,
-        color_edge = self.color_edge
-      } )
+      { scale = 0.1, points = leechPoints, color = self.color, color_edge = self.color_edge } )
+    r.part2 = r:addConvexBlob(
+      { damping = 0.1, adamping = 0.1 },
+      { scale = 0.1, points = leechPoints, color = self.color, color_edge = self.color_edge, offset={x=4,y=0} } )
+    r.part3 = r:addConvexBlob(
+      { damping = 0.1, adamping = 0.1 },
+      { scale = 0.1, points = leechPoints, color = self.color, color_edge = self.color_edge, offset={x=7,y=0} } )
 
     mixin(r, DamageableObject:prepareAttribute(difficulty,nil,Leech.deathSound,1000))
     
@@ -73,9 +75,7 @@ Leech = {
   
   draw = function(self)
     self.thruster:draw()
-    --self.part3:draw()
-    --self.part2:draw()
-    self.part1:draw()
+    self:superDraw()
   end,
   
   cleanup = function(self)

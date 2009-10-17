@@ -7,7 +7,18 @@ BlobPoly = {
     local r = {}
     mixin(r,BlobPoly)
     r.class = BlobPoly
-    r.points = params.points or {}
+    r.points = {}
+    r.scale = params.scale or 1
+    if r.scale == 0 then r.scale = 1 end
+    local x,y
+    for i,p in ipairs(params.points) do
+      x, y = p.x * r.scale, p.y * r.scale
+      if params.offset then
+        x = x + (params.offset.x * r.scale)
+        y = y + (params.offset.y * r.scale)
+      end
+      table.insert(r.points, {x=x,y=y})
+    end
     r.color = params.color or self.color 
     r.color_edge = params.color_edge or self.color_edge 
     return r

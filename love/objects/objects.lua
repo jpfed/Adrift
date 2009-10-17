@@ -26,7 +26,7 @@ objects = {
 
   getEnemy = function(obs, node)
     local r = math.random()
-    if r>0 then return Leech:create(node.x,node.y, state.game.difficulty) end
+    --if r>0 then return Leech:create(node.x,node.y, state.game.difficulty) end
     if r<0.375 then return Hornet:create(node.x, node.y, state.game.difficulty) end 
     if r<0.5 then return HornetEgg:create(node.x, node.y, state.game.difficulty) end
     return Eel:create(node.x,node.y, state.game.difficulty)

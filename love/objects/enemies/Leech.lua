@@ -36,6 +36,8 @@ Leech = {
     r.part3 = r:addConvexBlob(
       { damping = 0.1, adamping = 0.1 },
       { scale = 0.1, points = leechPoints, color = self.color, color_edge = self.color_edge, offset={x=7,y=0} } )
+    -- Now to joint them together!
+
 
     mixin(r, DamageableObject:prepareAttribute(difficulty,nil,Leech.deathSound,1000))
     

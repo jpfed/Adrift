@@ -100,13 +100,13 @@ state.game = {
     ) then return end
   
     if tryCollideInteraction( a, b,
-      function(maybeWall) return maybeWall == 0 end,
+      function(maybeWall) return maybeWall == L.physics end,
       function(maybeHornet) return AisInstanceOfB(maybeHornet, Hornet) end,
-      function(wall, hornet) hornet.collisionShock = 1 end
+      function(wall, hornet) hornet:collided() end
     ) then return end
 
     if tryCollideInteraction( a, b,
-      function(maybeWall) return maybeWall == 0 end,
+      function(maybeWall) return maybeWall == L.physics end,
       function(maybeHopper) return AisInstanceOfB(maybeHopper, Grasshopper) end,
       function(wall, hopper) hopper.touchedWall = true end
     ) then return end

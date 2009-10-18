@@ -1,7 +1,9 @@
 love.filesystem.require("oo.lua")
+love.filesystem.require("util/geom.lua")
 love.filesystem.require("objects/composable/Convex.lua")
 love.filesystem.require("objects/composable/Engine.lua")
 love.filesystem.require("objects/composable/SimpleGun.lua")
+love.filesystem.require("objects/composable/Projectile.lua")
 love.filesystem.require("objects/composable/DamageableObject.lua")
 love.filesystem.require("objects/composable/SimplePhysicsObject.lua")
 
@@ -20,11 +22,20 @@ Hornet = {
   thrust = 10,
     
   collisionShock = 0,
-  collisionReaction = 1,
+  maxCollisionShock = 1,
+  collisionReaction = 0,
   
   gun = nil,
   
   deathSound = love.audio.newSound("sound/hornetDeath.ogg"),
+  
+  collided = function(self)
+    if self.collisionShock == 0 then
+      self.collisionShock = math.random()*math.random()*self.maxCollisionShock
+      self.collisionReaction = math.random(2)*90 - 135
+      self.targTheta = math.rad(self.angle + self.collisionReaction)
+    end
+  end,
   
   create = function(self, x, y, difficulty)
     local bd = love.physics.newBody(L.world,x,y)
@@ -36,9 +47,8 @@ Hornet = {
     
     local s = 0.2
     local pointArray = {2*s,0*s,-1*s,1*s,-1*s,-1*s}
-    -- TODO: The Convex:create call below already does this?
     local sh = love.physics.newPolygonShape(bd,unpack(pointArray))
-    sh:setRestitution(1.5)
+    sh:setRestitution(0.5)
     
     local result = SimplePhysicsObject:create(bd,sh)
     result.superUpdate = result.update
@@ -53,31 +63,54 @@ Hornet = {
     
     result.engine = Engine:create(result, Hornet.thrust, 2,8)
     result.thruster = FireThruster:create(result, 180)
-    result.gun = SimpleGun:create(result, pointArray[1], pointArray[2], 0, 1, Hornet.bulletColor, Hornet.bulletHighlightColor)
+    local shotsPerSecond = math.random()+0.5
+    result.gun = SimpleGun:create(result, pointArray[1], pointArray[2], 0, shotsPerSecond, Hornet.bulletColor, Hornet.bulletHighlightColor)
     
-    result.collisionReaction = math.random()*90-45
-    result.coolRate = math.random()+0.5
+    result.strafe = SidestepPower:create(result)
+    result.strafe.orientation = math.random(2)*2-3
+    result.collisionReaction = math.random(2)*90-135
+    
     return result
   end,
   
   update = function(self, dt)
     self.superUpdate(self, dt)
     
-    -- go for the main character unless you are recovering from a collision
-    local forceX, forceY = 0, 0
+    -- go for the main character unless 
+    --   you are recovering from a collision or
+    --   there is someone in your way
+    local forceX, forceY, mustStrafe = 0, 0, false
     if self.collisionShock == 0 then
-      local tx, ty = state.game.ship.x, state.game.ship.y
-      local dx, dy = tx - self.x, ty - self.y
-      local anorm = math.max(0.01,math.sqrt(dx*dx + dy*dy))
-      if anorm < 36 then 
-        forceX, forceY = dx / anorm, dy / anorm
+      
+      local ship = state.game.ship
+      
+      if self.gun.heat == 0 then
+        local minX, maxX = math.min(self.x, ship.x), math.max(self.x, ship.x)
+        local minY, maxY = math.min(self.y, ship.y), math.max(self.y, ship.y)
+        
+        for k,v in pairs(L.objects) do
+          if minX < v.x and v.x < maxX and minY < v.y and v.y < maxY then
+            if not AisInstanceOfB(v, Projectile) then
+              if geom.dist_to_line_t(v,self,ship) < 2 then mustStrafe = true; break; end
+            end
+          end
+        end
+      end
+      
+      if mustStrafe then
+        self.strafe:trigger()
       else
-        forceX, forceY = math.random()*2-1, math.random()*2-1.1
+        local dx, dy = ship.x - self.x, ship.y - self.y
+        local anorm = math.max(0.01,math.sqrt(dx*dx + dy*dy))
+        if anorm < 36 then 
+          forceX, forceY = dx / anorm, dy / anorm
+        else
+          forceX, forceY = math.random()*2-1, math.random()*2-1.1
+        end
       end
     else
       -- back away from the wall and move along it in a consistent direction
-      local targTheta = math.rad(self.angle + self.collisionReaction)
-      forceX, forceY = - math.cos(targTheta), - math.sin(targTheta)
+      forceX, forceY = - math.cos(self.targTheta), - math.sin(self.targTheta)
       self.collisionShock = math.max(0,self.collisionShock - dt)
     end
     
@@ -85,8 +118,10 @@ Hornet = {
     self.thruster:setIntensity(overallThrust*5)
     self.thruster:update(dt)
     
+    self.strafe:update(dt)
+    
     -- shoot at all times
-    self.gun:fire()
+    if not mustStrafe then self.gun:fire() end
     self.gun:update(dt)
   end,
   

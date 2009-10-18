@@ -11,12 +11,13 @@ load = function()
   state.current = state.menu
   love.audio.setChannels(4)
   love.audio.setVolume(0.9)
+  love.audio.play(sound.bgm)
   useJoystick = (love.joystick.getNumJoysticks() > 0)
   if useJoystick then love.joystick.open(0) end
 end
 
 update = function(dt)
-  --if not love.audio.isPlaying() then love.audio.play(sound.bgm) end
+  if not love.audio.isPlaying() then love.audio.play(sound.bgm) end
   dt = math.min(dt, 1/15)
   state.current:update(dt)
 end

@@ -12,10 +12,10 @@ Level = {
   maxArcThickness = 20,
 
   camera = {
-    width = 40,
+    width = 32,
     x = 0,
     y = 0,
-    z = -24,
+    z = -30,
 
     EXPLORED = 1000,
     solidMapColor = love.graphics.newColor(64,64,128),
@@ -73,8 +73,15 @@ Level = {
 
   draw = function(level, depth)
     if state.game.ship ~= nil then
-      level.camera.x = level.camera.x * 0.75 + state.game.ship.body:getX() * 0.25
-      level.camera.y = level.camera.y * 0.75 + state.game.ship.body:getY() * 0.25
+      level.camera.idealX = level.camera.idealX * 0.75 + state.game.ship.body:getX() * 0.25
+      level.camera.idealY = level.camera.idealY * 0.75 + state.game.ship.body:getY() * 0.25
+      -- make sure the camera doesn't show the empty space at the outer edges of the level
+      local c = level.camera
+      local fovX = (c.width / 2)*(-c.z)/24
+      local fovY = fovX * 0.75
+      c.x = math.max(fovX/2 + 1, math.min(level.maxCol - fovX/2 + 1, c.idealX))
+      c.y = math.max(fovY/2 + 1, math.min(level.maxRow - fovY/2 + 1, c.idealY))
+      
     end
     
     level:render(depth)

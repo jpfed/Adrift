@@ -25,13 +25,15 @@ objects = {
     return WarpCrystal:create(node)
   end,
 
-  getEnemy = function(obs, node)
+  getEnemy = function(obs, node, difficulty)
     local r = math.random()
-    --if r>0 then return Leech:create(node.x,node.y, state.game.difficulty) end
-    if r<0.375 then return Hornet:create(node.x, node.y, state.game.difficulty) end 
-    if r<0.5 then return HornetEgg:create(node.x, node.y, state.game.difficulty) end
-    return Eel:create(node.x,node.y, state.game.difficulty)
-    
+    if r<0.375 then return Hornet:create(node.x, node.y, difficulty) end 
+    if r<0.5 then return HornetEgg:create(node.x, node.y, difficulty) end
+    return Eel:create(node.x,node.y, difficulty)
+  end,
+
+  getCreature = function(obs, node, difficulty)
+    return Grasshopper:create(node.x + 0.1, node.y, difficulty)
   end,
 
   getPowerup = function(obs,node)

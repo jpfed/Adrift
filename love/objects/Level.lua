@@ -424,15 +424,19 @@ Level = {
     for k,v in ipairs(level.nodes) do
       if v.startingSpot then 
         table.insert(level.objects, objects:getStartingSpot(v)) 
-      end
-      if v.warpCrystal then 
-        table.insert(level.objects, objects:getWarpCrystal(v)) 
-      end
-      if v.enemy then 
-        table.insert(level.objects, objects:getEnemy(v, difficulty)) 
-      end
-      if v.powerup then 
-        table.insert(level.objects, objects:getPowerup(v, difficulty)) 
+      else
+        if v.warpCrystal then 
+          table.insert(level.objects, objects:getWarpCrystal(v)) 
+        end
+        if v.enemy then 
+          table.insert(level.objects, objects:getEnemy(v, difficulty)) 
+        end
+        if v.powerup then 
+          table.insert(level.objects, objects:getPowerup(v, difficulty)) 
+        end
+        if math.random() < 0.5 then
+          table.insert(level.objects, objects:getCreature(v, difficulty)) 
+        end
       end
     end
   end,

@@ -33,7 +33,7 @@ state.game = {
     L = Level:create(s.difficulty*10 + s.levelNumber, 1, true)
     s.level = L
     L:solidify()
-    L:generateObjects(s.difficulty*10)
+    L:generateObjects(s.difficulty)
     
     if s.ship == nil then
       s.ship = Ship:create(L.nodes[1].x, L.nodes[1].y, state.options.controlScheme)
@@ -106,12 +106,6 @@ state.game = {
     ) then return end
 
     if tryCollideInteraction( a, b,
-      function(maybeWall) return maybeWall == L.physics end,
-      function(maybeHopper) return AisInstanceOfB(maybeHopper, Grasshopper) end,
-      function(wall, hopper) hopper.touchedWall = true end
-    ) then return end
-
-    if tryCollideInteraction( a, b,
       function(maybeProjectile) return AisInstanceOfB(maybeProjectile,Projectile) end,
       function(maybeDamageable) return AhasAttributeB(maybeDamageable, DamageableObject) end,
       function(projectile, damageable) projectile:strike(damageable) end
@@ -129,6 +123,18 @@ state.game = {
       function(eel, ship) eel:shock(ship) end    
     ) then return end
     
+    if tryCollideInteraction( a, b,
+      function(maybeHopper) return AisInstanceOfB(maybeHopper, Grasshopper) end,
+      function(maybe) return AhasAttributeB(maybe, DamageableObject) end,
+      function(hopper, thing) hopper:jump_off(thing) end
+    ) then return end
+
+    if tryCollideInteraction( a, b,
+      function(maybeHopper) return AisInstanceOfB(maybeHopper, Grasshopper) end,
+      function(maybeWall) return maybeWall == L.physics end,
+      function(hopper, wall) hopper.touchedWall = true end
+    ) then return end
+
     -- let the ship collect things
     if tryCollideInteraction( a, b,
       function(maybeCollectible) return AisInstanceOfB(maybeCollectible,CollectibleObject) end, 

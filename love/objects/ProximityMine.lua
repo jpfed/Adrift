@@ -55,10 +55,10 @@ ProximityMine = {
     s:setParticleLife(2,3)
     s:setRotation(0,360)
     s:setSpread(360)
-    s:setSpeed(v,v+2)
+    s:setSpeed(10,20)
     s:setRadialAcceleration(5,5)
     s:setGravity(10)
-    s:setSize(0.5, 1, 1)
+    s:setSize(1, 2, 1)
     s:setColor(result.smokeColor, result.smokeFadeColor)
     s:start()
 

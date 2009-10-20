@@ -1,7 +1,5 @@
 love.filesystem.require("oo.lua")
 
--- TODO: Change Level refs to state.game.level, or internalize them
-
 Level = {
   margin = 1,
   maxCol = 100,

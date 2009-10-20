@@ -6,6 +6,11 @@ Explosion = {
     
   life = 0,
 
+  touchDamageable = function(self,s) 
+    if not self.dead then
+      d:damage(self.damage)
+    end
+  end,
   
   draw = function(self)
     local x, y, scale = L:xy(self.x, self.y, 0)
@@ -30,11 +35,12 @@ Explosion = {
 
   create = function(self, params)
     local result
-    if params.damaging then
+    if params.damaging and "this doesn't work yet" == false then
       local body = love.physics.newBody(L.world,params.x,params.y,0.01)
-      local shape = love.physics.newCircleShape(body,params.size * 0.01)
+      local shape = love.physics.newCircleShape(body,params.size)
       shape:setSensor(true)
       result = Projectile:create(body, shape)
+      result.damage = params.size
     else
       result = GameObject:create(params.x,params.y)
     end
@@ -42,8 +48,6 @@ Explosion = {
     mixin(result, Explosion)
     result.class = Explosion
     
-    result.damage = result.size
-
     result.fire = love.graphics.newParticleSystem(result.brightImage, 300)
     local f = result.fire
     f:setDirection(0)
@@ -130,7 +134,6 @@ EggExplosion = {
     })
   end
 }
-
 
 DustExplosion = {
   create = function(self, x, y, duration, size)

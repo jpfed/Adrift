@@ -2,6 +2,8 @@ love.filesystem.require("oo.lua")
 love.filesystem.require("objects/composable/SimplePhysicsObject.lua")
 love.filesystem.require("objects/composable/Power.lua")
 love.filesystem.require("objects/ControlSchemes.lua")
+love.filesystem.require("objects/SimpleBullet.lua")
+love.filesystem.require("objects/HomingMissile.lua")
 
 Ship = {
   super = SimplePhysicsObject,
@@ -16,6 +18,7 @@ Ship = {
   gun = nil,
   bulletColor = love.graphics.newColor(0,0,255),
   bulletHighlightColor = love.graphics.newColor(100,100,255,200),
+  missileTrailColor = love.graphics.newColor(220,220,230,220),
   
   
   circColor = love.graphics.newColor(32,64,128),
@@ -47,7 +50,29 @@ Ship = {
     result.controller = ControlSchemes[controlSchemeNumber]
     if result.controller.directional then result.engine.turnRate = 32 end
     
-    result.gun = SimpleGun:create(result, 0.5, 0, 0, 5, Ship.bulletColor, Ship.bulletHighlightColor)
+    result.gun = SimpleGun:create({
+      parent = result,
+      mountX = 0.5,
+      mountY = 0,
+      mountAngle = 0,
+      shotsPerSecond = 4,
+      spawnProjectile = function(self, params)
+        return SimpleBullet:create(self.parent, params, result.bulletColor, result.bulletHighlightColor)
+      end
+    })
+    
+    result.launcher = SimpleGun:create({
+      parent = result,
+      mountX = 0.5,
+      mountY = 0,
+      mountAngle = 0,
+      shotsPerSecond = 0.2,
+      spawnProjectile = function(self, params)
+        -- set target = closest enemy?
+        local target = nil
+        return HomingMissile:create(self.parent, target, params, result.bulletColor, result.missileTrailColor)
+      end
+    })
     
     local s = 0.375
     local pointArray = {1*s,0*s, s*math.cos(math.pi*5/6),s*math.sin(math.pi*5/6), s*math.cos(math.pi*7/6),s*math.sin(math.pi*7/6)}
@@ -154,6 +179,7 @@ Ship = {
   
     if isFiring then self.gun:fire() end
     self.gun:update(dt)
+    self.launcher:update(dt)
   end,
 }
 

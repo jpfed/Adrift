@@ -71,6 +71,8 @@ QuadTree = {
 
   -- TODO: Should probably scrap everything from here down
 
+ZZ
+
   insert = function(self, object)
     if self:overlaps(object) then
       if not self.children then

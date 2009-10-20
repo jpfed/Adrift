@@ -63,9 +63,17 @@ Hornet = {
     
     result.engine = Engine:create(result, Hornet.thrust, 2,8)
     result.thruster = FireThruster:create(result, 180)
-    local shotsPerSecond = math.random()+0.5
-    result.gun = SimpleGun:create(result, pointArray[1], pointArray[2], 0, shotsPerSecond, Hornet.bulletColor, Hornet.bulletHighlightColor)
-    
+    result.gun = SimpleGun:create({
+      parent = result,
+      mountX = pointArray[1],
+      mountY = pointArray[2],
+      mountAngle = 0,
+      shotsPerSecond = math.random()+0.5,
+      spawnProjectile = function(self, params)
+        return SimpleBullet:create(self.parent, params, result.bulletColor, result.bulletHighlightColor)
+      end
+    })
+
     result.strafe = SidestepPower:create(result)
     result.strafe.orientation = math.random(2)*2-3
     result.collisionReaction = math.random(2)*90-135

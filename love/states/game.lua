@@ -89,6 +89,9 @@ state.game = {
     if key==love.key_g then
       table.insert(L.objects, Grasshopper:create(s.ship.x, s.ship.y, state.game.difficulty)) 
     end
+    if key==love.key_m then
+      s.ship.launcher:fire()
+    end
   end,
   
   joystickpressed = function(s,j,b)
@@ -111,7 +114,7 @@ state.game = {
     if tryCollideInteraction( a, b,
       function(maybeProjectile) return AisInstanceOfB(maybeProjectile,Projectile) end,
       function(maybeDamageable) return AhasAttributeB(maybeDamageable, DamageableObject) end,
-      function(projectile, damageable) projectile:strike(damageable) end
+      function(projectile, damageable) projectile:touchDamageable(damageable) end
     ) then return end
     
     if tryCollideInteraction( a, b,

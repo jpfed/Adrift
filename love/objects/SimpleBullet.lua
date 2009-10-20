@@ -6,8 +6,15 @@ SimpleBullet = {
   strikeSound = love.audio.newSound("sound/bulletStrike.ogg"),
   speed = 10,
   radius = 0.075,
-  color = nil,
-  firer = nil,
+  damage = 1,
+  
+  touchDamageable = function(self,d) 
+    if not self.dead then
+      d:damage(self.damage)
+      if self.strikeSound then love.audio.play(self.strikeSound) end
+      self.dead = true
+    end
+  end,
   
   update = function(self, dt)
     SimplePhysicsObject.update(self,dt)

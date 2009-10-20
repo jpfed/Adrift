@@ -11,7 +11,7 @@ HomingMissile = {
   touchDamageable = function(self,d) 
     if not self.dead then
       d:damage(self.damage)
-      L.addObject(FireyExplosion:create(self.x,self.y,60,2.0))
+      L:addObject(FireyExplosion:create(self.x,self.y,60,2.0))
       self.dead = true
     end
   end,

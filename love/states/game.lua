@@ -78,7 +78,10 @@ state.game = {
     if key==love.key_p then state.current = state.pause end
     if key==love.key_v then s.ship.hasCrystal = true end
     if key==love.key_e then
-      table.insert(L.objects, objects:getEnemy(s.ship, difficulty)) 
+      table.insert(L.objects, HornetEgg:create(s.ship.x, s.ship.y, state.game.difficulty)) 
+    end
+    if key==love.key_h then
+      table.insert(L.objects, Hornet:create(s.ship.x, s.ship.y, state.game.difficulty)) 
     end
     if key==love.key_d then
       table.insert(L.objects, Leech:create(s.ship.x, s.ship.y, state.game.difficulty)) 

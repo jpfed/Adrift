@@ -1,5 +1,8 @@
 love.filesystem.require("oo.lua")
 
+
+-- TODO: add an index so we can find a given item in the heap supa-fast?
+
 Heap = {
 
   compareNumbers = function(a,b) return a < b end,
@@ -28,6 +31,7 @@ Heap = {
     table.insert(e, element)
     local index = #(self.elements)
     
+    -- todo: abstract this out into a "bubble upwards" function usable by a "raise" function
     local swapPerformed = true
     while swapPerformed do
       local parentIndex = self:parentIndexOf(index)

@@ -24,9 +24,12 @@ HornetEgg = {
   
   update = function(self, dt)
     self:superUpdate(dt)
-    if self.armor == 1 then
+    if self.armor <= 1 then
       for hCounter = 1,self.numHornets do
-        local h = Hornet:create(self.x + 2*math.random()-1, self.y + 2*math.random()-1, self.difficulty)
+        local dx, dy = 2*math.random()-1, 2*math.random() - 1
+        local ang = math.deg(math.atan2(dy,dx))
+        local h = Hornet:create(self.x + dx, self.y + dy, self.difficulty)
+        h.body:setAngle(ang)
         L:addObject(h)
       end
       self:damage(1)

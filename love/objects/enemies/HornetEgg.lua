@@ -24,12 +24,15 @@ HornetEgg = {
   
   update = function(self, dt)
     self:superUpdate(dt)
-    if self.armor == 1 then
+    if self.armor < self.maxArmor then
       for hCounter = 1,self.numHornets do
-        local h = Hornet:create(self.x + 2*math.random()-1, self.y + 2*math.random()-1, self.difficulty)
+        local dx, dy = 2*math.random()-1, 2*math.random() - 1
+        local ang = math.deg(math.atan2(dy,dx))
+        local h = Hornet:create(self.x + dx, self.y + dy, self.difficulty)
+        h.body:setAngle(ang)
         L:addObject(h)
       end
-      self:damage(1)
+      self:damage(self.armor)
     end
   end,
   
@@ -47,7 +50,7 @@ HornetEgg = {
     local result = SimplePhysicsObject:create(bd,sh)
     result.superUpdate = result.update
     
-    mixin(result, DamageableObject:prepareAttribute(2,nil,HornetEgg.hatchSound, 0))
+    mixin(result, DamageableObject:prepareAttribute(500,nil,HornetEgg.hatchSound, 0))
     
     mixin(result, HornetEgg)
     result.class = HornetEgg

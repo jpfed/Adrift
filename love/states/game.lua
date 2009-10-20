@@ -92,6 +92,9 @@ state.game = {
     if key==love.key_m then
       s.ship.launcher:fire()
     end
+    if key==love.key_n then
+      s.ship.minelayer:fire()
+    end
   end,
   
   joystickpressed = function(s,j,b)
@@ -115,6 +118,12 @@ state.game = {
       function(maybeProjectile) return AisInstanceOfB(maybeProjectile,Projectile) end,
       function(maybeDamageable) return AhasAttributeB(maybeDamageable, DamageableObject) end,
       function(projectile, damageable) projectile:touchDamageable(damageable) end
+    ) then return end
+    
+    if tryCollideInteraction( a, b,
+      function(maybeProxMine) return AisInstanceOfB(maybeProxMine,ProximityMine) end,
+      function(whatever) return whatever ~= nil end,
+      function(prox, thing) prox:explode(thing) end
     ) then return end
     
     if tryCollideInteraction( a, b,

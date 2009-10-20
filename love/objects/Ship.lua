@@ -4,6 +4,7 @@ love.filesystem.require("objects/composable/Power.lua")
 love.filesystem.require("objects/ControlSchemes.lua")
 love.filesystem.require("objects/SimpleBullet.lua")
 love.filesystem.require("objects/HomingMissile.lua")
+love.filesystem.require("objects/ProximityMine.lua")
 
 Ship = {
   super = SimplePhysicsObject,
@@ -68,11 +69,23 @@ Ship = {
       mountAngle = 0,
       shotsPerSecond = 0.2,
       spawnProjectile = function(self, params)
-        -- set target = closest enemy?
+        -- TODO: set target = closest enemy?
         local target = nil
         return HomingMissile:create(self.parent, target, params, result.bulletColor, result.missileTrailColor)
       end
     })
+
+    result.minelayer = SimpleGun:create({
+      parent = result,
+      mountX = -0.7,
+      mountY = 0,
+      mountAngle = 180,
+      shotsPerSecond = 0.2,
+      spawnProjectile = function(self, params)
+        return ProximityMine:create(self.parent, params, result.bulletColor)
+      end
+    })
+    
     
     local s = 0.375
     local pointArray = {1*s,0*s, s*math.cos(math.pi*5/6),s*math.sin(math.pi*5/6), s*math.cos(math.pi*7/6),s*math.sin(math.pi*7/6)}
@@ -180,6 +193,7 @@ Ship = {
     if isFiring then self.gun:fire() end
     self.gun:update(dt)
     self.launcher:update(dt)
+    self.minelayer:update(dt)
   end,
 }
 

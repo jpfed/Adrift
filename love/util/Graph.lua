@@ -11,7 +11,7 @@ Graph = {
   end,
   
   addArc = function(self, tail, head, weight)
-    local a = GraphArc:create(head, tail, weight)
+    local a = GraphArc:create(tail, head, weight)
     table.insert(self.arcs, a)
     table.insert(tail.arcs, a)
     return a
@@ -46,10 +46,7 @@ Graph = {
     
     while openSet:checkTop() ~= nil do
       local current = openSet:removeTop()
-      
       if current == endingNode then 
-        
-        -- woohoo! you found it!
         local path, reversePath = {},{}
         while current ~= nil do
           table.insert(reversePath, current)
@@ -65,7 +62,7 @@ Graph = {
       else
         closedSet[current] = true
         for arcK, arcV in pairs(current.arcs) do
-          if not closedSet[arcV.head] then
+          if closedSet[arcV.head] == nil then
             local nextNode = arcV.head
             local tentativeTravelled = travelled[current] + arcV.weight
             

@@ -63,12 +63,22 @@ Heap = {
   
   removeTop = function(self)
     local result = self.elements[1]
+    self.indices[result] = nil
     
-    local item = table.remove(self.elements)
-    self.elements[1] = item
+    if #(self.elements) > 1 then
+      local item = table.remove(self.elements)
+      self.elements[1] = item
 
-    self:bubbleDown(item, 1)
-    return result
+      self:bubbleDown(item, 1)
+      return result
+    
+    elseif #(self.elements) == 1 then
+      return table.remove(self.elements)
+    
+    else
+      return nil
+    end
+    
   end,
  
   bubbleDown = function(self, item, index)

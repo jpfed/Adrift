@@ -36,6 +36,7 @@ function test_RemoveTop()
   assert(pq:removeTop().priority == 7)
   assert(pq:removeTop().priority == 8)
   assert(pq:removeTop().priority == 9)
+  assert(pq:checkTop() == nil)
 end
 
 function test_PriorityRaised()

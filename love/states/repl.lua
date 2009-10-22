@@ -10,16 +10,12 @@ state.repl = {
 
   keypressed = function(s,key) 
     if key == love.key_return then
-      local validFunc, errorMessage = loadstring("return " .. s.input)
-      if validFunc then
-        local status, value = pcall(validFunc)
-        if status then 
-          logger:add(tostring(value))
-        else
-          logger:add("Evaluation failed: " .. value)
-        end
+      local isValidFunction, value = s:tryExecuting("return " .. s.input)
+      if isValidFunction then
+        logger:add(tostring(value))
       else
-        logger:add("Compilation failed: " .. errorMessage)
+        local isValidProcedure, val = s:tryExecuting(s.input)
+        logger:add(tostring(val))
       end
       s.input = ""
     elseif key == love.key_backspace then
@@ -31,8 +27,24 @@ state.repl = {
       end
       s.input = s.input .. toAdd
     end
+  end,
+  
+  tryExecuting = function(s,input)
+    local validFunc, errorMessage = loadstring(input)
+    if validFunc then
+      local status, value = pcall(validFunc)
+      if status then
+        return true, tostring(value)
+      else
+        return false, "Evaluation failed: " .. value
+      end
+    else
+      return false, "Compilation failed" .. errorMessage
+    end
   end
 }
+
+
 
 state.repl.shiftMap = {}
 local sm = state.repl.shiftMap

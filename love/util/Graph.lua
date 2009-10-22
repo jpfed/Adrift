@@ -17,6 +17,13 @@ Graph = {
     return a
   end,
 
+  addNondirectedArc = function(self, node1, node2, weight)
+    local a = GraphArc:create(node1, node2, weight)
+    table.insert(self.arcs, a)
+    table.insert(node1.arcs, a)
+    table.insert(node2.arcs, a)
+  end,
+  
   create = function(self)
     local result = {nodes = {}, arcs = {}}
     mixin(result, Graph)

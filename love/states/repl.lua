@@ -12,7 +12,12 @@ state.repl = {
     if key == love.key_return then
       local validFunc, errorMessage = loadstring("return " .. s.input)
       if validFunc then
-        logger:add(tostring(validFunc()))
+        local status, value = pcall(validFunc)
+        if status then 
+          logger:add(tostring(value))
+        else
+          logger:add("Evaluation failed: " .. value)
+        end
       else
         logger:add("Compilation failed: " .. errorMessage)
       end

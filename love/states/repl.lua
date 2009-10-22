@@ -1,6 +1,8 @@
 state.repl = {
   start = function(s)
     s.input = ""
+    s.history = {}
+    s.historyCursor = 0
   end,
 
   draw = function(s) 
@@ -17,7 +19,15 @@ state.repl = {
         local isValidProcedure, val = s:tryExecuting(s.input)
         logger:add(tostring(val))
       end
+      table.insert(s.history, s.input)
+      s.historyCursor = #s.history
       s.input = ""
+    elseif key == love.key_up then
+      if s.historyCursor > 0 and s.historyCursor <= #s.history then s.input = s.history[s.historyCursor] end
+      s.historyCursor = math.max(1,s.historyCursor - 1)
+    elseif key == love.key_down then
+      s.historyCursor = math.min(s.historyCursor + 1, #s.history)
+      if s.historyCursor > 0 and s.historyCursor <= #s.history then s.input = s.history[s.historyCursor] end
     elseif key == love.key_backspace then
       s.input = s.input:sub(1, s.input:len() - 1)
     elseif key < 200 then

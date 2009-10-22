@@ -1,4 +1,5 @@
 love.filesystem.require("util/geom.lua")
+love.filesystem.require("util/PriorityQueue.lua")
 love.filesystem.require("oo.lua")
 
 Graph = {
@@ -10,7 +11,7 @@ Graph = {
   end,
   
   addArc = function(self, tail, head, weight)
-    local a = GraphArc:create(head, tail, weight)
+    local a = GraphArc:create(tail, head, weight)
     table.insert(self.arcs, a)
     table.insert(tail.arcs, a)
     return a
@@ -24,9 +25,14 @@ Graph = {
     return result
   end,
   
+  defaultDistanceFunction = function(startingNode, endingNode)
+    return 0
+  end,
+  
   -- distanceFunction(currentNode, endingNode) should be the best estimate we have of how far currentNode is from endingNode
   -- make sure distanceFunction(currentNode) is never greater than the true distance; underestimating is ok
   shortestPath = function(self, startingNode, endingNode, distanceFunction)
+    if distanceFunction == nil then distanceFunction = Graph.defaultDistanceFunction end
     closedSet = {}
     openSetIndex = {}
     openSet = PriorityQueue:create()
@@ -40,28 +46,43 @@ Graph = {
     
     while openSet:checkTop() ~= nil do
       local current = openSet:removeTop()
-      openSetIndex[current] = nil
-      
       if current == endingNode then 
-        -- woohoo! you found it! TODO: Work out the path using blah.previous and then return it
+        local path, reversePath = {},{}
+        while current ~= nil do
+          table.insert(reversePath, current)
+          current = current.previous
+        end
+        
+        for k = #reversePath,1,-1 do
+          table.insert(path, reversePath[k])
+        end
+        
+        return path 
+        
       else
         closedSet[current] = true
         for arcK, arcV in pairs(current.arcs) do
-          if not closedSet[arcV] then
+          if closedSet[arcV.head] == nil then
             local nextNode = arcV.head
             local tentativeTravelled = travelled[current] + arcV.weight
             
-            if openSetIndex[nextNode] == nil then
+            local inOpenSet = openSet:indexOf(nextNode) ~= nil
+            
+            if not inOpenSet then
               travelled[nextNode] = tentativeTravelled
               heuristic[nextNode] = distanceFunction(nextNode, endingNode)
+              
               nextNode.priority = travelled[nextNode] + heuristic[nextNode]
               openSet:insert(nextNode)
-              openSetIndex[nextNode] = true
+              
               nextNode.previous = current
+              
             elseif tentativeTravelled < travelled[nextNode] then
               travelled[nextNode] = tentativeTravelled
+              
               nextNode.priority = travelled[nextNode] + heuristic[nextNode]
-              -- TODO: raise priority of nextNode
+              openSet:priorityRaised(nextNode)
+              
               nextNode.previous = current
             end
           end

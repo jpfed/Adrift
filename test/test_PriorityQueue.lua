@@ -36,6 +36,35 @@ function test_RemoveTop()
   assert(pq:removeTop().priority == 7)
   assert(pq:removeTop().priority == 8)
   assert(pq:removeTop().priority == 9)
+  assert(pq:checkTop() == nil)
+end
+
+function test_PriorityRaised()
+  local pq = PriorityQueue:create()
+  pq:insert({priority = 5})
+  pq:insert({priority = 3})
+  pq:insert({priority = 7})
+  pq:insert({priority = 2})
+  local specialNode = {priority = 9}
+  pq:insert(specialNode)
+  assert(pq:checkTop().priority == 2)
+  specialNode.priority = 1
+  pq:priorityRaised(specialNode)
+  assert(pq:checkTop().priority == 1)
+end
+
+function test_PriorityLowered()
+  local pq = PriorityQueue:create()
+  pq:insert({priority = 5})
+  pq:insert({priority = 3})
+  pq:insert({priority = 7})
+  pq:insert({priority = 2})
+  local specialNode = {priority = 1}
+  pq:insert(specialNode)
+  assert(pq:checkTop().priority == 1)
+  specialNode.priority = 9
+  pq:priorityLowered(specialNode)
+  assert(pq:checkTop().priority == 2)
 end
 
 runTests { useANSI = true }

@@ -2,13 +2,14 @@ love.filesystem.require("oo.lua")
 love.filesystem.require("util/geom.lua")
 
 -- I'm going to attempt a standard quadtree for rectangle storage and 
--- retrieval. I want collision retrieval to be blazing fast, and fast
+-- retrieval. I want overlap retrieval to be blazing fast, and fast
 -- insertion is secondary for now.
 --
 -- It will contain arbitrary objects as long as they have a bounding box...
 -- my arbitrary convention is "p1" for upper left point and "p2" for lower right point
 --
 -- Initial starting point stolen from http://github.com/samuel/lua-quadtree/blob/master/quadtree.lua
+-- but ongoing TDD has invalidated most of that
 
 QuadTree = {
   -- Can init with p1 and p2 as points, or p1 as a box {p1, p2}
@@ -71,17 +72,10 @@ QuadTree = {
 
   -- TODO: Should probably scrap everything from here down
 
-ZZ
-
   insert = function(self, object)
     if self:overlaps(object) then
-      if not self.children then
-        if self:should_subdivide_for(object) then
-          self:subdivide()
-        else
-          table.insert(self.objects, object)
-          return
-        end
+      if not self.children and self:should_subdivide_for(object) then
+        self:subdivide()
       end
       self:check(object, function(quad, x) table.insert(quad.objects, object) end)
     end

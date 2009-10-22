@@ -24,7 +24,7 @@ end
 
 draw = function()
   state.current:draw()
-  
+  if state.repl.active then state.repl:draw() end 
   logger:draw()
 end
 
@@ -33,9 +33,21 @@ mousepressed = function(x, y, button)
 end
 
 keypressed = function(key)
-  if key==love.key_escape then love.system.exit() end
-  if key==love.key_r then love.system.restart() end
-  state.current:keypressed(key)
+  if state.repl.active then
+    if key==love.key_escape or key==love.key_tab then
+      state.repl.active = false
+    else
+      state.repl:keypressed(key)
+    end
+  else
+    if key==love.key_escape then love.system.exit() end
+    if key==love.key_r then love.system.restart() end
+    if key==love.key_tab then
+      state.repl.active = true
+      state.repl:start()
+    end
+    state.current:keypressed(key)
+  end
 end
 
 joystickpressed = function(j,b)

@@ -1,0 +1,4 @@
+LOVE?=love
+LUA?=lua
+RM?=rm -f
+ZIP?=zip -q -r

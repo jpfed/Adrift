@@ -1,16 +1,21 @@
-# This is OSX specific in places (open, etc.) but might be useful?
 NAME=adrift
-LUA=lua
+# one of win,osx,linux
+OS=linux
+include Makefile.$(OS) 
+
 
 #.SILENT:
 
 all: clean tests build run
 
 clean:
-	rm -f $(NAME).love
+	$(RM) $(NAME).love
 
 # Not sure how to make this run over each test_*.lua file because I am 
 # makefile-stupid
+#
+# Also, the lunity output needs to get aggregated for all of them... not sure 
+# how that should go either
 tests:
 	cd test && $(LUA) test_Explosion.lua
 	cd test && $(LUA) test_Geom.lua
@@ -19,8 +24,8 @@ tests:
 	cd test && $(LUA) test_QuadTree.lua
 
 build: clean
-	cd love && zip -q -r ../$(NAME).zip .
+	cd love && $(ZIP) ../$(NAME).zip .
 	mv $(NAME).zip $(NAME).love
 
 run: build
-	open $(NAME).love	
+	$(LOVE) $(NAME).love	

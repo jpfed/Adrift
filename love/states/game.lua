@@ -141,13 +141,13 @@ state.game = {
     if tryCollideInteraction( a, b,
       function(maybeHopper) return AisInstanceOfB(maybeHopper, Grasshopper) end,
       function(maybe) return AhasAttributeB(maybe, DamageableObject) end,
-      function(hopper, thing) hopper:jump_off(thing) end
+      function(hopper, thing) local x, y = c:getPosition(); hopper:jump_off(thing, {x,y}) end
     ) then return end
 
     if tryCollideInteraction( a, b,
       function(maybeHopper) return AisInstanceOfB(maybeHopper, Grasshopper) end,
       function(maybeWall) return maybeWall == L.physics end,
-      function(hopper, wall) hopper.touchedWall = true end
+      function(hopper, wall) local x,y = c:getPosition(); hopper.touchedWall = {x,y} end
     ) then return end
 
     -- let the ship collect things

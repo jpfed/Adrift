@@ -178,8 +178,8 @@ Level = {
   end,
 
   generate = function(level, difficulty)    
-    local enemyProbability = 1-math.exp(-difficulty/10)
-    local powerupProbability = (0.25 + math.exp(-difficulty/20))/2
+    local enemyProbability = 1-math.exp(-difficulty/15)
+    local powerupProbability = (0.25 + math.exp(-difficulty/25))/2
     
     local start = level:createNode(-1000,-1000,1000,-1000)
     start.startingSpot = true
@@ -418,22 +418,34 @@ Level = {
     end
   end,
 
-  generateObjects = function(level, difficulty)
+  generateobjects = function(level, difficulty)
     for k,v in ipairs(level.nodes) do
-      if v.startingSpot then 
-        table.insert(level.objects, objects:getStartingSpot(v)) 
+      if v.startingspot then 
+        table.insert(level.objects, objects:getstartingspot(v)) 
       else
-        if v.warpCrystal then 
-          table.insert(level.objects, objects:getWarpCrystal(v)) 
+        if v.warpcrystal then 
+          table.insert(level.objects, objects:getwarpcrystal(v)) 
         end
         if v.enemy then 
-          table.insert(level.objects, objects:getEnemy(v, difficulty)) 
+          table.insert(level.objects, objects:getenemy(v, difficulty)) 
         end
         if v.powerup then 
-          table.insert(level.objects, objects:getPowerup(v, difficulty)) 
+          table.insert(level.objects, objects:getpowerup(v, difficulty)) 
         end
         if math.random() < 0.5 then
-          table.insert(level.objects, objects:getCreature(v, difficulty)) 
+          table.insert(level.objects, objects:getcreature(v, difficulty)) 
+        end
+      end
+    end
+  end,
+
+  generateDefenders = function(level, difficulty)
+    for k,v in ipairs(level.nodes) do
+      if v.startingspot then 
+        table.insert(level.objects, objects:getenemy(v, difficulty * 2)) 
+      else
+        if math.random() < 0.3 then
+          table.insert(level.objects, objects:getenemy(v, difficulty)) 
         end
       end
     end

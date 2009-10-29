@@ -44,32 +44,39 @@ local opts = {
   
   
   
-  {text = "Normal", x = 500, y = 200, w = 75, h = 20,
+  {text = "Easy", x = 500, y = 200, w = 75, h = 20,
     action = function()
       state.options.difficulty = 1
   end,
   up = 10, down = 8, left = 1, right = 1,
   },
   
-  {text = "Hard", x = 500, y = 250, w = 60, h = 20,
+  {text = "Normal", x = 500, y = 250, w = 60, h = 20,
     action = function() 
       state.options.difficulty = 2
   end,
   up = 7, down = 9, left = 1, right = 1,
   },
   
-  {text = "Insane", x = 500, y = 300, w = 75, h = 20,
+  {text = "Hard", x = 500, y = 300, w = 75, h = 20,
     action = function() 
       state.options.difficulty = 3
   end,
   up = 8, down = 10, left = 1, right = 1,
   },
   
+  {text = "Insane", x = 500, y = 350, w = 75, h = 20,
+    action = function() 
+      state.options.difficulty = 4
+  end,
+  up = 9, down = 11, left = 1, right = 1,
+  },
+
   {text = "Done", x = 500, y = 500, w = 60, h = 20,
     action = function() 
       state.current = state.menu
   end,
-  up = 9, down = 7, left = 1, right = 1,
+  up = 10, down = 7, left = 1, right = 1,
   },
 }
 
@@ -90,5 +97,5 @@ local supplemental = {
 
 state.options = getMenu(opts, supplemental)
 
-state.options.difficulty = 1
+state.options.difficulty = 2
 state.options.controlScheme = 1

@@ -12,6 +12,7 @@ WarpCrystal = {
     if collector == state.game.ship then 
       state.game.score = state.game.score + 10000 
       logger:add("You found the crystal! Return to the warp portal!")
+      L:generateDefenders(state.game.difficulty)
     end
   end,
   

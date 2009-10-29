@@ -1,5 +1,6 @@
 love.filesystem.require("oo.lua")
 love.filesystem.require("objects/composable/SimplePhysicsObject.lua")
+love.filesystem.require("objects/goodies/ProximityMinePowerup.lua")
 
 ProximityMine = {
   super = SimplePhysicsObject,
@@ -7,13 +8,16 @@ ProximityMine = {
   damage = 3,
   smokeColor = love.graphics.newColor(200,200,200,180),
   smokeFadeColor = love.graphics.newColor(128,128,128,0),
-
+  placeSound = love.audio.newSound("sound/proximityMinePlacement.ogg"),
+  explodeSound = love.audio.newSound("sound/proximityMineExplosion.ogg"),
+  
   explode = function(self,d) 
     if not self.dead then
       -- todo: eventually the prox mine shouldn't do direct damage to its trigger-er, it should only damage via its giant explosion
       if AisInstanceOfB(d, DamageableObject) then
         d:damage(self.damage)
       end
+      love.audio.play(self.explodeSound)
       L:addObject(FireyExplosion:create(self.x,self.y,80,3.0))
       self.dead = true
     end
@@ -39,7 +43,7 @@ ProximityMine = {
     vx = vx / 20
     vy = vy / 20
     local v = vx + vy
-    local sbBody = love.physics.newBody(L.world, tipx,tipy,0.01)
+    local sbBody = love.physics.newBody(L.world, tipx,tipy,0.0)
     local sbShape = love.physics.newCircleShape(sbBody, ProximityMine.radius)
     sbBody:setVelocity(vx,vy)
     
@@ -63,6 +67,7 @@ ProximityMine = {
     s:start()
 
     return result
-  end
+  end,
+
   
 }

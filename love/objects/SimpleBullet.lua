@@ -94,6 +94,6 @@ SimpleBullet = {
     s:start()
 
     return result
-  end
-  
+  end,
+
 }

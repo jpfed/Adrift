@@ -9,7 +9,7 @@ load = function()
   love.mouse.setVisible(false)
   love.graphics.setFont(love.default_font)
   state.current = state.menu
-  love.audio.setChannels(4)
+  love.audio.setChannels(8)
   love.audio.setVolume(0.9)
   love.audio.play(sound.bgm[1])
   useJoystick = (love.joystick.getNumJoysticks() > 0)

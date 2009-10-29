@@ -24,6 +24,7 @@ end
 
 draw = function()
   state.current:draw()
+  love.graphics.setColor(255,255,255)
   if state.repl.active then state.repl:draw() end 
   logger:draw()
 end

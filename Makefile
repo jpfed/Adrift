@@ -13,10 +13,12 @@ clean:
 	$(RM) $(NAME).love
 
 tests:
-	cd test && $(LUA) run_console.lua
+	cd test && $(LUA) run.lua
 
 tests_html:
-	cd test && $(LUA) run_html.lua
+	TEST_FORMAT=HTML; cd test && $(LUA) run.lua > ../test_results.html
+	$(BROWSER) test_results.html
+
 
 build: clean
 	cd love && $(ZIP) ../$(NAME).zip .

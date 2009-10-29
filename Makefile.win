@@ -1,5 +1,6 @@
-# This is untested, almost definitely wrong.
+# This is untested, almost definitely wrong, esp for zip.
 LOVE?=love
+BROWSER?=start
 LUA?=lua
 RM?=del
 ZIP?=zip

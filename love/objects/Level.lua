@@ -418,22 +418,22 @@ Level = {
     end
   end,
 
-  generateobjects = function(level, difficulty)
+  generateObjects = function(level, difficulty)
     for k,v in ipairs(level.nodes) do
-      if v.startingspot then 
-        table.insert(level.objects, objects:getstartingspot(v)) 
+      if v.startingSpot then 
+        table.insert(level.objects, objects:getStartingSpot(v)) 
       else
-        if v.warpcrystal then 
-          table.insert(level.objects, objects:getwarpcrystal(v)) 
+        if v.warpCrystal then 
+          table.insert(level.objects, objects:getWarpCrystal(v)) 
         end
         if v.enemy then 
-          table.insert(level.objects, objects:getenemy(v, difficulty)) 
+          table.insert(level.objects, objects:getEnemy(v, difficulty)) 
         end
         if v.powerup then 
-          table.insert(level.objects, objects:getpowerup(v, difficulty)) 
+          table.insert(level.objects, objects:getPowerup(v, difficulty)) 
         end
         if math.random() < 0.5 then
-          table.insert(level.objects, objects:getcreature(v, difficulty)) 
+          table.insert(level.objects, objects:getCreature(v, difficulty)) 
         end
       end
     end
@@ -442,10 +442,10 @@ Level = {
   generateDefenders = function(level, difficulty)
     for k,v in ipairs(level.nodes) do
       if v.startingspot then 
-        table.insert(level.objects, objects:getenemy(v, difficulty * 2)) 
+        table.insert(level.objects, objects:getEnemy(v, difficulty * 2)) 
       else
         if math.random() < 0.3 then
-          table.insert(level.objects, objects:getenemy(v, difficulty)) 
+          table.insert(level.objects, objects:getEnemy(v, difficulty)) 
         end
       end
     end

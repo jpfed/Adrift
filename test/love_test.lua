@@ -16,9 +16,9 @@ local function love_load(path)
   local file = io.open(real_path, "rb")
   if file then
     -- Compile and return the module
-    return assert(loadstring(assert(file:read("*a")), filename))
+    return assert(loadstring(assert(file:read("*a")), real_path))
   end
-  return "no love file '"..filename.."' (checked with love_test loader)"
+  return "no love file '"..path.."' (checked with love_test loader)"
 end
 
 -- Install the loader so that it's called just before the normal Lua loader

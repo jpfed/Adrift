@@ -56,4 +56,3 @@ function test_ShortestPath1()
   assert(#path == 4)
 end
 
-runTests { useANSI = true }

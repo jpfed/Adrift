@@ -35,6 +35,3 @@ function test_SimpleOptimizer()
   assertEqual( #c_no, 0 )
 end
 
-
-runTests { useANSI = true }
-

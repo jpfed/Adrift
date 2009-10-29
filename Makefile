@@ -1,26 +1,25 @@
-# This is OSX specific in places (open, etc.) but might be useful?
 NAME=adrift
-LUA=lua
+# one of win,osx,linux
+OS=linux
+include Makefile.$(OS) 
+
 
 #.SILENT:
 
 all: clean tests build run
 
 clean:
-	rm -f $(NAME).love
+	$(RM) $(NAME).love
 
-# Not sure how to make this run over each test_*.lua file because I am 
-# makefile-stupid
 tests:
-	cd test && $(LUA) test_Explosion.lua
-	cd test && $(LUA) test_Geom.lua
-	cd test && $(LUA) test_Poly.lua
-	cd test && $(LUA) test_Triangle.lua
-	cd test && $(LUA) test_QuadTree.lua
+	cd test && $(LUA) run_console.lua
+
+tests_html:
+	cd test && $(LUA) run_html.lua
 
 build: clean
-	cd love && zip -q -r ../$(NAME).zip .
+	cd love && $(ZIP) ../$(NAME).zip .
 	mv $(NAME).zip $(NAME).love
 
 run: build
-	open $(NAME).love	
+	$(LOVE) $(NAME).love	

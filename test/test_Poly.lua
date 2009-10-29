@@ -55,4 +55,3 @@ function test_UnionRectangles()
   --assertTableEquals( result.points, {{x=0,y=1}...} )
 end
 
-runTests { useANSI = true }

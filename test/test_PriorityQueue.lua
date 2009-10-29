@@ -67,4 +67,3 @@ function test_PriorityLowered()
   assert(pq:checkTop().priority == 2)
 end
 
-runTests { useANSI = true }

@@ -35,14 +35,29 @@ Explosion = {
 
   create = function(self, params)
     local result
-    if params.damaging and "this doesn't work yet" == false then
-      local body = love.physics.newBody(L.world,params.x,params.y,0.01)
-      local shape = love.physics.newCircleShape(body,params.size)
-      shape:setSensor(true)
-      result = Projectile:create(body, shape)
-      result.damage = params.size
-    else
-      result = GameObject:create(params.x,params.y)
+    result = GameObject:create(params.x,params.y)
+    if params.damaging then
+      local sz = params.size
+      local minX, maxX, minY, maxY = params.x - sz, params.x + sz, params.y - sz, params.y + sz
+      for k,v in pairs(L.objects) do
+        if AhasAttributeB(v,DamageableObject) then
+          local x, y = v.x, v.y
+          if minX < x and x < maxX and minY < y and y < maxY then
+            local dx, dy = params.x - x, params.y - y
+            local dist = math.sqrt(dx*dy + dy*dy)
+            local damage = math.floor(math.max(0, math.abs(dist - sz)))
+            v:damage(damage)
+          end
+        end
+      end
+      local v = state.game.ship
+      local x, y = v.x, v.y
+      if minX < x and x < maxX and minY < y and y < maxY then
+        local dx, dy = params.x - x, params.y - y
+        local dist = math.sqrt(dx*dy + dy*dy)
+        local damage = math.floor(math.max(0, math.abs(dist - sz)))
+        v:damage(damage)
+      end
     end
     mixin(result, params)
     mixin(result, Explosion)

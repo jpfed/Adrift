@@ -1,6 +1,7 @@
 NAME=adrift
-# one of win,osx,linux
-OS=linux
+# default to osx, feel free to change your ENV variable or make this actually 
+# detect OS somehow
+OS?=osx
 include Makefile.$(OS) 
 
 

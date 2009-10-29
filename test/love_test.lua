@@ -7,6 +7,8 @@ end
 love = {}
 love.filesystem = {}
 love.graphics = mock()
+L = mock()
+state = mock()
 
 
 -- code originally from http://lua-users.org/wiki/LuaModulesLoader

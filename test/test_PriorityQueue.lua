@@ -1,7 +1,7 @@
 require 'lunity'
 require 'love_test'
 love.filesystem.require("util/PriorityQueue.lua")
-module( 'TEST_PRIORITY_QUEUE', lunity )
+module( 'TEST_PRIORITYQUEUE', lunity )
 
 function test_Create()
   local pq = PriorityQueue:create()

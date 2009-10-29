@@ -9,21 +9,22 @@ load = function()
   love.mouse.setVisible(false)
   love.graphics.setFont(love.default_font)
   state.current = state.menu
-  love.audio.setChannels(4)
+  love.audio.setChannels(8)
   love.audio.setVolume(0.9)
-  love.audio.play(sound.bgm)
+  love.audio.play(sound.bgm[1])
   useJoystick = (love.joystick.getNumJoysticks() > 0)
   if useJoystick then love.joystick.open(0) end
 end
 
 update = function(dt)
-  if not love.audio.isPlaying() then love.audio.play(sound.bgm) end
+  if not love.audio.isPlaying() then sound.bgmIndex = sound.bgmIndex % #sound.bgm + 1; love.audio.play(sound.bgm[sound.bgmIndex]) end
   dt = math.min(dt, 1/15)
   state.current:update(dt)
 end
 
 draw = function()
   state.current:draw()
+  love.graphics.setColor(255,255,255)
   if state.repl.active then state.repl:draw() end 
   logger:draw()
 end

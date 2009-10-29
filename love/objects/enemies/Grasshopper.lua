@@ -9,7 +9,7 @@ Grasshopper = {
   jumpPending = false,
   canJump = true,
   jumpPower = 5,
-  touchedWall = false,
+  touchedWall = nil,
   excited = false,
 
   color = love.graphics.newColor(10,150,30),
@@ -45,21 +45,28 @@ Grasshopper = {
       self.cooldown = self.cooldown - dt
       self.canJump = true
     end
-    if self.touchedWall or self.jumpPending then
-      if self.cooldown <= 0 and self.canJump then
-        self.cooldown = 0
-        self.touchedWall = false
-        self.jumpPending = false
-        self:jump()
-      else
-        self.jumpPending = true
-        self.cooldown = 1
+    if self.touchedWall ~= nil or self.jumpPending then
+      if self.cooldown <= 0 then
+        if self.canJump then
+          self.cooldown = 0
+          
+          self.jumpPending = false
+          self:jump(self.touchedWall)
+          self.touchedWall = nil
+        else
+          self.cooldown = 1
+        end
       end
     end
   end,
 
-  jump = function(self)
-    self.blob.body:setVelocity(math.random(4) - 2, math.random(self.jumpPower/3) - self.jumpPower)
+  jump = function(self, pos)
+    local dx, dy = geom.normalize(self.x - pos[1], self.y - pos[2])
+    dx, dy = geom.normalize(dx+(math.random()-0.5)/2, dy + (math.random()-0.5)/2)
+    dx, dy = self.jumpPower * dx, self.jumpPower * dy
+    
+    
+    self.blob.body:setVelocity(dx, dy)
     if self.excited then
       self.cooldown = 0.1
     else
@@ -68,14 +75,14 @@ Grasshopper = {
     self.canJump = false
   end,
 
-  jump_off = function(self,object)
+  jump_off = function(self,object, pos)
     if not AisInstanceOfB(object, Grasshopper) then
       object:damage(0.1)
     else
       -- grasshopper mating ritual!
     end
     self.excited = true
-    self:jump()
+    self:jump(pos)
   end,
 
   cleanup = function(self)

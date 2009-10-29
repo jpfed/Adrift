@@ -65,6 +65,7 @@ Hornet = {
     result.thruster = FireThruster:create(result, 180)
     result.gun = SimpleGun:create({
       parent = result,
+      ammo = math.huge,
       mountX = pointArray[1],
       mountY = pointArray[2],
       mountAngle = 0,

@@ -25,6 +25,7 @@ DamageableObject = {
       if self.armor > 0 then 
         if self.damageSound ~= nil then love.audio.play(self.damageSound) end
       else
+        self.dead = true
         local explosion 
         if self.class == HornetEgg then
           explosion = EggExplosion:create(self.x,self.y,120,3.0)
@@ -34,7 +35,6 @@ DamageableObject = {
         L:addObject(explosion)
         love.audio.play(self.deathSound)
         state.game.score = state.game.score + self.points
-        self.dead = true
       end
     end
   end

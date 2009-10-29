@@ -29,7 +29,7 @@ MultipleBlobObject = {
   end,
 
   update = function(self,dt)
-    GameObject:update(dt)
+    GameObject.update(self,dt)
     for k,v in pairs(self.blobs) do
       v:update(dt)
     end

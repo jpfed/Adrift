@@ -26,17 +26,20 @@ SimpleGun = {
   
   update = function(self, dt)
     if self.heat == 0 and self.tryFiring then
-      local theta = math.rad(self.parent.angle)
-      local rotatedX, rotatedY = self.mountX * math.cos(theta) - self.mountY * math.sin(theta), self.mountX * math.sin(theta) + self.mountY * math.cos(theta)
-      
-      local p = self:spawnProjectile({
-        x = rotatedX + self.parent.x, 
-        y = rotatedY + self.parent.y,
-        angle = self.parent.angle + self.mountAngle
-      })
-      L:addObject(p)
+      if self.ammo > 0 then
+        local theta = math.rad(self.parent.angle)
+        local rotatedX, rotatedY = self.mountX * math.cos(theta) - self.mountY * math.sin(theta), self.mountX * math.sin(theta) + self.mountY * math.cos(theta)
+        
+        local p = self:spawnProjectile({
+          x = rotatedX + self.parent.x, 
+          y = rotatedY + self.parent.y,
+          angle = self.parent.angle + self.mountAngle
+        })
+        L:addObject(p)
 
-      self.heat = self.heat + 1
+        self.heat = self.heat + 1
+        self.ammo = self.ammo - 1
+      end
     end
     
     self.tryFiring = false

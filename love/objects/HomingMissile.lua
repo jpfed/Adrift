@@ -1,5 +1,6 @@
 love.filesystem.require("oo.lua")
 love.filesystem.require("objects/composable/Projectile.lua")
+love.filesystem.require("objects/composable/Convex.lua")
 
 HomingMissile = {
   super = Projectile,
@@ -7,11 +8,14 @@ HomingMissile = {
   radius = 0.1,
   damage = 2,
   missileFadeColor = love.graphics.newColor(128,128,128,0),
-
+  fireSound = love.audio.newSound("sound/homingMissileFire.ogg"),
+  engineSound = love.audio.newSound("sound/homingMissileEngine.ogg"),
+  explodeSound = love.audio.newSound("sound/homingMissileExplosion.ogg"),
+  engineSoundT = 0,
+  
   touchDamageable = function(self,d) 
     if not self.dead then
       d:damage(self.damage)
-      L:addObject(FireyExplosion:create(self.x,self.y,60,2.0))
       self.dead = true
     end
   end,
@@ -28,6 +32,19 @@ HomingMissile = {
     s:setSpeed(20+speed*2,20+speed*3)
     s:setSize(0.1+speedRatio, 2+speedRatio, 1)
     self.smoke:update(dt)
+    
+    if self.target then
+      local t = self.target
+      local dx, dy = geom.normalize(t.x - self.x, t.y - self.y)
+      self.engine:vector(dx, dy, dt)
+    end
+    
+    self.engineSoundT = math.max(0, self.engineSoundT - dt)
+    if self.engineSoundT == 0 then
+      love.audio.play(self.engineSound)
+      self.engineSoundT = 0.1
+    end
+    
   end,
   
   draw = function(b) 
@@ -37,6 +54,7 @@ HomingMissile = {
     love.graphics.setColorMode(love.color_normal)
     love.graphics.setColor(b.color)
     love.graphics.circle(love.draw_fill,x,y,b.radius*scale,16)
+    b.convex:draw()
   end,
   
   create = function(sb, firer, target, originPoint, color, missileTrailColor)
@@ -47,10 +65,11 @@ HomingMissile = {
     vx = vx + mx
     vy = vy + my
     local v = vx + vy
-    local sbBody = love.physics.newBody(L.world, tipx+mx/120,tipy+my/120,0.01)
+    local sbBody = love.physics.newBody(L.world, tipx+mx/60,tipy+my/60,0.01)
     local sbShape = love.physics.newCircleShape(sbBody, HomingMissile.radius)
     sbBody:setBullet(true)
     sbBody:setVelocity(vx,vy)
+    
     
     local result = Projectile:create(sbBody, sbShape)
     mixin(result, HomingMissile)
@@ -58,9 +77,11 @@ HomingMissile = {
     result.color = color
     result.firer = firer
     result.target = target
-    -- TODO: If target isn't set, what then?
 
+    result.engine = Engine:create(result, 20, 20, 5)
+    
     local orientation = math.atan2(vy,vx)
+    sbBody:setAngle(math.deg(orientation))
     result.smoke = love.graphics.newParticleSystem(love.graphics.newImage("graphics/smoke.png"), 300)
     local s = result.smoke
     s:setEmissionRate(5)
@@ -75,7 +96,16 @@ HomingMissile = {
     s:setColor(missileTrailColor, result.missileFadeColor)
     s:start()
 
+    local sc = HomingMissile.radius*2
+    local points = {1*sc,0*sc,0.25*sc,0.25*sc,-0.25*sc,0.25*sc,-1*sc,0*sc,-0.25*sc,0.25*sc,0.25*sc,0.25*sc}
+    result.convex = Convex:create(result, points, result.color, result.color)
+    
     return result
-  end
+  end,
   
+  cleanup = function(self)
+    love.audio.play(self.explodeSound)
+    L:addObject(FireyExplosion:create(self.x,self.y,60,2.0))
+    if self.super.cleanup then self.super.cleanup(self) end
+  end
 }

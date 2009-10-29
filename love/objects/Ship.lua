@@ -1,4 +1,5 @@
 love.filesystem.require("oo.lua")
+love.filesystem.require("util/geom.lua")
 love.filesystem.require("objects/composable/SimplePhysicsObject.lua")
 love.filesystem.require("objects/composable/Power.lua")
 love.filesystem.require("objects/ControlSchemes.lua")
@@ -16,7 +17,7 @@ Ship = {
   engine = nil,
   controller = nil,
   
-  gun = nil,
+  equipables = nil,
   bulletColor = love.graphics.newColor(0,0,255),
   bulletHighlightColor = love.graphics.newColor(100,100,255,200),
   missileTrailColor = love.graphics.newColor(220,220,230,220),
@@ -26,6 +27,8 @@ Ship = {
   triColor = love.graphics.newColor(64,128,255),
   cryColor = love.graphics.newColor(255,255,255),
   healthColor = love.graphics.newColor(255,255,255),
+  currentWeaponColor = love.graphics.newColor(255,255,255),
+  otherWeaponColor = love.graphics.newColor(255,255,255,64),
   
   hasCrystal = false,
   hasFieldDetector = false,
@@ -51,41 +54,66 @@ Ship = {
     result.controller = ControlSchemes[controlSchemeNumber]
     if result.controller.directional then result.engine.turnRate = 32 end
     
-    result.gun = SimpleGun:create({
+    result.equipables = {}
+    
+    table.insert(result.equipables, SimpleGun:create({
       parent = result,
+      ammo = math.huge,
       mountX = 0.5,
       mountY = 0,
       mountAngle = 0,
       shotsPerSecond = 4,
+      name = "SimpleBullet",
+      icon = love.graphics.newImage("graphics/simpleBulletIcon.png"),
       spawnProjectile = function(self, params)
+        self.ammo = self.ammo + 1
         return SimpleBullet:create(self.parent, params, result.bulletColor, result.bulletHighlightColor)
       end
-    })
+    }))
     
-    result.launcher = SimpleGun:create({
+    table.insert(result.equipables, SimpleGun:create({
       parent = result,
+      ammo = 0,
       mountX = 0.5,
       mountY = 0,
       mountAngle = 0,
-      shotsPerSecond = 0.2,
+      shotsPerSecond = 1,
+      name = "HomingMissile",
+      icon = love.graphics.newImage("graphics/homingMissileIcon.png"),
       spawnProjectile = function(self, params)
-        -- TODO: set target = closest enemy?
-        local target = nil
+        local bestEnemy, bestDistance = nil, math.huge
+        for k, v in pairs(L.objects) do
+          if AhasAttributeB(v, DamageableObject) then
+            local dist = geom.distance_t(self.parent, v)
+            if dist < bestDistance then
+              bestDistance = dist
+              bestEnemy = v
+            end
+          end
+        end
+        
+        love.audio.play(HomingMissile.fireSound)
+        local target = bestEnemy
         return HomingMissile:create(self.parent, target, params, result.bulletColor, result.missileTrailColor)
       end
-    })
+    }))
 
-    result.minelayer = SimpleGun:create({
+    table.insert(result.equipables, SimpleGun:create({
       parent = result,
+      ammo = 0,
       mountX = -0.7,
       mountY = 0,
       mountAngle = 180,
-      shotsPerSecond = 0.2,
+      shotsPerSecond = 1,
+      name = "ProximityMine",
+      icon = love.graphics.newImage("graphics/proximityMineIcon.png"),
       spawnProjectile = function(self, params)
+        love.audio.play(ProximityMine.placeSound)
         return ProximityMine:create(self.parent, params, result.bulletColor)
       end
-    })
+    }))
     
+    result.currentWeapon = 1
     
     local s = 0.375
     local pointArray = {1*s,0*s, s*math.cos(math.pi*5/6),s*math.sin(math.pi*5/6), s*math.cos(math.pi*7/6),s*math.sin(math.pi*7/6)}
@@ -143,6 +171,32 @@ Ship = {
       love.graphics.setColor(self.healthColor)
       love.graphics.rectangle(love.draw_fill,100,590, 700 * self.armor / self.maxArmor,10)
       love.graphics.draw("HP: " .. tostring(self.armor) .. " / " .. tostring(self.maxArmor), 15,598)
+      
+      for k = 1, #(self.equipables) do
+        local x, y = 30*k - 15, 525
+        local e = self.equipables[k]
+        
+        if e.ammo > 0 then
+          local img = e.icon
+          local w, h = img:getWidth(), img:getHeight()
+          love.graphics.draw(img, x+w/2, y+h/2, 0, 25/w)
+          
+          love.graphics.setColor(0,0,0,math.min(255,math.max(64,math.ceil(255/e.shotsPerSecond))))
+          local heat = e.heat
+          love.graphics.rectangle(love.draw_fill, x, y + h*(1-heat), 25, h*heat)
+        end
+        
+        if k == self.currentWeapon then
+          love.graphics.setColor(self.currentWeaponColor)
+        else
+          love.graphics.setColor(self.otherWeaponColor)
+        end
+        local a = self.equipables[k].ammo
+        if a == math.huge then a = "--" end
+        love.graphics.draw(tostring(a),x,y)
+        love.graphics.rectangle(love.draw_line,x,y,25,25)
+      end
+      
     end
   end,
   
@@ -183,17 +237,22 @@ Ship = {
         self.powers.teleport:trigger()
       end
     end
-
+    
     if applyThrust then
       local overallThrust = self.engine:vector(targVx, targVy, dt)
       self.thruster:setIntensity(overallThrust*7.5)
     end
     self.thruster:update(dt)
   
-    if isFiring then self.gun:fire() end
-    self.gun:update(dt)
-    self.launcher:update(dt)
-    self.minelayer:update(dt)
+    if self.equipables[self.currentWeapon].ammo == 0 then self:switchWeapons() end
+    if isFiring then self.equipables[self.currentWeapon]:fire() end
+    for k,v in pairs(self.equipables) do 
+      v:update(dt)
+    end
   end,
+  
+  switchWeapons = function(self)
+    self.currentWeapon = self.currentWeapon % #(self.equipables) + 1
+  end
 }
 

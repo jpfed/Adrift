@@ -83,22 +83,20 @@ state.game = {
     if key==love.key_h then
       table.insert(L.objects, Hornet:create(s.ship.x, s.ship.y, state.game.difficulty)) 
     end
-    if key==love.key_d then
+    if key==love.key_l then
       table.insert(L.objects, Leech:create(s.ship.x, s.ship.y, state.game.difficulty)) 
     end
     if key==love.key_g then
       table.insert(L.objects, Grasshopper:create(s.ship.x, s.ship.y, state.game.difficulty)) 
     end
-    if key==love.key_m then
-      s.ship.launcher:fire()
-    end
-    if key==love.key_n then
-      s.ship.minelayer:fire()
+    if key==love.key_d then
+      s.ship:switchWeapons()
     end
   end,
   
   joystickpressed = function(s,j,b)
     if b == 2 then state.current = state.pause end
+    if b == 3 then s.ship:switchWeapons() end
   end,
   
   collision = function(a,b,c)
@@ -141,13 +139,13 @@ state.game = {
     if tryCollideInteraction( a, b,
       function(maybeHopper) return AisInstanceOfB(maybeHopper, Grasshopper) end,
       function(maybe) return AhasAttributeB(maybe, DamageableObject) end,
-      function(hopper, thing) hopper:jump_off(thing) end
+      function(hopper, thing) local x, y = c:getPosition(); hopper:jump_off(thing, {x,y}) end
     ) then return end
 
     if tryCollideInteraction( a, b,
       function(maybeHopper) return AisInstanceOfB(maybeHopper, Grasshopper) end,
       function(maybeWall) return maybeWall == L.physics end,
-      function(hopper, wall) hopper.touchedWall = true end
+      function(hopper, wall) local x,y = c:getPosition(); hopper.touchedWall = {x,y} end
     ) then return end
 
     -- let the ship collect things

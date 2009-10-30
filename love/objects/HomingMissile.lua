@@ -78,7 +78,7 @@ HomingMissile = {
     result.firer = firer
     result.target = target
 
-    result.engine = Engine:create(result, 20, 20, 5)
+    result.engine = Engine:create(result, 30, 2, 2)
     
     local orientation = math.atan2(vy,vx)
     sbBody:setAngle(math.deg(orientation))

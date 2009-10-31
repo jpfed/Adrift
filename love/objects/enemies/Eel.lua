@@ -80,7 +80,7 @@ Eel = {
       local point = {x = 0, y = 0}
       for x=minX,maxX do
         for y = minY, maxY do
-          if L:solidTileAt(x,y) then
+          if L:solidAt(x,y) then
             point.x, point.y = x, y
             if geom.dist_to_line_t(point, self, state.game.ship) < 2 then
               local rdx, rdy = self.x - x, self.y - y

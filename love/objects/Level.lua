@@ -393,7 +393,9 @@ Level = {
     end
   end,
 
-  solidTileAt = function(level, x, y)
+  solidAt = function(level, x, y)
+    x = math.max(1, math.min(level.maxCol, math.ceil(x)))
+    y = math.max(1, math.min(level.maxRow, math.ceil(y)))
     local tile = level.tiles[x][y] 
     return tile ~= nil and tile ~= 0
   end,

@@ -194,7 +194,7 @@ TeleportPower = {
       
       for x=minX,maxX do
         for y=minY,maxY do
-          found = found or L:solidTileAt(x,y)
+          found = found or L:solidAt(x,y)
         end
       end
       

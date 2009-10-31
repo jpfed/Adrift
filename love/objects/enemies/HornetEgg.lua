@@ -28,7 +28,7 @@ HornetEgg = {
       for hCounter = 1,self.numHornets do
         local dx, dy = 4*math.random()-2, 4*math.random() - 2
         local ang = math.deg(math.atan2(dy,dx))
-        if not L:solidTileAt(math.floor(self.x + dx), math.floor(self.y + dy)) then
+        if not L:solidAt(self.x + dx,self.y + dy) then
           local h = Hornet:create(self.x + dx, self.y + dy, self.difficulty)
           h.body:setAngle(ang)
           L:addObject(h)

@@ -1,9 +1,10 @@
 love.filesystem.require("oo.lua")
+love.filesystem.require("objects/composable/SimplePhysicsObject.lua")
 love.filesystem.require("objects/composable/Projectile.lua")
 love.filesystem.require("objects/composable/Convex.lua")
 
 HomingMissile = {
-  super = Projectile,
+  super = SimplePhysicsObject,
   speed = 5,
   radius = 0.1,
   damage = 2,
@@ -71,7 +72,8 @@ HomingMissile = {
     sbBody:setVelocity(vx,vy)
     
     
-    local result = Projectile:create(sbBody, sbShape)
+    local result = SimplePhysicsObject:create(sbBody, sbShape)
+    mixin(result, Projectile:attribute())
     mixin(result, HomingMissile)
     result.class = HomingMissile
     result.color = color

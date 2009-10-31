@@ -113,7 +113,7 @@ state.game = {
     ) then return end
 
     if tryCollideInteraction( a, b,
-      function(maybeProjectile) return AisInstanceOfB(maybeProjectile,Projectile) end,
+      function(maybeProjectile) return AhasAttributeB(maybeProjectile,Projectile) end,
       function(maybeDamageable) return AhasAttributeB(maybeDamageable, DamageableObject) end,
       function(projectile, damageable) projectile:touchDamageable(damageable) end
     ) then return end
@@ -125,7 +125,7 @@ state.game = {
     ) then return end
     
     if tryCollideInteraction( a, b,
-      function(maybeProjectile) return AisInstanceOfB(maybeProjectile,Projectile) end,
+      function(maybeProjectile) return AhasAttributeB(maybeProjectile,Projectile) end,
       function(whatever) return whatever ~= nil end,
       function(projectile, whatever) projectile.dead = true end
     ) then return end

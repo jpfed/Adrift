@@ -116,7 +116,7 @@ Eel = {
       local bulletX, bulletY, bnorm = 0, 0, 1
       -- TODO: better method of asking level for its projectiles 
       for k,v in pairs(L.objects) do
-        if AisInstanceOfB(v,Projectile) then
+        if AhasAttributeB(v,Projectile) then
           local bx, by = self.x - v.x, self.y - v.y
           local bvx, bvy = v.body:getVelocity()
           

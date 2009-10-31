@@ -1,8 +1,9 @@
 love.filesystem.require("oo.lua")
+love.filesystem.require("objects/composable/SimplePhysicsObject.lua")
 love.filesystem.require("objects/composable/Projectile.lua")
 
 SimpleBullet = {
-  super = Projectile,
+  super = SimplePhysicsObject,
   strikeSound = love.audio.newSound("sound/bulletStrike.ogg"),
   speed = 10,
   radius = 0.075,
@@ -57,7 +58,8 @@ SimpleBullet = {
     sbBody:setVelocity(vx,vy)
     sbShape:setSensor(true)
     
-    local result = Projectile:create(sbBody, sbShape)
+    local result = SimplePhysicsObject:create(sbBody, sbShape)
+    mixin(result, Projectile:attribute())
     mixin(result, SimpleBullet)
     result.class = SimpleBullet
     result.color = color

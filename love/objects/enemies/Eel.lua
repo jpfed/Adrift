@@ -46,7 +46,7 @@ Eel = {
     result.superUpdate = result.update
     result.superCleanup = result.cleanup
     
-    mixin(result,DamageableObject:prepareAttribute(difficulty,nil,Eel.deathSound, 1000))
+    mixin(result,DamageableObject:attribute(difficulty,nil,Eel.deathSound, 1000))
     
     mixin(result,Eel)
     result.class = Eel

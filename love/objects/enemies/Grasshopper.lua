@@ -23,7 +23,7 @@ Grasshopper = {
 
     r.superUpdate = r.update
     r.superCleanup = r.cleanup
-    mixin(r, DamageableObject:prepareAttribute(difficulty,nil,Grasshopper.deathSound,500))
+    mixin(r, DamageableObject:attribute(difficulty,nil,Grasshopper.deathSound,500))
     mixin(r, Grasshopper)
     r.class = Grasshopper
 

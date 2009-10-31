@@ -54,7 +54,7 @@ Hornet = {
     result.superUpdate = result.update
     result.superCleanup = result.cleanup
     
-    mixin(result, DamageableObject:prepareAttribute(difficulty,nil,Hornet.deathSound, 1000))
+    mixin(result, DamageableObject:attribute(difficulty,nil,Hornet.deathSound, 1000))
     
     mixin(result, Hornet)
     result.class = Hornet

@@ -6,7 +6,7 @@ DamageableObject = {
 
   armor = 1,
 
-  prepareAttribute = function(d,hp, damageSound, deathSound, pointsForDestroying)
+  attribute = function(d,hp, damageSound, deathSound, pointsForDestroying)
     local result = {attributes = {}}
     result.attributes[DamageableObject] = true
     

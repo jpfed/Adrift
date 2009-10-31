@@ -44,7 +44,7 @@ Ship = {
     bd:setAngle(0)
     
     local result = SimplePhysicsObject:create(bd,sh); result.superUpdate = result.update
-    mixin(result, DamageableObject:prepareAttribute(20,nil,love.audio.newSound("sound/hornetDeath.ogg"),0))
+    mixin(result, DamageableObject:attribute(20,nil,love.audio.newSound("sound/hornetDeath.ogg"),0))
     mixin(result, Ship)
     result.class = Ship
     

@@ -52,7 +52,7 @@ HornetEgg = {
     local result = SimplePhysicsObject:create(bd,sh)
     result.superUpdate = result.update
     
-    mixin(result, DamageableObject:prepareAttribute(500,nil,HornetEgg.hatchSound, 0))
+    mixin(result, DamageableObject:attribute(500,nil,HornetEgg.hatchSound, 0))
     
     mixin(result, HornetEgg)
     result.class = HornetEgg

@@ -36,7 +36,7 @@ Leech = {
     love.physics.newDistanceJoint( r.part2.body, r.part3.body, 0.95, 0, 1.05, 0 ) 
 
 
-    mixin(r, DamageableObject:prepareAttribute(difficulty,nil,Leech.deathSound,1000))
+    mixin(r, DamageableObject:attribute(difficulty,nil,Leech.deathSound,1000))
     
     return r
   end,

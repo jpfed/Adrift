@@ -45,7 +45,10 @@ HomingMissile = {
       love.audio.play(self.engineSound)
       self.engineSoundT = 0.1
     end
-    
+    local se = self.engine
+    se.thrust = se.thrust + dt*5
+    se.thrustRate = se.thrustRate * (1-dt)
+    se.turnRate = se.turnRate * (1-dt)
   end,
   
   draw = function(b) 
@@ -86,7 +89,7 @@ HomingMissile = {
     local sc = HomingMissile.radius*2
     local points = {1*sc,0*sc,0.25*sc,0.25*sc,-0.25*sc,0.25*sc,-1*sc,0*sc,-0.25*sc,0.25*sc,0.25*sc,0.25*sc}
     result.convex = Convex:create(result, points, result.color, result.color)
-    result.engine = Engine:create(result, 30, 2, 2)
+    result.engine = Engine:create(result, 5, 8, 8)
    
     result.smoke = love.graphics.newParticleSystem(love.graphics.newImage("graphics/smoke.png"), 300)
     local s = result.smoke

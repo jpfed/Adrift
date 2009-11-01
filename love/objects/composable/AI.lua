@@ -10,7 +10,7 @@ Planner = {
     return result
   end,
   
-  addAttitude = function(self, attitude, objectSource, weight, otherParams)
+  addStrategy = function(self, attitude, objectSource, weight, otherParams)
     local toInsert = {attitude = attitude, objectSource = objectSource, weight = weight}
     if otherParams ~= nil then mixin(toInsert, otherParams) end
     table.insert(self.attitudes, toInsert)

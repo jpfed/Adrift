@@ -49,10 +49,10 @@ Eel = {
     result.class = Eel
     
     result.planner = Planner:create(result)
-    result.planner:addAttitude(AI.approach, AI.playerAnticipator, 1)
-    result.planner:addAttitude(AI.flee, AI.nearbyWalls, 0.25)
-    result.planner:addAttitude(AI.dodge, AI.nearbyWalls, 0.75)
-    result.planner:addAttitude(AI.flee, AI.allProjectiles, 2)
+    result.planner:addStrategy(AI.approach, AI.playerAnticipator, 1)
+    result.planner:addStrategy(AI.flee, AI.nearbyWalls, 0.25)
+    result.planner:addStrategy(AI.dodge, AI.nearbyWalls, 0.75)
+    result.planner:addStrategy(AI.flee, AI.allProjectiles, 2)
     
     result.cvx = Convex:create(result, pointArray, self.lineColor, self.fillColor)
     result.engine = Engine:create(result, result.thrust, 2, 8)

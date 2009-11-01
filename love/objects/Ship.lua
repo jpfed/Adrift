@@ -43,7 +43,7 @@ Ship = {
     sh:setRestitution(0.125)
     bd:setAngle(0)
     
-    local result = SimplePhysicsObject:create(bd,sh); result.superUpdate = result.update
+    local result = SimplePhysicsObject:create(bd,sh)
     mixin(result, DamageableObject:attribute(20,nil,love.audio.newSound("sound/hornetDeath.ogg"),0))
     mixin(result, Ship)
     result.class = Ship
@@ -201,7 +201,7 @@ Ship = {
   end,
   
   update = function(self, dt)
-    self:superUpdate(dt)
+    SimplePhysicsObject.update(self,dt)
 
     for k,power in pairs(self.powers) do
       power:update(dt)

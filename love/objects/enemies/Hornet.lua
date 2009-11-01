@@ -51,8 +51,6 @@ Hornet = {
     sh:setRestitution(0.5)
     
     local result = SimplePhysicsObject:create(bd,sh)
-    result.superUpdate = result.update
-    result.superCleanup = result.cleanup
     
     mixin(result, DamageableObject:attribute(difficulty,nil,Hornet.deathSound, 1000))
     
@@ -83,7 +81,7 @@ Hornet = {
   end,
   
   update = function(self, dt)
-    self.superUpdate(self, dt)
+    SimplePhysicsObject.update(self, dt)
     
     -- go for the main character unless 
     --   you are recovering from a collision or
@@ -140,7 +138,8 @@ Hornet = {
   end,
   
   cleanup = function(self)
-    self:superCleanup()
+    SimplePhysicsObject.cleanup(self)
+    self.cvx:cleanup()
     if math.random() < 0.25 then L:addObject(EnergyPowerup:create(self)) end
   end
   

@@ -43,8 +43,6 @@ Eel = {
     local sh = love.physics.newPolygonShape(bd,unpack(pointArray))
     
     local result = SimplePhysicsObject:create(bd, sh)
-    result.superUpdate = result.update
-    result.superCleanup = result.cleanup
     
     mixin(result,DamageableObject:attribute(difficulty,nil,Eel.deathSound, 1000))
     
@@ -59,7 +57,7 @@ Eel = {
   end,
   
   update = function(self, dt)
-    self.superUpdate(self, dt)
+    SimplePhysicsObject.update(self, dt)
     if self.actionClock == 0 or self.action == nil then
       -- go for the main character
       local attraction = 1
@@ -171,7 +169,8 @@ Eel = {
   end,
   
   cleanup = function(self)
-    self:superCleanup()
+    SimplePhysicsObject.cleanup(self)
+    self.cvx:cleanup()
     if math.random() < 0.25 then L:addObject(EnergyPowerup:create(self)) end
   end
 }

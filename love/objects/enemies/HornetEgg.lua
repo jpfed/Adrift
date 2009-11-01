@@ -23,7 +23,7 @@ HornetEgg = {
   end,
   
   update = function(self, dt)
-    self:superUpdate(dt)
+    SimplePhysicsObject.update(self,dt)
     if self.armor < self.maxArmor then
       for hCounter = 1,self.numHornets do
         local dx, dy = 4*math.random()-2, 4*math.random() - 2
@@ -50,8 +50,7 @@ HornetEgg = {
     sh:setRestitution(0)
     
     local result = SimplePhysicsObject:create(bd,sh)
-    result.superUpdate = result.update
-    
+
     mixin(result, DamageableObject:attribute(500,nil,HornetEgg.hatchSound, 0))
     
     mixin(result, HornetEgg)

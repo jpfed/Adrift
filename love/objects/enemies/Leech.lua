@@ -14,7 +14,6 @@ Leech = {
   create = function(self, x, y, difficulty)
     local r = MultipleBlobObject:create(x,y)
 
-    r.superCleanup = r.cleanup
     mixin(r, Leech)
     r.class = Leech
 
@@ -42,7 +41,7 @@ Leech = {
   end,
   
   cleanup = function(self)
-    self:superCleanup()
+    MultipleBlobObject.cleanup(self)
     if math.random() < 0.25 then L:addObject(EnergyPowerup:create(self)) end
   end
 }

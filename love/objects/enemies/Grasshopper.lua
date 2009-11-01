@@ -21,8 +21,6 @@ Grasshopper = {
   create = function(self, x, y, difficulty)
     local r = MultipleBlobObject:create(x,y)
 
-    r.superUpdate = r.update
-    r.superCleanup = r.cleanup
     mixin(r, DamageableObject:attribute(difficulty,nil,Grasshopper.deathSound,500))
     mixin(r, Grasshopper)
     r.class = Grasshopper
@@ -40,7 +38,7 @@ Grasshopper = {
   end,
   
   update = function(self, dt)
-    self:superUpdate(dt)
+    MultipleBlobObject.update(self,dt)
     if self.cooldown > 0 then
       self.cooldown = self.cooldown - dt
       self.canJump = true
@@ -86,7 +84,7 @@ Grasshopper = {
   end,
 
   cleanup = function(self)
-    self:superCleanup()
+    MultipleBlobObject.cleanup(self)
     if math.random() < 0.25 then L:addObject(EnergyPowerup:create(self)) end
   end
 }

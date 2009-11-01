@@ -147,7 +147,7 @@ TeleportPower = {
   sound = love.audio.newSound("sound/teleport.ogg"),
 
   shipUpdate = function(self, dt)
-    self:superUpdate(dt)
+    SimplePhysicsObject.update(self,dt)
     self.powers.teleport:update(dt)
   end,
 

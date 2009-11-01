@@ -1,26 +1,17 @@
 love.filesystem.require("oo.lua")
-love.filesystem.require("objects/composable/SimplePhysicsObject.lua")
 
 CollectibleObject = {
-  super = SimplePhysicsObject,
-  sound = {},
-  
-  
-  create = function(self,bod,shp,snd,effectFunc)
-    local result = SimplePhysicsObject:create(bod,shp)
+   
+  attribute = function(self,snd,effectFunc)
+    local result = {attributes = {}, sound = snd, collectEffect = effectFunc}
+    result.attributes[CollectibleObject] = true
     mixin(result,CollectibleObject)
-    result.class = CollectibleObject
-    result.sound = snd
-    result.effect = effectFunc
     return result
   end,
-  
-  effect = function(self) end,
-  
+    
   collected = function(self, collector)
     love.audio.play(self.sound)
-    self:effect(collector)
-    self.dead = true
+    self:collectEffect(collector)
   end
   
 }

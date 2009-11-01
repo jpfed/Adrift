@@ -150,7 +150,7 @@ state.game = {
 
     -- let the ship collect things
     if tryCollideInteraction( a, b,
-      function(maybeCollectible) return AisInstanceOfB(maybeCollectible,CollectibleObject) end, 
+      function(maybeCollectible) return AhasAttributeB(maybeCollectible,CollectibleObject) end, 
       function(maybeShip) return AisInstanceOfB(maybeShip, Ship) end, 
       function(collectible, ship) collectible:collected(ship) end
     ) then return end

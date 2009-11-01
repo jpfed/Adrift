@@ -1,8 +1,9 @@
 love.filesystem.require("oo.lua")
+love.filesystem.require("objects/composable/SimplePhysicsObject.lua")
 love.filesystem.require("objects/composable/CollectibleObject.lua")
 
 TeleportPowerup = {
-  super = CollectibleObject,
+  super = SimplePhysicsObject,
   
   timer = 0, 
   
@@ -21,10 +22,11 @@ TeleportPowerup = {
       state.game.score = state.game.score + 1000 
       logger:add("Teleport Powerup collected! Press mod-back to activate!")
     end
+    self.dead = true
   end,
   
   update = function(self, dt)
-    self:superUpdate(dt)
+    SimplePhysicsObject.update(self,dt)
     self.timer = self.timer + dt
   end,
   
@@ -38,8 +40,8 @@ TeleportPowerup = {
   create = function(self,node)
     local tpBody = love.physics.newBody(L.world,node.x,node.y,0.25)
     local tpShape = love.physics.newRectangleShape(tpBody,1,1)
-    local result = CollectibleObject:create(tpBody, tpShape, TeleportPowerup.sound, TeleportPowerup.effect)
-    result.superUpdate = result.update
+    local result = SimplePhysicsObject:create(tpBody, tpShape)
+    mixin(result, CollectibleObject:attribute(TeleportPowerup.sound, TeleportPowerup.effect))
     mixin(result, TeleportPowerup)
     result.class = TeleportPowerup
     return result

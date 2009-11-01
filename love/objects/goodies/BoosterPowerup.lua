@@ -1,8 +1,9 @@
 love.filesystem.require("oo.lua")
+love.filesystem.require("objects/composable/SimplePhysicsObject.lua")
 love.filesystem.require("objects/composable/CollectibleObject.lua")
 
 BoosterPowerup = {
-  super = CollectibleObject,
+  super = SimplePhysicsObject,
   
   timer = 0, 
   
@@ -25,10 +26,11 @@ BoosterPowerup = {
       state.game.score = state.game.score + 1000 
       logger:add("Enhanced Booster collected! Press mod-forward to activate!")
     end
+    self.dead = true
   end,
   
   update = function(self, dt)
-    self:superUpdate(dt)
+    SimplePhysicsObject.update(self, dt)
     self.timer = self.timer + dt
   end,
   
@@ -42,8 +44,8 @@ BoosterPowerup = {
   create = function(self,node)
     local bBody = love.physics.newBody(L.world,node.x,node.y,0.25)
     local bShape = love.physics.newRectangleShape(bBody,1,1)
-    local result = CollectibleObject:create(bBody, bShape, BoosterPowerup.sound, BoosterPowerup.effect)
-    result.superUpdate = result.update
+    local result = SimplePhysicsObject:create(bBody, bShape)
+    mixin(result, CollectibleObject:attribute(BoosterPowerup.sound, BoosterPowerup.effect))
     mixin(result, BoosterPowerup)
     result.class = BoosterPowerup
     return result

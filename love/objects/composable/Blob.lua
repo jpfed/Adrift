@@ -63,6 +63,7 @@ Blob = {
     GameObject.cleanup(self)
     if self.shapes then
       for i,shape in ipairs(self.shapes) do
+        shape:setSensor(true)
         shape:setData(nil)
         shape:destroy()
         shape = nil

@@ -11,8 +11,10 @@ SimplePhysicsObject = {
     mixin(result,SimplePhysicsObject)
     result.class = SimplePhysicsObject
     result.body = bod
-    result.shape = shp
-    result.shape:setData(result)
+    if shp ~= nil then
+      result.shape = shp
+      result.shape:setData(result)
+    end
     return result 
   end,
   
@@ -26,9 +28,12 @@ SimplePhysicsObject = {
   
   cleanup = function(self)
     GameObject.cleanup(self)
-    self.shape:setData(nil)
-    self.shape:destroy()
-    self.shape = nil
+    if self.shape ~= nil then
+      self.shape:setSensor(true)
+      self.shape:setData(nil)
+      self.shape:destroy()
+      self.shape = nil
+    end
     self.body:destroy()
     self.body = nil
   end

@@ -60,6 +60,12 @@ Convex = {
     self.pointArray = nil
     self._rotatedPoints = nil
     self._projectedPoints = nil
+    if self.shape ~= nil then
+      self.shape:setSensor(true)
+      self.shape:setData(nil)
+      self.shape:destroy()
+      self.shape = nil
+    end
   end
   
 }

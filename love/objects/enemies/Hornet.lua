@@ -47,13 +47,9 @@ Hornet = {
     
     local s = 0.2
     local pointArray = {2*s,0*s,-1*s,1*s,-1*s,-1*s}
-    local sh = love.physics.newPolygonShape(bd,unpack(pointArray))
-    sh:setRestitution(0.5)
     
-    local result = SimplePhysicsObject:create(bd,sh)
-    
+    local result = SimplePhysicsObject:create(bd)
     mixin(result, DamageableObject:attribute(difficulty,nil,Hornet.deathSound, 1000))
-    
     mixin(result, Hornet)
     result.class = Hornet
     
@@ -138,8 +134,8 @@ Hornet = {
   end,
   
   cleanup = function(self)
-    SimplePhysicsObject.cleanup(self)
     self.cvx:cleanup()
+    SimplePhysicsObject.cleanup(self)
     if math.random() < 0.25 then L:addObject(EnergyPowerup:create(self)) end
   end
   

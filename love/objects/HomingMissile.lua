@@ -59,6 +59,8 @@ HomingMissile = {
   end,
   
   create = function(sb, firer, target, originPoint, color, missileTrailColor)
+    local result = {}
+    
     local theta = math.rad(originPoint.angle)
     local tipx,tipy = originPoint.x, originPoint.y
     local vx,vy = firer.body:getVelocity()
@@ -66,13 +68,14 @@ HomingMissile = {
     vx = vx + mx
     vy = vy + my
     local v = vx + vy
-    local sbBody = love.physics.newBody(L.world, tipx+mx/60,tipy+my/60,0.01)
-    local sbShape = love.physics.newCircleShape(sbBody, HomingMissile.radius)
-    sbBody:setBullet(true)
-    sbBody:setVelocity(vx,vy)
+    result.body = love.physics.newBody(L.world, tipx+mx/60,tipy+my/60,0.01)
+    local orientation = math.atan2(vy,vx)
+    result.body:setAngle(math.deg(orientation))
     
+    result.body:setBullet(true)
+    result.body:setVelocity(vx,vy)
     
-    local result = SimplePhysicsObject:create(sbBody, sbShape)
+    mixin(result, SimplePhysicsObject:create(result.body))
     mixin(result, Projectile:attribute())
     mixin(result, HomingMissile)
     result.class = HomingMissile
@@ -80,10 +83,11 @@ HomingMissile = {
     result.firer = firer
     result.target = target
 
+    local sc = HomingMissile.radius*2
+    local points = {1*sc,0*sc,0.25*sc,0.25*sc,-0.25*sc,0.25*sc,-1*sc,0*sc,-0.25*sc,0.25*sc,0.25*sc,0.25*sc}
+    result.convex = Convex:create(result, points, result.color, result.color)
     result.engine = Engine:create(result, 30, 2, 2)
-    
-    local orientation = math.atan2(vy,vx)
-    sbBody:setAngle(math.deg(orientation))
+   
     result.smoke = love.graphics.newParticleSystem(love.graphics.newImage("graphics/smoke.png"), 300)
     local s = result.smoke
     s:setEmissionRate(5)
@@ -98,14 +102,13 @@ HomingMissile = {
     s:setColor(missileTrailColor, result.missileFadeColor)
     s:start()
 
-    local sc = HomingMissile.radius*2
-    local points = {1*sc,0*sc,0.25*sc,0.25*sc,-0.25*sc,0.25*sc,-1*sc,0*sc,-0.25*sc,0.25*sc,0.25*sc,0.25*sc}
-    result.convex = Convex:create(result, points, result.color, result.color)
+    
     
     return result
   end,
   
   cleanup = function(self)
+    self.convex:cleanup()
     love.audio.play(self.explodeSound)
     L:addObject(FireyExplosion:create(self.x,self.y,60,2.0))
     if self.super.cleanup then self.super.cleanup(self) end

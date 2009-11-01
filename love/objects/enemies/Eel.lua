@@ -39,10 +39,8 @@ Eel = {
     
     local s = 0.15
     local pointArray = {2*s,0*s, 1*s,1*s, -1*s,1*s, -2*s,0*s, -1*s,-1*s, 1*s,-1*s}
-    
-    local sh = love.physics.newPolygonShape(bd,unpack(pointArray))
-    
-    local result = SimplePhysicsObject:create(bd, sh)
+ 
+    local result = SimplePhysicsObject:create(bd)
     
     mixin(result,DamageableObject:attribute(difficulty,nil,Eel.deathSound, 1000))
     
@@ -169,8 +167,8 @@ Eel = {
   end,
   
   cleanup = function(self)
-    SimplePhysicsObject.cleanup(self)
     self.cvx:cleanup()
+    SimplePhysicsObject.cleanup(self)
     if math.random() < 0.25 then L:addObject(EnergyPowerup:create(self)) end
   end
 }

@@ -41,7 +41,7 @@ AI = {
   -- approach the closest of the relevant objects
   tag = function(self, planner, mx, my)
     local closestObject, closestDistance = nil, math.huge
-    local parent = self.parent
+    local parent = planner.parent
     local objects = self:objectSource(parent)
     for k, v in pairs(objects) do
       local dist = geom.distance_t(parent, v)

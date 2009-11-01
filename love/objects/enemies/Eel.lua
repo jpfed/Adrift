@@ -5,7 +5,7 @@ love.filesystem.require("objects/composable/Convex.lua")
 love.filesystem.require("objects/composable/Thruster.lua")
 love.filesystem.require("objects/composable/Projectile.lua")
 love.filesystem.require("objects/goodies/EnergyPowerup.lua")
-love.filesystem.require("objects/composable/Planner.lua")
+love.filesystem.require("objects/composable/AI.lua")
 
 Eel = {
   super = SimplePhysicsObject,

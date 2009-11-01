@@ -18,10 +18,6 @@ GameObject = {
   
   draw = function(self) end,
   update = function(self, dt) end,
-  cleanup = function(self)
-    for k,v in pairs(self) do
-      if v.cleanup ~= nil then v:cleanup() end
-    end
-  end,
+  cleanup = function(self) end,
   
 }

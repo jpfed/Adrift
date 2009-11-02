@@ -60,9 +60,10 @@ Turret = {
   update = function(self, dt)
     SimplePhysicsObject.update(self, dt)
     local dist = geom.distance_t(self, state.game.ship)
-    if dist < 10 then
+    if dist <= 30 then
       self.gun:fire()
     end
+    self.gun:update(dt)
   end,
   
   draw = function(self)

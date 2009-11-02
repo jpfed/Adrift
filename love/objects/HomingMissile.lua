@@ -87,7 +87,7 @@ HomingMissile = {
     result.target = target
 
     local sc = HomingMissile.radius*2
-    local points = {1*sc,0*sc,0.25*sc,0.25*sc,-0.25*sc,0.25*sc,-1*sc,0*sc,-0.25*sc,0.25*sc,0.25*sc,0.25*sc}
+    local points = {1*sc,0*sc,0.25*sc,0.25*sc,-0.25*sc,0.25*sc,-1*sc,0*sc,-0.25*sc,-0.25*sc,0.25*sc,-0.25*sc}
     result.convex = Convex:create(result, points, result.color, result.color)
     result.engine = Engine:create(result, 5, 8, 8)
    

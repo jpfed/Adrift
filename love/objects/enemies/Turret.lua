@@ -23,7 +23,7 @@ Turret = {
     bd:setDamping(0.01)
     bd:setAngularDamping(0.01)
     bd:setAllowSleep(false)
-    bd:setAngle(0)
+    bd:setAngle(180)
     
     local result = SimplePhysicsObject:create(bd)
     
@@ -33,7 +33,7 @@ Turret = {
     result.class = Turret
     
     
-    local s = 0.5
+    local s = 0.4
     local pointArray = {2*s,0*s, 2*s,2*s, 0*s,3*s, -2*s,2*s, -2*s,-0*s}
  
     result.cvx = Convex:create(result, pointArray, self.lineColor, self.fillColor)
@@ -42,12 +42,12 @@ Turret = {
     result.gun = SimpleGun:create({
       parent = result,
       ammo = 100,
-      mountX = 0.5,
-      mountY = 0,
-      mountAngle = 0,
+      mountX = 0,
+      mountY = 3.2*s,
+      mountAngle = math.pi/2,
       shotsPerSecond = 0.5,
       spawnProjectile = function(self, params)
-        -- TODO: set self.mountAngle to a sensible angle
+        -- TODO: set self.mountAngle to a sensible angle?
         love.audio.play(HomingMissile.fireSound)
         local target = state.game.ship
         return HomingMissile:create(self.parent, target, params, result.bulletColor, result.missileTrailColor)

@@ -83,6 +83,9 @@ state.game = {
     if key==love.key_h then
       table.insert(L.objects, Hornet:create(s.ship.x, s.ship.y, state.game.difficulty)) 
     end
+    if key==love.key_t then
+      table.insert(L.objects, Turret:create(s.ship.x, s.ship.y+1, state.game.difficulty)) 
+    end
     if key==love.key_l then
       table.insert(L.objects, Leech:create(s.ship.x, s.ship.y, state.game.difficulty)) 
     end

@@ -30,8 +30,8 @@ HomingMissile = {
     local s = self.smoke
     s:setDirection(math.deg(orientation) - 180)
     s:setRotation(orientation + math.pi / 2)
-    s:setSpeed(20+speed*2,20+speed*3)
-    s:setSize(0.1+speedRatio, 2+speedRatio, 1)
+    s:setSpeed(20+speed*2,20+speed*4)
+    s:setSize(0.1+speedRatio, 0.5+speedRatio, 1)
     self.smoke:update(dt)
     
     if self.target then
@@ -57,7 +57,6 @@ HomingMissile = {
     love.graphics.draw(b.smoke,x,y)
     love.graphics.setColorMode(love.color_normal)
     love.graphics.setColor(b.color)
-    love.graphics.circle(love.draw_fill,x,y,b.radius*scale,16)
     b.convex:draw()
   end,
   

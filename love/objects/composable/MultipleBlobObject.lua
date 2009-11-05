@@ -14,10 +14,6 @@ MultipleBlobObject = {
     return result 
   end,
 
-  respawn = function(self, p)
-    -- TODO
-  end,
-
   addConvexBlob = function(self,bodyParams,shapeParams)
     local b = Blob:create(self,bodyParams)
     b:addConvexShape(shapeParams)

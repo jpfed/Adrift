@@ -10,23 +10,29 @@ CollectorObject = {
   end,
     
   inventoryAdd = function(self, thing)
-    self.inventory[thing] = thing
-    L:removeObject(thing)
+    local inv = self.inventory
+    local cls = thing.class
+    if inv[cls] == nil then
+      inv[cls] = 1
+    else
+      inv[cls] = inv[cls] + 1
+    end
   end,
 
   inventoryDrop = function(self, thing)
-    self.inventory[thing] = nil
-    -- Not sure how to move the stored object to the right coords
-    -- Or, for that matter, how to stop the dropper from immediately picking 
-    -- it back up
-    thing.spawnAt(self)
-    L:addObject(thing)
+    if self.inventory[thing] > 0 then 
+      self.inventory[thing] = self.inventory[thing] - 1
+      L:addObject(thing:create(self))
+    end
   end,
 
   inventoryDropAll = function(self)
-    for k,v in ipairs(self.inventory) do
-      self:inventoryDrop(v)
+    for itemClass,itemCount in pairs(self.inventory) do
+      for k = 1, itemCount do
+          self:inventoryDrop(itemClass)
+      end
     end
+    self.inventory = {}
   end
 
 }

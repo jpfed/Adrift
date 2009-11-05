@@ -86,6 +86,7 @@ Grasshopper = {
 
   cleanup = function(self)
     MultipleBlobObject.cleanup(self)
+    self:inventoryDropAll()
     if math.random() < 0.25 then L:addObject(EnergyPowerup:create(self)) end
   end
 }

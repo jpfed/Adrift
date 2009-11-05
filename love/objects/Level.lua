@@ -437,6 +437,10 @@ Level = {
         if math.random() < 0.5 then
           table.insert(level.objects, objects:getCreature(v, difficulty)) 
         end
+        local minerals = math.random(1,4)
+        for i=0,minerals do
+          table.insert(level.objects, MineralChunk:create(v)) 
+        end
       end
     end
   end,

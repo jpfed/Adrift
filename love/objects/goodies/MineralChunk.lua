@@ -15,6 +15,7 @@ MineralChunk = {
   
   effect = function(self, collector) 
     -- no special effect yet
+    self.dead = true
   end,
   
   create = function(self,point)

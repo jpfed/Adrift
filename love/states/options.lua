@@ -74,6 +74,9 @@ local opts = {
 
   {text = "Done", x = 500, y = 500, w = 60, h = 20,
     action = function() 
+      
+      state.options:save()
+      
       state.current = state.menu
   end,
   up = 10, down = 7, left = 1, right = 1,
@@ -97,5 +100,23 @@ local supplemental = {
 
 state.options = getMenu(opts, supplemental)
 
-state.options.difficulty = 2
-state.options.controlScheme = 1
+if state.options.difficulty == nil then state.options.difficulty = 2 end
+if state.options.controlScheme == nil then state.options.controlScheme = 1 end
+
+state.options.save = function(self)
+  local savePath = "options"
+  local diff = "state.options.difficulty = " .. tostring(self.difficulty) .. "\n"
+  local ctrl = "state.options.controlScheme = " .. tostring(self.controlScheme) .. "\n"
+  
+  local saveFile = love.filesystem.newFile(savePath, love.file_write)
+  love.filesystem.open(saveFile)
+  love.filesystem.write(saveFile, diff)
+  love.filesystem.write(saveFile, ctrl)
+  love.filesystem.close(saveFile)
+end
+
+state.options.load = function(self)
+  local savePath = "options"
+  if love.filesystem.exists(savePath) then love.filesystem.include(savePath) end
+end
+

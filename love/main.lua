@@ -6,6 +6,9 @@ load = function()
   love.filesystem.require("objects/Level.lua")
   love.filesystem.require("sound/sound.lua")
   love.filesystem.require("states/states.lua")
+  
+  state.options:load()
+  
   love.mouse.setVisible(false)
   love.graphics.setFont(love.default_font)
   state.current = state.menu

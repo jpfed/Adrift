@@ -21,7 +21,7 @@ MineralChunk = {
   create = function(self,point)
     local r = MultipleBlobObject:create(point.x,point.y)
 
-    --mixin(r, CollectibleObject:attribute(self.sound, self.effect))
+    mixin(r, CollectibleObject:attribute(self.sound, self.effect))
     mixin(r, MineralChunk)
     r.class = MineralChunk
 

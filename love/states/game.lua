@@ -2,6 +2,7 @@ love.filesystem.require("oo.lua")
 love.filesystem.require("objects/composable/DamageableObject.lua")
 love.filesystem.require("objects/composable/CollectibleObject.lua")
 love.filesystem.require("objects/goodies/WarpPortal.lua")
+love.filesystem.require("objects/goodies/MineralChunk.lua")
 
 state.game = {
   
@@ -151,11 +152,14 @@ state.game = {
       function(hopper, wall) local x,y = c:getPosition(); hopper.touchedWall = {x,y} end
     ) then return end
 
-    -- let the ship collect things
+    -- let collectors collect things
     if tryCollideInteraction( a, b,
-      function(maybeCollectible) return AhasAttributeB(maybeCollectible,CollectibleObject) end, 
-      function(maybeShip) return AisInstanceOfB(maybeShip, Ship) end, 
-      function(collectible, ship) collectible:collected(ship) end
+      function(x) return AhasAttributeB(x, CollectibleObject) end, 
+      function(x) return AhasAttributeB(x, CollectorObject) end, 
+      function(collectible, hobo)
+        collectible:collected(hobo)
+        hobo:inventoryAdd(collectible)
+      end
     ) then return end
     
     -- check if they just finished the level

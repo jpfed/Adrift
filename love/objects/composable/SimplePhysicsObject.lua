@@ -18,6 +18,14 @@ SimplePhysicsObject = {
     return result 
   end,
   
+  respawnAt = function(self, p)
+    self.dead = false
+    self.body = self:createBody(p)
+    self.shape = self:createShape(self.body)
+    self.shape:setData(self)
+    return self
+  end,
+
   update = function(self,dt)
     GameObject.update(self,dt)
     self.body:setSleep(false)

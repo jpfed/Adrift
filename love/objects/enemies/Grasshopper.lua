@@ -22,6 +22,7 @@ Grasshopper = {
     local r = MultipleBlobObject:create(x,y)
 
     mixin(r, DamageableObject:attribute(difficulty,nil,Grasshopper.deathSound,500))
+    mixin(r, CollectorObject:attribute())
     mixin(r, Grasshopper)
     r.class = Grasshopper
 

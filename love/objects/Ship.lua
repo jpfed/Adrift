@@ -1,6 +1,8 @@
 love.filesystem.require("oo.lua")
 love.filesystem.require("util/geom.lua")
 love.filesystem.require("objects/composable/SimplePhysicsObject.lua")
+love.filesystem.require("objects/composable/DamageableObject.lua")
+love.filesystem.require("objects/composable/CollectorObject.lua")
 love.filesystem.require("objects/composable/Power.lua")
 love.filesystem.require("objects/ControlSchemes.lua")
 love.filesystem.require("objects/SimpleBullet.lua")
@@ -45,6 +47,7 @@ Ship = {
     
     local result = SimplePhysicsObject:create(bd,sh)
     mixin(result, DamageableObject:attribute(20,nil,love.audio.newSound("sound/hornetDeath.ogg"),0))
+    mixin(result, CollectorObject:attribute())
     mixin(result, Ship)
     result.class = Ship
     

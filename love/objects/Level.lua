@@ -455,6 +455,15 @@ Level = {
 
   addObject = function(level, o)
     table.insert(level.objects,o)
+  end,
+
+  removeObject = function(level, o)
+    for k,v in ipairs(level.objects) do
+      if v == o then
+        table.remove(level.objects, k)
+        return
+      end
+    end
   end
 }
 

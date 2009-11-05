@@ -9,13 +9,13 @@ ProximityMinePowerup = {
   sound = love.audio.newSound("sound/proximityMineCollect.ogg"),
   
   effect = function(self, collector) 
-    for k,v in pairs(collector.equipables) do
-      if v.name == "ProximityMine" then 
-        local m = collector.equipables[k]
-        m.ammo = m.ammo + 5 
-      end
-    end
     if collector == state.game.ship then
+      for k,v in pairs(collector.equipables) do
+        if v.name == "ProximityMine" then 
+          local m = collector.equipables[k]
+          m.ammo = m.ammo + 5 
+        end
+      end
       state.game.score = state.game.score + 1000 
       logger:add("You found 5 proximity mines!")
     end

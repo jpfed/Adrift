@@ -44,6 +44,7 @@ Eel = {
     local result = SimplePhysicsObject:create(bd)
     
     mixin(result,DamageableObject:attribute(difficulty,nil,Eel.deathSound, 1000))
+    mixin(result,CollectorObject:attribute())
     
     mixin(result,Eel)
     result.class = Eel

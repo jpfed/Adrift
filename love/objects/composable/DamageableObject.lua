@@ -33,6 +33,9 @@ DamageableObject = {
           explosion = FireyExplosion:create(self.x,self.y,60,1.0)
         end
         L:addObject(explosion)
+        if AhasAttributeB(self, CollectorObject) then
+          self:inventoryDropAll()
+        end
         love.audio.play(self.deathSound)
         state.game.score = state.game.score + self.points
       end

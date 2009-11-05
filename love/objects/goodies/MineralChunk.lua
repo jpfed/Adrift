@@ -14,7 +14,10 @@ MineralChunk = {
   color_texture2 = love.graphics.newColor(100,100,100,200),
   
   effect = function(self, collector) 
-    -- no special effect yet
+    if AisInstanceOfB(collector,Ship) then
+      state.game.score = state.game.score + 10
+      logger:add("Mineral inventory: " .. collector.inventory[MineralChunk])
+    end
     self.dead = true
   end,
   

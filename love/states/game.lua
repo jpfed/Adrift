@@ -157,8 +157,8 @@ state.game = {
       function(x) return AhasAttributeB(x, CollectibleObject) end, 
       function(x) return AhasAttributeB(x, CollectorObject) end, 
       function(collectible, hobo)
-        collectible:collected(hobo)
         hobo:inventoryAdd(collectible)
+        collectible:collected(hobo)
       end
     ) then return end
     

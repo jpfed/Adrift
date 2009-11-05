@@ -1,8 +1,9 @@
 state.repl = {
+  history = {},
+  
   start = function(s)
     s.input = ""
-    s.history = {}
-    s.historyCursor = 0
+    s.historyCursor = #s.history
   end,
 
   draw = function(s) 
@@ -21,6 +22,7 @@ state.repl = {
       end
       table.insert(s.history, s.input)
       s.historyCursor = #s.history
+      s:save(s.input)
       s.input = ""
     elseif key == love.key_up then
       if s.historyCursor > 0 and s.historyCursor <= #s.history then s.input = s.history[s.historyCursor] end
@@ -79,7 +81,26 @@ sm["'"] = "\""
 sm[","] = "<"
 sm["."] = ">"
 sm["/"] = "?"
+
 -- translate small letter + shift into capital letter
 for asciiCode = 97,122 do
   sm[string.char(asciiCode)] = string.char(asciiCode - 32)
+end
+
+state.repl.save = function(self, value)
+  local savePath = "repl"
+  local saveFile 
+  if love.filesystem.exists(savePath) then 
+    saveFile = love.filesystem.newFile(savePath, love.file_append)
+  else
+    saveFile = love.filesystem.newFile(savePath, love.file_write)
+  end
+  love.filesystem.open(saveFile)
+  love.filesystem.write(saveFile, "table.insert(state.repl.history, \"" .. value .. "\")\n")
+  love.filesystem.close(saveFile)
+end
+
+state.repl.load = function(self)
+  local savePath = "repl"
+  if love.filesystem.exists(savePath) then love.filesystem.include(savePath) end
 end

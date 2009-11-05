@@ -8,6 +8,7 @@ load = function()
   love.filesystem.require("states/states.lua")
   
   state.options:load()
+  state.repl:load()
   
   love.mouse.setVisible(false)
   love.graphics.setFont(love.default_font)

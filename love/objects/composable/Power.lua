@@ -37,7 +37,7 @@ Power = {
     end
   end,
   
-  create = function(self,parent,color,cooldown_speed,duration,fstart,factive,finactive,fend,fdraw)
+  create = function(self,parent,color,cooldown_speed,duration,fstart,factive,finactive,fend,fdraw,icon)
     local r = {}
     mixin(r, Power)
     r.class = Power
@@ -53,6 +53,7 @@ Power = {
     r.draw    = fdraw   or Power.doNothing
     r.finactive = finactive or Power.doNothing
     r.active = false
+    r.icon = icon
     return r
   end,
 
@@ -69,7 +70,7 @@ Power = {
 }
 
 BoostPower = {
-
+  icon = love.graphics.newImage("graphics/booster0.png"),
   sound = love.audio.newSound("sound/booster.ogg"),
 
   default_thrust_increment = 15,
@@ -97,7 +98,7 @@ BoostPower = {
   end,
   
   create = function(self,parent)
-    local result = Power:create(parent, love.graphics.newColor(255,200,20,50), BoostPower.default_cooldown_speed, 0.2, BoostPower.fstart, nil, nil, BoostPower.fend, BoostPower.fdraw)
+    local result = Power:create(parent, love.graphics.newColor(255,200,20,50), BoostPower.default_cooldown_speed, 0.2, BoostPower.fstart, nil, nil, BoostPower.fend, BoostPower.fdraw, BoostPower.icon)
     result.thrust_increment = BoostPower.default_thrust_increment
     return result
   end
@@ -143,7 +144,7 @@ SidestepPower = {
 }
 
 TeleportPower = {
-
+  icon = love.graphics.newImage("graphics/teleport2.png"),
   sound = love.audio.newSound("sound/teleport.ogg"),
 
   shipUpdate = function(self, dt)
@@ -228,6 +229,6 @@ TeleportPower = {
   end,
   
   create = function(self, ship)
-    return Power:create(ship, love.graphics.newColor(100,100,255,50), 5, 0.2, TeleportPower.fstart, TeleportPower.factive, TeleportPower.finactive, TeleportPower.fend, TeleportPower.fdraw)
+    return Power:create(ship, love.graphics.newColor(100,100,255,50), 5, 0.2, TeleportPower.fstart, TeleportPower.factive, TeleportPower.finactive, TeleportPower.fend, TeleportPower.fdraw, TeleportPower.icon)
   end
 }

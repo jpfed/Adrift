@@ -175,29 +175,50 @@ Ship = {
       love.graphics.rectangle(love.draw_fill,100,590, 700 * self.armor / self.maxArmor,10)
       love.graphics.draw("HP: " .. tostring(self.armor) .. " / " .. tostring(self.maxArmor), 15,598)
       
+      local i = 0
       for k = 1, #(self.equipables) do
-        local x, y = 30*k - 15, 525
-        local e = self.equipables[k]
-        
+      
+        local e = self.equipables[k]       
         if e.ammo > 0 then
+          i = i + 1
           local img = e.icon
           local w, h = img:getWidth(), img:getHeight()
+          local x, y = 30*i - 15, 525
           love.graphics.draw(img, x+w/2, y+h/2, 0, 25/w)
           
           love.graphics.setColor(0,0,0,math.min(255,math.max(64,math.ceil(255/e.shotsPerSecond))))
           local heat = e.heat
           love.graphics.rectangle(love.draw_fill, x, y + h*(1-heat), 25, h*heat)
+          if k == self.currentWeapon then
+            love.graphics.setColor(self.currentWeaponColor)
+          else
+            love.graphics.setColor(self.otherWeaponColor)
+          end
+          local a = self.equipables[k].ammo
+          if a == math.huge then a = "--" end
+          love.graphics.draw(tostring(a),x,y)
+          love.graphics.rectangle(love.draw_line,x,y,25,25)
         end
-        
-        if k == self.currentWeapon then
-          love.graphics.setColor(self.currentWeaponColor)
-        else
-          love.graphics.setColor(self.otherWeaponColor)
+      end
+      i = i + 1
+      for k,v in pairs(self.powers) do
+        local p = self.powers[k]
+        if p.icon ~= nil and p.cooldown_speed > 0 then
+          i = i + 1
+          local img = p.icon
+          local w, h = img:getWidth(), img:getHeight()
+          local x, y = 30*i - 15, 525
+          love.graphics.draw(img, x+w/2, y+h/2, 0, 25/w)
+          love.graphics.setColor(0,0,0,math.min(255,math.max(64,math.ceil(255*p.cooldown_speed))))
+          local heat = 1- (p.cooldown_time / p.cooldown_speed)
+          love.graphics.rectangle(love.draw_fill, x, y + h*(1-heat), 25, h*heat)
+          if p.active then
+            love.graphics.setColor(self.currentWeaponColor)
+          else
+            love.graphics.setColor(self.otherWeaponColor)
+          end
+          love.graphics.rectangle(love.draw_line,x,y,25,25)
         end
-        local a = self.equipables[k].ammo
-        if a == math.huge then a = "--" end
-        love.graphics.draw(tostring(a),x,y)
-        love.graphics.rectangle(love.draw_line,x,y,25,25)
       end
       
     end

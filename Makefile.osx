@@ -1,4 +1,4 @@
-LOVE?=open
+LOVE?= /Applications/love.app/Contents/MacOS/love
 BROWSER?=open
 LUA?=lua
 RM?=rm -f

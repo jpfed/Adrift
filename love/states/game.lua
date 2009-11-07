@@ -157,6 +157,7 @@ state.game = {
       function(x) return AhasAttributeB(x, CollectibleObject) end, 
       function(x) return AhasAttributeB(x, CollectorObject) end, 
       function(collectible, hobo)
+        if collectible.dead or hobo.dead then return end
         hobo:inventoryAdd(collectible)
         collectible:collected(hobo)
       end

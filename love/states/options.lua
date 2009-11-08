@@ -1,41 +1,41 @@
 local opts = {
 
-  {text = "Radial Keyboard Controls", x = 100, y = 125, w = 180, h = 20,
+  {text = "Radial Keyboard Controls", x = 100, y = 225, w = 180, h = 20,
     action = function()  
       state.options.controlScheme = 1
   end,
   up = 6, down = 2, left = 7, right = 7, 
   },
 
-  {text = "Eight-directional Keyboard Controls", x = 100, y = 175, w = 245, h = 20,
+  {text = "Eight-directional Keyboard Controls", x = 100, y = 275, w = 245, h = 20,
     action = function()  
       state.options.controlScheme = 2
   end,
   up = 1, down = 3, left = 7, right = 7,
   },
 
-  {text = "Radial Gamepad Controls", x = 100, y = 225, w = 180, h = 20,
+  {text = "Radial Gamepad Controls", x = 100, y = 325, w = 180, h = 20,
     action = function()  
       state.options.controlScheme = 3
   end,
   up = 2, down = 4, left = 7, right = 7,
   },
 
-  {text = "Eight-directional Gamepad Controls", x = 100, y = 275, w = 245, h = 20,
+  {text = "Eight-directional Gamepad Controls", x = 100, y = 375, w = 245, h = 20,
     action = function()  
       state.options.controlScheme = 4
   end,
   up = 3, down = 5, left = 7, right = 7,
   },
   
-  {text = "Radial Joystick Controls", x = 100, y = 325, w = 165, h = 20,
+  {text = "Radial Joystick Controls", x = 100, y = 425, w = 165, h = 20,
     action = function()  
       state.options.controlScheme = 5
   end,
   up = 4, down = 6, left = 7, right = 7,
   },
 
-  {text = "Omni-directional Joystick Controls", x = 100, y = 375, w = 230, h = 20,
+  {text = "Omni-directional Joystick Controls", x = 100, y = 475, w = 230, h = 20,
     action = function()  
       state.options.controlScheme = 6
   end,
@@ -90,11 +90,6 @@ local supplemental = {
     love.graphics.setColor(s.highlightColor)
     love.graphics.circle(love.draw_fill, controlsOption.x - 30, controlsOption.y - 4, 8, 32)
     love.graphics.circle(love.draw_fill, difficultyOption.x - 30, difficultyOption.y - 4, 8, 32)
-    love.graphics.setColor(s.normalColor)
-    love.graphics.line(400,425,400,600)
-    love.graphics.line(400,425,000,425)
-    love.graphics.line(650,75,000,75)
-    love.graphics.line(650,75,650,600)
   end
 }
 

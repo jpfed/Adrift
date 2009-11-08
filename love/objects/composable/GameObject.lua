@@ -20,4 +20,6 @@ GameObject = {
   update = function(self, dt) end,
   cleanup = function(self) end,
   
+  kindOf = function(self, attrib) kindOf(self, attrib) end,
+  isA = function(self, class) isA(self, class) end,
 }

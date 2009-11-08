@@ -106,61 +106,62 @@ state.game = {
   
     if tryCollideInteraction( a, b,
       function(maybeWall) return maybeWall == L.physics end,
-      function(maybeHornet) return AisInstanceOfB(maybeHornet, Hornet) end,
+      function(maybeHornet) return isA(maybeHornet, Hornet) end,
       function(wall, hornet) hornet:collided() end
     ) then return end
 
     if tryCollideInteraction( a, b,
-      function(maybeProjectile) return AhasAttributeB(maybeProjectile,Projectile) end,
-      function(maybeDamageable) return AhasAttributeB(maybeDamageable, DamageableObject) end,
+      function(maybeProjectile) return kindOf(maybeProjectile,Projectile) end,
+      function(maybeDamageable) return kindOf(maybeDamageable, DamageableObject) end,
       function(projectile, damageable) projectile:touchDamageable(damageable) end
     ) then return end
     
     if tryCollideInteraction( a, b,
-      function(maybeProxMine) return AisInstanceOfB(maybeProxMine,ProximityMine) end,
+      function(maybeProxMine) return isA(maybeProxMine,ProximityMine) end,
       function(whatever) return whatever ~= nil end,
       function(prox, thing) prox:explode(thing) end
     ) then return end
     
     if tryCollideInteraction( a, b,
-      function(maybeProjectile) return AhasAttributeB(maybeProjectile,Projectile) end,
+      function(maybeProjectile) return kindOf(maybeProjectile,Projectile) end,
       function(whatever) return whatever ~= nil end,
       function(projectile, whatever) projectile.dead = true end
     ) then return end
     
     if tryCollideInteraction( a, b,
-      function(maybeEel) return AisInstanceOfB(maybeEel, Eel) end,
-      function(maybeShip) return AisInstanceOfB(maybeShip, Ship) end,
+      function(maybeEel) return isA(maybeEel, Eel) end,
+      function(maybeShip) return isA(maybeShip, Ship) end,
       function(eel, ship) eel:shock(ship) end    
     ) then return end
     
     if tryCollideInteraction( a, b,
-      function(maybeHopper) return AisInstanceOfB(maybeHopper, Grasshopper) end,
-      function(maybe) return AhasAttributeB(maybe, DamageableObject) end,
+      function(maybeHopper) return isA(maybeHopper, Grasshopper) end,
+      function(maybe) return kindOf(maybe, DamageableObject) end,
       function(hopper, thing) local x, y = c:getPosition(); hopper:jump_off(thing, {x,y}) end
     ) then return end
 
     if tryCollideInteraction( a, b,
-      function(maybeHopper) return AisInstanceOfB(maybeHopper, Grasshopper) end,
+      function(maybeHopper) return isA(maybeHopper, Grasshopper) end,
       function(maybeWall) return maybeWall == L.physics end,
       function(hopper, wall) local x,y = c:getPosition(); hopper.touchedWall = {x,y} end
     ) then return end
 
     -- let collectors collect things
     if tryCollideInteraction( a, b,
-      function(x) return AhasAttributeB(x, CollectibleObject) end, 
-      function(x) return AhasAttributeB(x, CollectorObject) end, 
+      function(x) return kindOf(x, CollectibleObject) end, 
+      function(x) return kindOf(x, CollectorObject) end, 
       function(collectible, hobo)
         if collectible.dead or hobo.dead then return end
-        hobo:inventoryAdd(collectible)
-        collectible:collected(hobo)
+        if hobo:inventoryAdd(collectible) then
+          collectible:collected(hobo)
+        end
       end
     ) then return end
     
     -- check if they just finished the level
     if tryCollideInteraction( a, b,
-      function(maybePortal) return AisInstanceOfB(maybePortal, WarpPortal) end,
-      function(maybeShip) return AisInstanceOfB(maybeShip, Ship) and maybeShip.hasCrystal end,
+      function(maybePortal) return isA(maybePortal, WarpPortal) end,
+      function(maybeShip) return isA(maybeShip, Ship) and maybeShip.hasCrystal end,
       function(portal, ship) love.audio.play(portal.sound); state.current = state.victory end
     ) then return end
     

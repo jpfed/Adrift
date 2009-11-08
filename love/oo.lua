@@ -11,13 +11,13 @@ mixin = function(destination, source)
   end
 end
 
-AisInstanceOfB = function(object, class)
+isA = function(object, class)
   if object == nil then return false end
   if object == class or object.class == class then return true end
-  return AisInstanceOfB(object.super,class)
+  return isA(object.super,class)
 end
 
-AhasAttributeB = function(object, attrib)
+kindOf = function(object, attrib)
   if object == nil then return false end
   if object.attributes == nil then return false end
   return object.attributes[attrib] ~= nil

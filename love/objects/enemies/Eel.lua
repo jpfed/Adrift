@@ -101,5 +101,9 @@ Eel = {
     SimplePhysicsObject.cleanup(self)
     self:inventoryDropAll()
     if math.random() < 0.25 then L:addObject(EnergyPowerup:create(self)) end
-  end
+  end,
+
+  canPickUp = function(self,thing) 
+    return thing:isA(MineralChunk)
+  end,
 }

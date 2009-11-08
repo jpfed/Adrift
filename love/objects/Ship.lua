@@ -86,7 +86,7 @@ Ship = {
       spawnProjectile = function(self, params)
         local bestEnemy, bestDistance = nil, math.huge
         for k, v in pairs(L.objects) do
-          if AhasAttributeB(v, DamageableObject) then
+          if kindOf(v, DamageableObject) then
             local dist = geom.distance_t(self.parent, v)
             if dist < bestDistance then
               bestDistance = dist
@@ -277,6 +277,8 @@ Ship = {
   
   switchWeapons = function(self)
     self.currentWeapon = self.currentWeapon % #(self.equipables) + 1
-  end
+  end,
+
+  canPickUp = function(self,thing) return true end,
 }
 

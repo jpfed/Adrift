@@ -40,7 +40,7 @@ Explosion = {
       local sz = params.size
       local minX, maxX, minY, maxY = params.x - sz, params.x + sz, params.y - sz, params.y + sz
       for k,v in pairs(L.objects) do
-        if AhasAttributeB(v,DamageableObject) then
+        if kindOf(v,DamageableObject) then
           local x, y = v.x, v.y
           if minX < x and x < maxX and minY < y and y < maxY then
             local dx, dy = params.x - x, params.y - y

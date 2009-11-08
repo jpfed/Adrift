@@ -9,7 +9,7 @@ EnergyPowerup = {
   sound = love.audio.newSound("sound/HpPlus.ogg"),
   
   effect = function(self, collector) 
-    if AhasAttributeB(collector, DamageableObject) then
+    if kindOf(collector, DamageableObject) then
       collector.armor = math.min(collector.maxArmor, collector.armor + 1)
       if collector == state.game.ship then state.game.score = state.game.score + 100 end
       self.dead = true

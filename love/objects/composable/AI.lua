@@ -159,7 +159,7 @@ AI = {
     local parentVx, parentVy = 0, 0
     if parent.body ~= nil then parentVx, parentVy = parent.body:getVelocity() end
     for k,v in pairs(L.objects) do
-      if AhasAttributeB(v, Projectile) then 
+      if kindOf(v, Projectile) then 
         local insert = true
         local projVx, projVy = 0, 0
         if v.body ~= nil then projVx, projVy = v.body:getVelocity() end
@@ -178,7 +178,7 @@ AI = {
   allProjectiles = function(self, parent)
     local result = {}
     for k, v in pairs(L.objects) do
-      if AhasAttributeB(v, Projectile) then
+      if kindOf(v, Projectile) then
         table.insert(result, v)
       end
     end

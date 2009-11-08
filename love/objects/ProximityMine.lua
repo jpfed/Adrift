@@ -14,7 +14,7 @@ ProximityMine = {
   explode = function(self,d) 
     if not self.dead then
       -- todo: eventually the prox mine shouldn't do direct damage to its trigger-er, it should only damage via its giant explosion
-      if AisInstanceOfB(d, DamageableObject) then
+      if isA(d, DamageableObject) then
         d:damage(self.damage)
       end
       love.audio.play(self.explodeSound)

@@ -9,7 +9,7 @@ MaxEnergyPowerup = {
   sound = love.audio.newSound("sound/MaxHpPlus.ogg"),
   
   effect = function(self, collector) 
-    if AhasAttributeB(collector, DamageableObject) then
+    if kindOf(collector, DamageableObject) then
       collector.maxArmor = collector.maxArmor + 1
       collector.armor = math.min(collector.maxArmor, collector.armor + 2)
       if collector == state.game.ship then 

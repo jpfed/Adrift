@@ -75,7 +75,7 @@ Grasshopper = {
   end,
 
   jump_off = function(self,object, pos)
-    if not AisInstanceOfB(object, Grasshopper) then
+    if not isA(object, Grasshopper) then
       object:damage(0.1)
     else
       -- grasshopper mating ritual!
@@ -88,5 +88,9 @@ Grasshopper = {
     MultipleBlobObject.cleanup(self)
     self:inventoryDropAll()
     if math.random() < 0.25 then L:addObject(EnergyPowerup:create(self)) end
-  end
+  end,
+
+  canPickUp = function(self,thing) 
+    return thing:isA(MineralChunk)
+  end,
 }

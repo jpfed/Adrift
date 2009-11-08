@@ -10,6 +10,7 @@ CollectorObject = {
   end,
     
   inventoryAdd = function(self, thing)
+    if not self.canPickUp or not self:canPickUp(thing) then return false end
     local inv = self.inventory
     local cls = thing.class
     if inv[cls] == nil then
@@ -17,6 +18,7 @@ CollectorObject = {
     else
       inv[cls] = inv[cls] + 1
     end
+    return true
   end,
 
   inventoryDrop = function(self, thing)

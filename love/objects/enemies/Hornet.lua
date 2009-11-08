@@ -94,7 +94,7 @@ Hornet = {
         
         for k,v in pairs(L.objects) do
           if minX < v.x and v.x < maxX and minY < v.y and v.y < maxY then
-            if not AhasAttributeB(v, Projectile) then
+            if not kindOf(v, Projectile) then
               if geom.dist_to_line_t(v,self,ship) < 2 then mustStrafe = true; break; end
             end
           end

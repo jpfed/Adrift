@@ -35,7 +35,7 @@ HomingMissilePowerup = {
     local shape = self:createShape(body)
     local result = SimplePhysicsObject:create(body, shape)
     mixin(result, CollectibleObject:attribute(HomingMissilePowerup.sound, HomingMissilePowerup.effect))
-    mixin(result,RepresentableAsImage)
+    mixin(result, RepresentableAsImage)
     mixin(result, HomingMissilePowerup)
     result.class = HomingMissilePowerup
     return result

@@ -5,14 +5,16 @@ local title = {
 
   pings = {},
   PING_LIFE = 10,
-  PING_SPEED = 50,
-  PING_ACCEL = -0.1,
+  PING_SPEED = 200,
+  PING_ACCEL = -10,
   PING_X = 488,
   PING_Y = 30,
   t = 0,
   cooldown = 6,
+  scroll = 0,
 
-  update = function(self,dt)
+  update = function(self,menu,s,dt)
+    if s and s.waiting then self.scroll = s.waiting * (-140 / s.SCROLL_SPEED) end
     self.t = self.t + dt
     self.cooldown = self.cooldown + dt
     self.ix = self.PING_X + (math.sin(self.t / 2) * 20)
@@ -20,14 +22,12 @@ local title = {
 
     for k,ping in ipairs(self.pings) do
       if ping then
-        ping.t = ping.t + (dt * ping.speed)
         if ping.speed > 1 then ping.speed = ping.speed + (dt * self.PING_ACCEL) end
         if ping.speed < 1 then ping.speed = 1 end
+        ping.t = ping.t + (dt * ping.speed)
       end
     end
-    if #self.pings < 10 and self.cooldown > 6 then
-      self:addPing()
-    end
+    if self.cooldown > 6 then self:addPing() end
   end,
 
   addPing = function(self)
@@ -49,22 +49,22 @@ local title = {
       local alpha = 100 - (ping.t / 2)
       if alpha < 10 then alpha = 10 end
       love.graphics.setColor(love.graphics.newColor(255,255,255,alpha / 5 - 2))
-      love.graphics.circle(love.draw_fill,ping.x,ping.y,ping.t+15,64)
+      love.graphics.circle(love.draw_fill,ping.x,ping.y+self.scroll,ping.t+15,64)
       love.graphics.setColor(love.graphics.newColor(255,255,255,alpha))
-      love.graphics.circle(love.draw_line,ping.x,ping.y,ping.t+15,64)
+      love.graphics.circle(love.draw_line,ping.x,ping.y+self.scroll,ping.t+15,64)
     end
 
     if math.random() <0.005 then
       -- GLITCH OUT!
       love.graphics.setColor(self.banner_color_glitch)
       for i = 1,4 do
-        love.graphics.draw(self.banner,380 + math.random(40),90 + math.random(20),math.random() * 10 - 5,1,math.random())
-        love.graphics.draw(self.banner,self.ix,self.iy,math.random(360),math.random()/10,math.random()/3)
+        love.graphics.draw(self.banner,380 + math.random(40),90 + math.random(20) + self.scroll,math.random() * 10 - 5,1,math.random())
+        love.graphics.draw(self.banner,self.ix,self.iy+self.scroll,math.random(360),math.random()/10,math.random()/3)
       end
     else
       love.graphics.setColor(self.banner_color)
-      love.graphics.draw(self.banner,400,100,0,1)
-      love.graphics.rectangle(love.draw_fill,self.ix-15,self.iy-15,30,30)
+      love.graphics.draw(self.banner,400,100+self.scroll,0,1)
+      love.graphics.rectangle(love.draw_fill,self.ix-15,self.iy-15+self.scroll,30,30)
     end
 
     love.graphics.setBlendMode(love.blend_normal)
@@ -112,11 +112,14 @@ getMenu = function(opts, extras)
 
     options = opts,
     supplemental = extras,
+    loading = false,
     title = title,
     overlay = overlay,
     
     update = function(s,dt)
-      s.title:update(dt)
+      s.title:update(s,s.supplemental,dt)
+      if s.supplemental and s.supplemental.update then s.supplemental:update(s,dt) end
+      if s.loading then return end
       local x,y = 0,0
       if useJoystick then x, y = love.joystick.getAxes(0) end
       local gamepad = -1
@@ -149,8 +152,9 @@ getMenu = function(opts, extras)
     
     draw = function(s) 
       s.title:draw(s)
+      if s.loading then return end
       s.cursor:draw(s)
-      if s.supplemental then s.supplemental:draw(s) end
+      if s.supplemental and s.supplemental.draw then s.supplemental:draw(s) end
       love.graphics.setColor(s.normalColor)
       for k,v in ipairs(s.options) do
         love.graphics.draw(v.text,v.x,v.y)
@@ -176,7 +180,17 @@ local options = {
   
   {text = "Start Game", x = 480, y = 200, w = 95, h = 20,
     action = function()  
-      state.game:load()
+      -- NOTE: if we had a way to do background loading, we could adjust the 
+      -- scroll speed here depending on how long it was estimated to take...
+      state.menu.loading = true
+      state.menu.supplemental = {
+        SCROLL_SPEED = 3,
+        waiting = 0,
+        update = function(self, s, dt)
+          self.waiting = self.waiting + dt
+          if self.waiting > self.SCROLL_SPEED then state.game:load() end
+        end,
+      }
   end,
   up = 4, down = 2, left = 1, right = 1,
   },
@@ -202,6 +216,7 @@ local options = {
   up = 3, down = 1, left = 4, right = 4,
   }
 }
+
 
 
 state.menu = getMenu(options)

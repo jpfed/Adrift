@@ -14,10 +14,12 @@ CollectorObject = {
     local inv = self.inventory
     local cls = thing.class
     if inv[cls] == nil then
-      inv[cls] = 1
-    else
-      inv[cls] = inv[cls] + 1
+      inv[cls] = 0
     end
+
+    local size = 1
+    if thing.size then size = thing.size end
+    inv[cls] = inv[cls] + size
     return true
   end,
 

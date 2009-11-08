@@ -30,6 +30,8 @@ EnergyChunk = {
     local p2 = r:generateRandomConvex()
 
     r.scale = math.random(6,10) / 100.0
+    r.size = r.scale * 10
+
     local poly = function(i) 
       local x = math.cos(math.pi / 1.5 * i)
       local y = math.sin(math.pi / 1.5 * i)

@@ -33,6 +33,7 @@ MineralChunk = {
     local p2 = r:generateRandomConvex()
     
     r.scale = math.random(10,18) / 100.0
+    r.size = r.scale * 10
     r.blob = r:addConvexBlob(
       { damping = 0.1, adamping = 0.1 },
       { scale = r.scale, points = p1, color = self.color, color_edge = self.color_edge } )

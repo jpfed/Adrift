@@ -115,6 +115,12 @@ getMenu = function(opts, extras)
     loading = false,
     title = title,
     overlay = overlay,
+
+    reset = function(s)
+      s.loading = false
+      s.title.scroll = 0
+      s.supplemental = {}
+    end,
     
     update = function(s,dt)
       s.title:update(s,s.supplemental,dt)

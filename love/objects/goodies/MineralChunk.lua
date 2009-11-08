@@ -31,12 +31,12 @@ MineralChunk = {
     local p1 = self:generateRandomConvex()
     local p2 = self:generateRandomConvex()
     
-    r.scale = math.random(1,4) / 20.0
+    r.scale = math.random(10,18) / 120.0
     r.blob = r:addConvexBlob(
       { damping = 0.1, adamping = 0.1 },
       { scale = r.scale, points = p1, color = self.color, color_edge = self.color_edge } )
     r.blob:addConvexShape(
-      { scale = r.scale, points = p2, color = self.color, color_edge = self.color_edge } )
+      { scale = r.scale * 0.9, points = p2, color = self.color, color_edge = self.color_edge } )
 
     return r
   end,
@@ -52,9 +52,12 @@ MineralChunk = {
   generateRandomConvex = function(self)
     local result = {}
     local angles = {}
+    --local angles = {0, math.pi/2, math.pi, math.pi*3/2}
     local numPoints = math.random(3,8)
     for k = 1, numPoints do
-      table.insert(angles, math.random()*2*math.pi)
+      local r = (2 * math.pi / numPoints) * k
+      local tweak = (math.random() - 0.5) * 3 / (numPoints)
+      table.insert(angles, r + tweak)
     end
     table.sort(angles)
     for k = 1, numPoints do

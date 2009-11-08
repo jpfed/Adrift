@@ -24,6 +24,7 @@ getMenu = function(opts, extras)
     supplemental = extras,
     
     update = function(s,dt)
+      s.supplemental:update(dt)
       local x,y = 0,0
       if useJoystick then x, y = love.joystick.getAxes(0) end
       local gamepad = -1
@@ -48,6 +49,7 @@ getMenu = function(opts, extras)
         elseif left then c.selected = s.options[c.selected].left; c.cooldown = c.cooldown + 0.125
         elseif right then c.selected = s.options[c.selected].right; c.cooldown = c.cooldown + 0.125
         end
+        if up or down or left or right then s.supplemental:addPing() end
       else
         s.cursor.cooldown = math.max(0,s.cursor.cooldown - dt)
       end
@@ -108,14 +110,66 @@ local options = {
 }
 
 local supplemental = {
-  draw = function(sup,s)
-    love.graphics.setColor(s.normalColor)
-    love.graphics.line(425,150,425,450)
-    love.graphics.line(600,150,600,450)
-    love.graphics.line(275,0,425,150)
-    love.graphics.line(750,0,600,150)
-    love.graphics.line(425,450,275,600)
-    love.graphics.line(600,450,750,600)
+  banner = love.graphics.newImage("graphics/adrift_banner.png"),
+  banner_color = love.graphics.newColor(255,255,255),
+
+  pings = {},
+  PING_LIFE = 10,
+  PING_SPEED = 50,
+  PING_ACCEL = -0.1,
+  PING_X = 488,
+  PING_Y = 30,
+  t = 0,
+  cooldown = 6,
+
+  update = function(self,dt)
+    self.t = self.t + dt
+    self.cooldown = self.cooldown + dt
+    self.ix = self.PING_X + (math.sin(self.t / 2) * 20)
+    self.iy = self.PING_Y
+
+    for k,ping in ipairs(self.pings) do
+      if ping then
+        ping.t = ping.t + (dt * ping.speed)
+        if ping.speed > 1 then ping.speed = ping.speed + (dt * self.PING_ACCEL) end
+        if ping.speed < 1 then ping.speed = 1 end
+      end
+    end
+    if #self.pings < 10 and self.cooldown > 6 then
+      self:addPing()
+    end
+  end,
+
+  addPing = function(self)
+    self.cooldown = 0
+    local ping = {
+      speed = self.PING_SPEED,
+      x = self.ix,
+      y = self.iy,
+      t = 0,
+    }
+    table.insert(self.pings, ping)
+  end,
+
+  draw = function(self,s)
+    love.graphics.setBlendMode(love.blend_additive)
+
+    for k,ping in ipairs(self.pings) do
+      local alpha = 100 - (ping.t / 2)
+      if alpha < 10 then alpha = 10 end
+      love.graphics.setColor(love.graphics.newColor(255,255,255,alpha / 5 - 2))
+      love.graphics.circle(love.draw_fill,ping.x,ping.y,ping.t,64)
+      love.graphics.setColor(love.graphics.newColor(255,255,255,alpha))
+      love.graphics.circle(love.draw_line,ping.x,ping.y,ping.t,64)
+    end
+
+    love.graphics.draw(self.banner,400,100,0,1)
+
+    -- draw dot over i
+    love.graphics.setColor(self.banner_color)
+    love.graphics.rectangle(love.draw_fill,self.ix-15,self.iy-15,30,30)
+
+    love.graphics.setBlendMode(love.blend_normal)
   end
 }
 

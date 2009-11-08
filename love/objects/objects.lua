@@ -18,6 +18,7 @@ love.filesystem.require("objects/enemies/HornetEgg.lua")
 love.filesystem.require("objects/enemies/Leech.lua")
 love.filesystem.require("objects/enemies/Grasshopper.lua")
 love.filesystem.require("objects/enemies/Turret.lua")
+love.filesystem.require("objects/enemies/Bomber.lua")
 
 objects = {
   
@@ -31,10 +32,11 @@ objects = {
 
   getEnemy = function(obs, node, difficulty)
     local r = math.random()
-    if r<0.375 then return Hornet:create(node.x, node.y, difficulty) end 
-    if r<0.5 then return HornetEgg:create(node.x, node.y, difficulty) end
+    if r<0.2 then return Hornet:create(node.x, node.y, difficulty) end 
+    if r<0.4 then return HornetEgg:create(node.x, node.y, difficulty) end
     -- TODO: this should create it starting on the ground or attached to a wall somehow
-    if r<0.7 then return Turret:create(node.x, node.y, difficulty) end
+    if r<0.5 then return Turret:create(node.x, node.y, difficulty) end
+    if r<0.7 then return Bomber:create(node.x, node.y, difficulty) end
     return Eel:create(node.x,node.y, difficulty)
   end,
 

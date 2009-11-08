@@ -84,14 +84,8 @@ state.game = {
     if key==love.key_h then
       table.insert(L.objects, Hornet:create(s.ship.x, s.ship.y, state.game.difficulty)) 
     end
-    if key==love.key_t then
-      table.insert(L.objects, Turret:create(s.ship.x, s.ship.y+1, state.game.difficulty)) 
-    end
-    if key==love.key_l then
-      table.insert(L.objects, Leech:create(s.ship.x, s.ship.y, state.game.difficulty)) 
-    end
-    if key==love.key_g then
-      table.insert(L.objects, Grasshopper:create(s.ship.x, s.ship.y, state.game.difficulty)) 
+    if key==love.key_b then
+      table.insert(L.objects, Bomber:create(s.ship.x, s.ship.y, state.game.difficulty)) 
     end
     if key==love.key_d then
       s.ship:switchWeapons()

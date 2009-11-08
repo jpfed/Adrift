@@ -1,6 +1,7 @@
 local title = {
   banner = love.graphics.newImage("graphics/adrift_banner.png"),
   banner_color = love.graphics.newColor(255,255,255),
+  banner_color_glitch = love.graphics.newColor(200,220,255,50),
 
   pings = {},
   PING_LIFE = 10,
@@ -42,6 +43,7 @@ local title = {
 
   draw = function(self,s)
     love.graphics.setBlendMode(love.blend_additive)
+    love.graphics.setBlendMode(love.color_modulate)
 
     for k,ping in ipairs(self.pings) do
       local alpha = 100 - (ping.t / 2)
@@ -52,13 +54,21 @@ local title = {
       love.graphics.circle(love.draw_line,ping.x,ping.y,ping.t,64)
     end
 
-    love.graphics.draw(self.banner,400,100,0,1)
-
-    -- draw dot over i
-    love.graphics.setColor(self.banner_color)
-    love.graphics.rectangle(love.draw_fill,self.ix-15,self.iy-15,30,30)
+    if math.random() <0.005 then
+      -- GLITCH OUT!
+      love.graphics.setColor(self.banner_color_glitch)
+      for i = 1,4 do
+        love.graphics.draw(self.banner,380 + math.random(40),90 + math.random(20),math.random() * 10 - 5,1,math.random())
+        love.graphics.draw(self.banner,self.ix,self.iy,math.random(360),math.random()/10,math.random()/3)
+      end
+    else
+      love.graphics.setColor(self.banner_color)
+      love.graphics.draw(self.banner,400,100,0,1)
+      love.graphics.rectangle(love.draw_fill,self.ix-15,self.iy-15,30,30)
+    end
 
     love.graphics.setBlendMode(love.blend_normal)
+    love.graphics.setBlendMode(love.color_normal)
   end
 }
 

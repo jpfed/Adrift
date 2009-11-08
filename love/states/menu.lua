@@ -114,7 +114,7 @@ getMenu = function(opts, extras)
         elseif left then c.selected = s.options[c.selected].left; c.cooldown = c.cooldown + 0.125
         elseif right then c.selected = s.options[c.selected].right; c.cooldown = c.cooldown + 0.125
         end
-        if up or down or left or right then s.title:addPing() end
+        if up or down or left or right or select then s.title:addPing() end
       else
         s.cursor.cooldown = math.max(0,s.cursor.cooldown - dt)
       end

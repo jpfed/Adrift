@@ -42,6 +42,6 @@ Leech = {
   
   cleanup = function(self)
     MultipleBlobObject.cleanup(self)
-    if math.random() < 0.25 then L:addObject(EnergyPowerup:create(self)) end
+    if math.random() < 0.25 then L:addObject(ArmorPowerup:create(self)) end
   end
 }

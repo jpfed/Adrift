@@ -1,13 +1,16 @@
 love.filesystem.require("util/geom.lua")
 love.filesystem.require("objects/goodies/WarpCrystal.lua")
 love.filesystem.require("objects/goodies/WarpPortal.lua")
-love.filesystem.require("objects/goodies/EnergyPowerup.lua")
-love.filesystem.require("objects/goodies/MaxEnergyPowerup.lua")
+love.filesystem.require("objects/goodies/ArmorPowerup.lua")
+love.filesystem.require("objects/goodies/MaxArmorPowerup.lua")
 love.filesystem.require("objects/goodies/TeleportPowerup.lua")
 love.filesystem.require("objects/goodies/BoosterPowerup.lua")
 love.filesystem.require("objects/goodies/HomingMissilePowerup.lua")
 love.filesystem.require("objects/goodies/ProximityMinePowerup.lua")
 love.filesystem.require("objects/goodies/MineralChunk.lua")
+love.filesystem.require("objects/goodies/EnergyChunk.lua")
+love.filesystem.require("objects/composable/Resource.lua")
+love.filesystem.require("objects/composable/Powerup.lua")
 love.filesystem.require("objects/SimpleBullet.lua")
 love.filesystem.require("objects/composable/DamageableObject.lua")
 love.filesystem.require("objects/composable/Thruster.lua")
@@ -48,11 +51,12 @@ objects = {
     local r = math.random()
     if r<0.05 then return TeleportPowerup:create(node) end
     if r<0.15 then return BoosterPowerup:create(node) end
-    if r<0.3 then return MaxEnergyPowerup:create(node) end
+    if r<0.3 then return MaxArmorPowerup:create(node) end
     if r<0.4 then return ProximityMinePowerup:create(node) end
     if r<0.5 then return HomingMissilePowerup:create(node) end
     if r<0.75 then return MineralChunk:create(node) end
-    return EnergyPowerup:create(node)
+    if r<0.8  then return EnergyChunk:create(node) end
+    return ArmorPowerup:create(node)
   end,
   
 }

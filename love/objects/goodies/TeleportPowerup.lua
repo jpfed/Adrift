@@ -42,6 +42,7 @@ TeleportPowerup = {
     local tpShape = love.physics.newRectangleShape(tpBody,1,1)
     local result = SimplePhysicsObject:create(tpBody, tpShape)
     mixin(result, CollectibleObject:attribute(TeleportPowerup.sound, TeleportPowerup.effect))
+    mixin(result, Powerup:attribute())
     mixin(result, TeleportPowerup)
     result.class = TeleportPowerup
     return result

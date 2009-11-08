@@ -43,5 +43,28 @@ MultipleBlobObject = {
     for k,blob in pairs(self.blobs) do
       blob:cleanup()
     end
-  end
+  end,
+
+  generateRandomConvex = function(self, sides)
+    local result = {}
+    local angles = {}
+    --local angles = {0, math.pi/2, math.pi, math.pi*3/2}
+    local numPoints 
+    if sides then
+      numPoints = sides
+    else
+      numPoints = math.random(3,8)
+    end
+
+    for k = 1, numPoints do
+      local r = (2 * math.pi / numPoints) * k
+      local tweak = (math.random() - 0.5) * 3 / (numPoints)
+      table.insert(angles, r + tweak)
+    end
+    table.sort(angles)
+    for k = 1, numPoints do
+      table.insert(result, {x = 1.5*math.cos(angles[k]), y = 1.5*math.sin(angles[k])})
+    end
+    return result
+  end,
 }

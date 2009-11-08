@@ -2,7 +2,6 @@ love.filesystem.require("oo.lua")
 love.filesystem.require("objects/composable/DamageableObject.lua")
 love.filesystem.require("objects/composable/CollectibleObject.lua")
 love.filesystem.require("objects/goodies/WarpPortal.lua")
-love.filesystem.require("objects/goodies/MineralChunk.lua")
 
 state.game = {
   
@@ -79,7 +78,7 @@ state.game = {
     if key==love.key_p then state.current = state.pause end
     if key==love.key_v then s.ship.hasCrystal = true end
     if key==love.key_e then
-      table.insert(L.objects, HornetEgg:create(s.ship.x, s.ship.y, state.game.difficulty)) 
+      table.insert(L.objects, EnergyChunk:create({x=s.ship.x,y=s.ship.y+1}, state.game.difficulty)) 
     end
     if key==love.key_h then
       table.insert(L.objects, Hornet:create(s.ship.x, s.ship.y, state.game.difficulty)) 

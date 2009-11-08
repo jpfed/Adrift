@@ -87,10 +87,10 @@ Grasshopper = {
   cleanup = function(self)
     MultipleBlobObject.cleanup(self)
     self:inventoryDropAll()
-    if math.random() < 0.25 then L:addObject(EnergyPowerup:create(self)) end
+    if math.random() < 0.25 then L:addObject(ArmorPowerup:create(self)) end
   end,
 
   canPickUp = function(self,thing) 
-    return thing:isA(MineralChunk)
+    return thing:isA(Resource) or thing:isA(Powerup)
   end,
 }

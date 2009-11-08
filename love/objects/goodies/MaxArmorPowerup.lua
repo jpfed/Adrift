@@ -3,7 +3,7 @@ love.filesystem.require("objects/composable/SimplePhysicsObject.lua")
 love.filesystem.require("objects/composable/CollectibleObject.lua")
 love.filesystem.require("graphics/RepresentableAsImage.lua")
 
-MaxEnergyPowerup = {
+MaxArmorPowerup = {
   super = SimplePhysicsObject,
   image = love.graphics.newImage("graphics/MaxHpPlus.png"),
   sound = love.audio.newSound("sound/MaxHpPlus.ogg"),
@@ -24,11 +24,12 @@ MaxEnergyPowerup = {
     local epBody = love.physics.newBody(L.world,node.x,node.y,0.25)
     local epShape = love.physics.newRectangleShape(epBody,0.5,0.5)
     local result = SimplePhysicsObject:create(epBody, epShape)
-    mixin(result, CollectibleObject:attribute(MaxEnergyPowerup.sound, MaxEnergyPowerup.effect))
-    mixin(result,RepresentableAsImage)
+    mixin(result, CollectibleObject:attribute(MaxArmorPowerup.sound, MaxArmorPowerup.effect))
+    mixin(result, Powerup:attribute())
+    mixin(result, RepresentableAsImage)
     result.imageSize = 2
-    mixin(result, MaxEnergyPowerup)
-    result.class = MaxEnergyPowerup
+    mixin(result, MaxArmorPowerup)
+    result.class = MaxArmorPowerup
     return result
   end
 }

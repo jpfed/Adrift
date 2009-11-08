@@ -46,6 +46,7 @@ BoosterPowerup = {
     local bShape = love.physics.newRectangleShape(bBody,1,1)
     local result = SimplePhysicsObject:create(bBody, bShape)
     mixin(result, CollectibleObject:attribute(BoosterPowerup.sound, BoosterPowerup.effect))
+    mixin(result, Powerup:attribute())
     mixin(result, BoosterPowerup)
     result.class = BoosterPowerup
     return result

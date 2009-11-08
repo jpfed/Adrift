@@ -4,7 +4,7 @@ love.filesystem.require("objects/composable/DamageableObject.lua")
 love.filesystem.require("objects/composable/Convex.lua")
 love.filesystem.require("objects/composable/Thruster.lua")
 love.filesystem.require("objects/composable/Projectile.lua")
-love.filesystem.require("objects/goodies/EnergyPowerup.lua")
+love.filesystem.require("objects/goodies/ArmorPowerup.lua")
 love.filesystem.require("objects/composable/AI.lua")
 
 Eel = {
@@ -100,10 +100,10 @@ Eel = {
     self.cvx:cleanup()
     SimplePhysicsObject.cleanup(self)
     self:inventoryDropAll()
-    if math.random() < 0.25 then L:addObject(EnergyPowerup:create(self)) end
+    if math.random() < 0.25 then L:addObject(ArmorPowerup:create(self)) end
   end,
 
   canPickUp = function(self,thing) 
-    return thing:isA(MineralChunk)
+    return thing:kindOf(Resource) or thing:kindOf(Powerup)
   end,
 }

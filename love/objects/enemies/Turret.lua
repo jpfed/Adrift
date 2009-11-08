@@ -3,7 +3,7 @@ love.filesystem.require("objects/composable/SimplePhysicsObject.lua")
 love.filesystem.require("objects/composable/DamageableObject.lua")
 love.filesystem.require("objects/composable/Convex.lua")
 love.filesystem.require("objects/HomingMissile.lua")
-love.filesystem.require("objects/goodies/EnergyPowerup.lua")
+love.filesystem.require("objects/goodies/ArmorPowerup.lua")
 
 Turret = {
   super = SimplePhysicsObject,
@@ -74,7 +74,7 @@ Turret = {
     self.cvx:cleanup()
     SimplePhysicsObject.cleanup(self)
     -- TODO: drop missiles maybe!
-    if math.random() < 0.25 then L:addObject(EnergyPowerup:create(self)) end
+    if math.random() < 0.25 then L:addObject(ArmorPowerup:create(self)) end
   end
 }
 

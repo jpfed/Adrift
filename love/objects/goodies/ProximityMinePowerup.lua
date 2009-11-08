@@ -27,7 +27,8 @@ ProximityMinePowerup = {
     local shape = love.physics.newRectangleShape(body,1,1)
     local result = SimplePhysicsObject:create(body, shape)
     mixin(result, CollectibleObject:attribute(ProximityMinePowerup.sound, ProximityMinePowerup.effect))
-    mixin(result,RepresentableAsImage)
+    mixin(result, Powerup:attribute())
+    mixin(result, RepresentableAsImage)
     mixin(result, ProximityMinePowerup)
     result.class = ProximityMinePowerup
     return result

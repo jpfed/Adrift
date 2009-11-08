@@ -2,7 +2,9 @@ love.filesystem.require("oo.lua")
 love.filesystem.require("objects/composable/MultipleBlobObject.lua")
 love.filesystem.require("objects/composable/DamageableObject.lua")
 love.filesystem.require("objects/composable/Thruster.lua")
+love.filesystem.require("objects/composable/SimpleGun.lua")
 love.filesystem.require("objects/composable/Projectile.lua")
+love.filesystem.require("objects/ProximityMine.lua")
 love.filesystem.require("objects/goodies/EnergyPowerup.lua")
 love.filesystem.require("objects/composable/AI.lua")
 
@@ -15,6 +17,7 @@ Bomber = {
   cvx = nil,
   color = love.graphics.newColor(192,0,0),
   color_edge = love.graphics.newColor(128,64,64),
+  color_mine = love.graphics.newColor(192,64,64),
     
   thrust = 3,
     
@@ -30,13 +33,16 @@ Bomber = {
     
     local scale = 0.2
     local pMain = {{x=3,y=0}, {x=1,y=3}, {x=0,y=0}, {x=1,y=-3}}
-    local pBombChute = {{x=1,y=1}, {x=-1,y=1}, {x=-1,y=-1}, {x=1,y=-1}}
+    local pBombChute1 = {{x=1,y=1}, {x=-1,y=2}, {x=1,y=0}}
+    local pBombChute2 = {{x=1,y=-1}, {x=1,y=0}, {x=-1,y=-2}}
 
     r.blob = r:addConvexBlob(
       { damping = 0.1, adamping = 0.1 },
       { scale = scale, points = pMain, color = self.color, color_edge = self.color_edge } )
     r.blob:addConvexShape(
-      { scale = scale, points = pBombChute, color = self.color, color_edge = self.color } )
+      { scale = scale, points = pBombChute1, color = self.color, color_edge = self.color } )
+    r.blob:addConvexShape(
+      { scale = scale, points = pBombChute2, color = self.color, color_edge = self.color } )
 
  
     r.planner = Planner:create(r)
@@ -48,6 +54,19 @@ Bomber = {
     r.engine = Engine:create(r, r.thrust, 2, 8)
     r.thruster = FireThruster:create(r, 180)
     
+    r.gun = SimpleGun:create({
+      parent = r,
+      ammo = math.huge,
+      mountX = -0.8,
+      mountY = 0,
+      mountAngle = 180,
+      shotsPerSecond = 0.2,
+      spawnProjectile = function(self, params)
+        love.audio.play(ProximityMine.placeSound)
+        return ProximityMine:create(self.parent, params, Bomber.color_mine)
+      end
+    })
+
     return r
   end,
   
@@ -58,6 +77,10 @@ Bomber = {
     local overallThrust = self.engine:vector(ax, ay, dt)
     self.thruster:setIntensity(overallThrust*5)
     self.thruster:update(dt)
+
+    -- For right now, always lay mines
+    self.gun:fire()
+    self.gun:update(dt)
   end,
   
   draw = function(self)

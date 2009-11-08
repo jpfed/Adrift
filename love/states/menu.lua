@@ -49,9 +49,9 @@ local title = {
       local alpha = 100 - (ping.t / 2)
       if alpha < 10 then alpha = 10 end
       love.graphics.setColor(love.graphics.newColor(255,255,255,alpha / 5 - 2))
-      love.graphics.circle(love.draw_fill,ping.x,ping.y,ping.t,64)
+      love.graphics.circle(love.draw_fill,ping.x,ping.y,ping.t+15,64)
       love.graphics.setColor(love.graphics.newColor(255,255,255,alpha))
-      love.graphics.circle(love.draw_line,ping.x,ping.y,ping.t,64)
+      love.graphics.circle(love.draw_line,ping.x,ping.y,ping.t+15,64)
     end
 
     if math.random() <0.005 then
@@ -69,6 +69,22 @@ local title = {
 
     love.graphics.setBlendMode(love.blend_normal)
     love.graphics.setBlendMode(love.color_normal)
+  end
+}
+
+-- Add some staticy effects to the menu
+local overlay = {
+  color_overlay = love.graphics.newColor(0,20,35,80),
+
+  draw = function(self,s)
+    love.graphics.setBlendMode(love.blend_normal)
+    love.graphics.setBlendMode(love.color_normal)
+
+    love.graphics.setColor(self.color_overlay)
+    for i=1,10 do
+      local y = math.random(20,580)
+      love.graphics.line(0, y, 800, y+math.random() * 4 - 2)
+    end
   end
 }
 
@@ -97,6 +113,7 @@ getMenu = function(opts, extras)
     options = opts,
     supplemental = extras,
     title = title,
+    overlay = overlay,
     
     update = function(s,dt)
       s.title:update(dt)
@@ -118,13 +135,13 @@ getMenu = function(opts, extras)
       local select = love.keyboard.isDown(love.key_return) 
       
       if c.cooldown == 0 then
+        if up or down or left or right or select then s.title:addPing() end
         if select then c.cooldown = c.cooldown + 0.125; s.options[c.selected].action(); return end
         if up then c.selected = s.options[c.selected].up; c.cooldown = c.cooldown + 0.125
         elseif down then c.selected = s.options[c.selected].down; c.cooldown = c.cooldown + 0.125
         elseif left then c.selected = s.options[c.selected].left; c.cooldown = c.cooldown + 0.125
         elseif right then c.selected = s.options[c.selected].right; c.cooldown = c.cooldown + 0.125
         end
-        if up or down or left or right or select then s.title:addPing() end
       else
         s.cursor.cooldown = math.max(0,s.cursor.cooldown - dt)
       end
@@ -138,6 +155,7 @@ getMenu = function(opts, extras)
       for k,v in ipairs(s.options) do
         love.graphics.draw(v.text,v.x,v.y)
       end
+      s.overlay:draw(s)
     end,
     
     mousepressed = function(s,x,y,button) 

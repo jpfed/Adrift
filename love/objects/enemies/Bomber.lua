@@ -1,64 +1,58 @@
 love.filesystem.require("oo.lua")
-love.filesystem.require("objects/composable/SimplePhysicsObject.lua")
+love.filesystem.require("objects/composable/MultipleBlobObject.lua")
 love.filesystem.require("objects/composable/DamageableObject.lua")
-love.filesystem.require("objects/composable/Convex.lua")
 love.filesystem.require("objects/composable/Thruster.lua")
 love.filesystem.require("objects/composable/Projectile.lua")
 love.filesystem.require("objects/goodies/EnergyPowerup.lua")
 love.filesystem.require("objects/composable/AI.lua")
 
 Bomber = {
-  super = SimplePhysicsObject,
+  super = MultipleBlobObject,
   
   actionClock = 0,
   action = nil,
   
   cvx = nil,
-  lineColor = love.graphics.newColor(128,64,64),
-  fillColor = love.graphics.newColor(192,0,0),
+  color = love.graphics.newColor(192,0,0),
+  color_edge = love.graphics.newColor(128,64,64),
     
-  
-  thruster = nil,
-  engine = nil,
-  thrust = 4,
+  thrust = 3,
     
   deathSound = love.audio.newSound("sound/hornetDeath.ogg"),
     
-  
   create = function(self, x, y, difficulty)
-    local bd = love.physics.newBody(L.world,x,y,1)
-    bd:setMass(0,0,1,1)
-    bd:setDamping(0.01)
-    bd:setAngularDamping(0.01)
-    bd:setAllowSleep(false)
-    bd:setAngle(0)
+    local r = MultipleBlobObject:create(x,y)
     
-    local s = 0.2
-    local pointArray = {2*s,0*s, 0*s,3*s, -1*s,0*s, 0*s,-3*s}
+    mixin(r,DamageableObject:attribute(difficulty,nil,self.deathSound, 1000))
+    mixin(r,CollectorObject:attribute())
+    mixin(r,Bomber)
+    r.class = Bomber
+    
+    local scale = 0.2
+    local pMain = {{x=3,y=0}, {x=1,y=3}, {x=0,y=0}, {x=1,y=-3}}
+    local pBombChute = {{x=1,y=1}, {x=-1,y=1}, {x=-1,y=-1}, {x=1,y=-1}}
+
+    r.blob = r:addConvexBlob(
+      { damping = 0.1, adamping = 0.1 },
+      { scale = scale, points = pMain, color = self.color, color_edge = self.color_edge } )
+    r.blob:addConvexShape(
+      { scale = scale, points = pBombChute, color = self.color, color_edge = self.color } )
+
  
-    local result = SimplePhysicsObject:create(bd)
+    r.planner = Planner:create(r)
+    r.planner:addStrategy(AI.flee, AI.playerAnticipator, 0.5)
+    r.planner:addStrategy(AI.flee, AI.nearbyWalls, 0.5)
+    r.planner:addStrategy(AI.dodge, AI.nearbyWalls, 1.0)
+    --r.planner:addStrategy(AI.dodge, AI.approachingProjectiles, 0.5)
     
-    mixin(result,DamageableObject:attribute(difficulty,nil,self.deathSound, 1000))
-    mixin(result,CollectorObject:attribute())
+    r.engine = Engine:create(r, r.thrust, 2, 8)
+    r.thruster = FireThruster:create(r, 180)
     
-    mixin(result,Bomber)
-    result.class = Bomber
-    
-    result.planner = Planner:create(result)
-    result.planner:addStrategy(AI.flee, AI.playerAnticipator, 0.5)
-    result.planner:addStrategy(AI.flee, AI.nearbyWalls, 0.5)
-    result.planner:addStrategy(AI.dodge, AI.nearbyWalls, 1.0)
-    --result.planner:addStrategy(AI.dodge, AI.approachingProjectiles, 0.5)
-    
-    result.cvx = Convex:create(result, pointArray, self.lineColor, self.fillColor)
-    result.engine = Engine:create(result, result.thrust, 2, 8)
-    result.thruster = FireThruster:create(result, 180)
-    
-    return result
+    return r
   end,
   
   update = function(self, dt)
-    SimplePhysicsObject.update(self, dt)
+    MultipleBlobObject.update(self,dt)
     
     local ax, ay = self.planner:getEngineAction()
     local overallThrust = self.engine:vector(ax, ay, dt)
@@ -68,12 +62,11 @@ Bomber = {
   
   draw = function(self)
     self.thruster:draw()
-    self.cvx:draw()
+    MultipleBlobObject.draw(self)
   end,
   
   cleanup = function(self)
-    self.cvx:cleanup()
-    SimplePhysicsObject.cleanup(self)
+    MultipleBlobObject.cleanup(self)
     self:inventoryDropAll()
     if math.random() < 0.25 then L:addObject(EnergyPowerup:create(self)) end
   end

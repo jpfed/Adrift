@@ -21,6 +21,12 @@ HomingMissile = {
     end
   end,
   
+  touchOther = function(self,x,y) 
+    if not self.dead then
+      self.dead = true
+    end
+  end,
+  
   update = function(self, dt)
     SimplePhysicsObject.update(self,dt)
     local vx, vy = self.body:getVelocity()

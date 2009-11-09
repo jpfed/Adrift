@@ -48,7 +48,10 @@ objects = {
       {
         function(maybeProjectile) return kindOf(maybeProjectile,Projectile) end,
         function(whatever) return whatever ~= nil end,
-        function(projectile, whatever) projectile.dead = true end
+        function(projectile, whatever, c) 
+          local x,y = c:getPosition()
+          projectile:touchOther(x,y)
+        end
       },
 
       -- Hornets and eels
@@ -60,7 +63,11 @@ objects = {
       {
         function(maybeEel) return isA(maybeEel, Eel) end,
         function(maybeShip) return isA(maybeShip, Ship) end,
-        function(eel, ship) eel:shock(ship) end    
+        function(eel, ship, c)
+          local x,y = c:getPosition()
+          L:addObject(SparkExplosion:create(x,y,40,1.5,eel.fillColor))
+          eel:shock(ship)
+        end
       },
 
       -- Grasshopper stuff

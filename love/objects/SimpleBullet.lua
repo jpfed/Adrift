@@ -16,6 +16,12 @@ SimpleBullet = {
       self.dead = true
     end
   end,
+
+  touchOther = function(self,d)
+    if not self.dead then
+      self.dead = true
+    end
+  end,
   
   update = function(self, dt)
     SimplePhysicsObject.update(self,dt)
@@ -98,4 +104,8 @@ SimpleBullet = {
     return result
   end,
 
+  cleanup = function(self)
+    L:addObject(SparkExplosion:create(self.x,self.y,25,0.6,self.color))
+    if self.super.cleanup then self.super.cleanup(self) end
+  end
 }

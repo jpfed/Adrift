@@ -128,6 +128,32 @@ FireyExplosion = {
   end
 }
 
+SparkExplosion = {
+  create = function(self, x, y, duration, size, color)
+    local ex = Explosion:create({
+      x = x,
+      y = y,
+      duration = 40,
+      size = size or 1,
+      damaging = false,
+      slowdown = false,
+
+      brightImage = love.graphics.newImage("graphics/gline.png"),
+      brightStart = color,
+      brightFade = love.graphics.newColor(0, 0, 0, 20),
+      
+      smokeImage = love.graphics.newImage("graphics/smoke.png"),
+      smokeStart = love.graphics.newColor(128,128,128,100),
+      smokeFade = love.graphics.newColor(64,64,64,0),
+    })
+    ex.fire:setSpin(0)
+    ex.smoke:setLifetime(0.2)
+    ex.smoke:setParticleLife(1,1.2)
+    ex.smoke:setSize(2.0, 1.0, 1.0)
+    return ex
+  end
+}
+
 EggExplosion = {
   create = function(self, x, y, duration, size)
     return Explosion:create(

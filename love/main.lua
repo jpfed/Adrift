@@ -1,3 +1,5 @@
+love.filesystem.require("states/states.lua")
+
 load = function()
   math.randomseed(os.time())
   love.filesystem.require("oo.lua")
@@ -5,7 +7,6 @@ load = function()
   love.filesystem.require("objects/objects.lua")
   love.filesystem.require("objects/Level.lua")
   love.filesystem.require("sound/sound.lua")
-  love.filesystem.require("states/states.lua")
   
   state.options:load()
   state.repl:load()

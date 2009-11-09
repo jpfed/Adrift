@@ -145,3 +145,4 @@ Hornet = {
     return thing:kindOf(Powerup)
   end,
 }
+

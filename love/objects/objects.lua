@@ -24,6 +24,78 @@ love.filesystem.require("objects/enemies/Turret.lua")
 love.filesystem.require("objects/enemies/Bomber.lua")
 
 objects = {
+
+  loadCollisions = function()
+    return {
+      -- Dead objects
+      {
+        function(a) return a == nil or a.dead end,
+        function(b) return true end,
+        function(a,b) end
+      },
+
+      -- Projectiles and explosions
+      {
+        function(maybeProjectile) return kindOf(maybeProjectile,Projectile) end,
+        function(maybeDamageable) return kindOf(maybeDamageable, DamageableObject) end,
+        function(projectile, damageable) projectile:touchDamageable(damageable) end
+      },
+      {
+        function(maybeProxMine) return isA(maybeProxMine,ProximityMine) end,
+        function(whatever) return whatever ~= nil end,
+        function(prox, thing) prox:explode(thing) end
+      },
+      {
+        function(maybeProjectile) return kindOf(maybeProjectile,Projectile) end,
+        function(whatever) return whatever ~= nil end,
+        function(projectile, whatever) projectile.dead = true end
+      },
+
+      -- Hornets and eels
+      {
+        function(maybeWall) return maybeWall == L.physics end,
+        function(maybeHornet) return isA(maybeHornet, Hornet) end,
+        function(wall, hornet) hornet:collided() end
+      },
+      {
+        function(maybeEel) return isA(maybeEel, Eel) end,
+        function(maybeShip) return isA(maybeShip, Ship) end,
+        function(eel, ship) eel:shock(ship) end    
+      },
+
+      -- Grasshopper stuff
+      {
+        function(maybeHopper) return isA(maybeHopper, Grasshopper) end,
+        function(maybeDamageable) return kindOf(maybeDamageable, DamageableObject) end,
+        function(hopper, thing, c) local x,y = c:getPosition(); hopper:jump_off(thing, {x,y}) end
+      },
+      {
+        function(maybeHopper) return isA(maybeHopper, Grasshopper) end,
+        function(maybeWall) return maybeWall == L.physics end,
+        function(hopper, wall, c) local x,y = c:getPosition(); hopper.touchedWall = {x,y} end
+      },
+
+      -- Generic collection
+      {
+        function(x) return kindOf(x, CollectibleObject) end, 
+        function(x) return kindOf(x, CollectorObject) end, 
+        function(collectible, hobo)
+          if collectible.dead or hobo.dead then return end
+          if hobo:inventoryAdd(collectible) then
+            collectible:collected(hobo)
+          end
+        end
+      },
+
+      -- VICTORY
+      {
+        function(maybePortal) return isA(maybePortal, WarpPortal) end,
+        function(maybeShip) return isA(maybeShip, Ship) and maybeShip.hasCrystal end,
+        function(portal, ship) love.audio.play(portal.sound); state.current = state.victory end
+      }
+    }
+  end,
+
   
   getStartingSpot = function(obs, node)
     return WarpPortal:create(node)
@@ -60,3 +132,5 @@ objects = {
   end,
   
 }
+
+

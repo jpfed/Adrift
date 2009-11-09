@@ -23,10 +23,12 @@ end
 update = function(dt)
   if not love.audio.isPlaying() then sound.bgmIndex = sound.bgmIndex % #sound.bgm + 1; love.audio.play(sound.bgm[sound.bgmIndex]) end
   dt = math.min(dt, 1/15)
+  if state.current == state.inventory then state.game:update(dt) end
   state.current:update(dt)
 end
 
 draw = function()
+  if state.current == state.inventory then state.game:draw() end
   state.current:draw()
   love.graphics.setColor(255,255,255)
   if state.repl.active then state.repl:draw() end 

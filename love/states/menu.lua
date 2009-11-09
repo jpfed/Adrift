@@ -17,7 +17,7 @@ local title = {
     if s and s.waiting then self.scroll = s.waiting * (-140 / s.SCROLL_SPEED) end
     self.t = self.t + dt
     self.cooldown = self.cooldown + dt
-    self.ix = self.PING_X + (math.sin(self.t / 2) * 20)
+    self.ix = self.PING_X + (math.cos(self.t / 4) * 30) - 30
     self.iy = self.PING_Y
 
     for k,ping in ipairs(self.pings) do

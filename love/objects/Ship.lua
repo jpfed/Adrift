@@ -170,11 +170,13 @@ Ship = {
   end,
   
   drawHUD = function(self)
-    if state.current == state.game then
+    if state.current == state.game or state.current == state.inventory then
       love.graphics.setColor(self.healthColor)
       love.graphics.rectangle(love.draw_fill,100,590, 700 * self.armor / self.maxArmor,10)
       love.graphics.draw("HP: " .. tostring(self.armor) .. " / " .. tostring(self.maxArmor), 15,598)
       
+      love.graphics.draw("Score: " .. tostring(state.game.score),15,580)
+
       local i = 0
       for k = 1, #(self.equipables) do
       
@@ -231,45 +233,49 @@ Ship = {
       power:update(dt)
     end
   
-    local targVx, targVy, isFiring, isMod1 = self.controller:getAction(self,dt)
-    local normVx, normVy = geom.normalize(targVx, targVy)
-    local angle = math.rad(self.angle)
-    local angX, angY = math.cos(angle), math.sin(angle)
-    if normX == 0 and normY == 0 then normX, normY = angX, angY end
-    local applyThrust = true
-    if isMod1 then
-      local forward = geom.dot_product(normVx, normVy, angX, angY) > 0.7
-      local left = geom.dot_product(normVx, normVy, angY, -angX) > 0.7
-      local right = geom.dot_product(normVx, normVy, -angY, angX) > 0.7
-      local back = geom.dot_product(normVx, normVy, angX, angY) < -0.7
-      
-      if forward then self.powers.boost:trigger() end
-      
-      if left then 
-        applyThrust = false
-        self.powers.sidestep.orientation = -1
-        self.powers.sidestep:trigger()
+    if state.current ~= state.inventory then
+      local targVx, targVy, isFiring, isMod1 = self.controller:getAction(self,dt)
+      local normVx, normVy = geom.normalize(targVx, targVy)
+      local angle = math.rad(self.angle)
+      local angX, angY = math.cos(angle), math.sin(angle)
+      if normX == 0 and normY == 0 then normX, normY = angX, angY end
+      local applyThrust = true
+      if isMod1 then
+        local forward = geom.dot_product(normVx, normVy, angX, angY) > 0.7
+        local left = geom.dot_product(normVx, normVy, angY, -angX) > 0.7
+        local right = geom.dot_product(normVx, normVy, -angY, angX) > 0.7
+        local back = geom.dot_product(normVx, normVy, angX, angY) < -0.7
+        
+        if forward then self.powers.boost:trigger() end
+        
+        if left then 
+          applyThrust = false
+          self.powers.sidestep.orientation = -1
+          self.powers.sidestep:trigger()
+        end
+        
+        if right then
+          applyThrust = false
+          self.powers.sidestep.orientation = 1
+          self.powers.sidestep:trigger()
+        end
+        if back and self.hasTeleport then
+          applyThrust = false
+          self.powers.teleport:trigger()
+        end
       end
       
-      if right then
-        applyThrust = false
-        self.powers.sidestep.orientation = 1
-        self.powers.sidestep:trigger()
+      if applyThrust then
+        local overallThrust = self.engine:vector(targVx, targVy, dt)
+        self.thruster:setIntensity(overallThrust*7.5)
       end
-      if back and self.hasTeleport then
-        applyThrust = false
-        self.powers.teleport:trigger()
-      end
+
+      if isFiring then self.equipables[self.currentWeapon]:fire() end
     end
-    
-    if applyThrust then
-      local overallThrust = self.engine:vector(targVx, targVy, dt)
-      self.thruster:setIntensity(overallThrust*7.5)
-    end
+
     self.thruster:update(dt)
   
     if self.equipables[self.currentWeapon].ammo == 0 then self:switchWeapons() end
-    if isFiring then self.equipables[self.currentWeapon]:fire() end
     for k,v in pairs(self.equipables) do 
       v:update(dt)
     end

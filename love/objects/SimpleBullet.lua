@@ -5,6 +5,7 @@ love.filesystem.require("objects/composable/Projectile.lua")
 SimpleBullet = {
   super = SimplePhysicsObject,
   strikeSound = love.audio.newSound("sound/bulletStrike.ogg"),
+  sparkSound = love.audio.newSound("sound/bulletSpark.ogg"),
   speed = 10,
   radius = 0.075,
   damage = 1,
@@ -19,6 +20,7 @@ SimpleBullet = {
 
   touchOther = function(self,d)
     if not self.dead then
+      if self.sparkSound then love.audio.play(self.sparkSound) end
       self.dead = true
     end
   end,

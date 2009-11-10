@@ -65,7 +65,7 @@ objects = {
         function(maybeShip) return isA(maybeShip, Ship) end,
         function(eel, ship, c)
           local x,y = c:getPosition()
-          L:addObject(SparkExplosion:create(x,y,40,1.5,eel.fillColor))
+          L:addObject(ZapExplosion:create(x,y,40,1.5,eel.fillColor))
           eel:shock(ship)
         end
       },

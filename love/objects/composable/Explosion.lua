@@ -130,26 +130,36 @@ FireyExplosion = {
 
 SparkExplosion = {
   create = function(self, x, y, duration, size, color)
+    local cr, cg, cb, ca = math.floor(color:getRed()/2), math.floor(color:getGreen()/2), math.floor(color:getBlue()/2), math.floor(color:getAlpha()/2)
     local ex = Explosion:create({
       x = x,
       y = y,
-      duration = 40,
-      size = size or 1,
+      duration = 20,
+      size = (size or 1),
       damaging = false,
       slowdown = false,
 
       brightImage = love.graphics.newImage("graphics/gline.png"),
-      brightStart = color,
-      brightFade = love.graphics.newColor(0, 0, 0, 20),
+      brightStart = love.graphics.newColor(cr + 128, cg + 128, cb + 128, ca + 128),
+      brightFade = love.graphics.newColor(cr, cg, cb, ca),
       
       smokeImage = love.graphics.newImage("graphics/smoke.png"),
       smokeStart = love.graphics.newColor(128,128,128,100),
       smokeFade = love.graphics.newColor(64,64,64,0),
     })
-    ex.fire:setSpin(0)
+    ex.fire:setSpeed(0, 400*ex.size)
     ex.smoke:setLifetime(0.2)
     ex.smoke:setParticleLife(1,1.2)
     ex.smoke:setSize(2.0, 1.0, 1.0)
+    return ex
+  end
+}
+
+ZapExplosion = {
+  create = function(self, x, y, duration, size, color)
+    local ex = SparkExplosion:create(x,y,duration, size, color)
+    ex.fire:setSpeed(30*ex.size)
+    ex.fire:setSpin(0)
     return ex
   end
 }

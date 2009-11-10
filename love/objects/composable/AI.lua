@@ -141,17 +141,18 @@ AI = {
     return {{x = predX, y = predY}}
   end,
   
-  nearbyWalls = function(self, parent)
-    local result = {}
-    local numRadiusSteps, numAngleSteps = 2, 8
-    for r = 1,numRadiusSteps do
-      for a = 1,numAngleSteps do
-        local theta = a*2*math.pi/numAngleSteps
-        local x, y = parent.x + r*math.cos(theta), parent.y + r*math.sin(theta)
-        if L:solidAt(x,y) then table.insert(result, {x = x, y = y}) end
+  nearbyWalls = function(numRadiusSteps, numAngleSteps)
+    return function(self, parent)
+      local result = {}
+      for r = 1,numRadiusSteps do
+        for a = 1,numAngleSteps do
+          local theta = a*2*math.pi/numAngleSteps
+          local x, y = parent.x + r*math.cos(theta), parent.y + r*math.sin(theta)
+          if L:solidAt(x,y) then table.insert(result, {x = x, y = y}) end
+        end
       end
+      return result
     end
-    return result
   end,
 
   approachingProjectiles = function(self, parent)
@@ -188,7 +189,15 @@ AI = {
   otherAgents = function(self, parent)
     local result = {}
     for k, v in pairs(L.objects) do
-      if not AhasAttribute(v,Projectile) and not AhasAttribute(v, CollectibleObject) then table.insert(result, {x = v.x, y = v.y}) end
+      if not kindOf(v,Projectile) and not kindOf(v, CollectibleObject) then table.insert(result, {x = v.x, y = v.y}) end
+    end
+    return result
+  end,
+  
+  collectibles = function(self, parent)
+    local result = {}
+    for k, v in pairs(L.objects) do
+      if kindOf(v, CollectibleObject) then table.insert(result, v) end
     end
     return result
   end,

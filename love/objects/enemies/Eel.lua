@@ -51,8 +51,8 @@ Eel = {
     
     result.planner = Planner:create(result)
     result.planner:addStrategy(AI.approach, AI.playerAnticipator, 1)
-    result.planner:addStrategy(AI.flee, AI.nearbyWalls, 0.25)
-    result.planner:addStrategy(AI.dodge, AI.nearbyWalls, 0.75)
+    result.planner:addStrategy(AI.flee, AI.nearbyWalls(2,8), 0.25)
+    result.planner:addStrategy(AI.dodge, AI.nearbyWalls(2,8), 0.75)
     result.planner:addStrategy(AI.flee, AI.allProjectiles, 2)
     
     result.cvx = Convex:create(result, pointArray, self.lineColor, self.fillColor)

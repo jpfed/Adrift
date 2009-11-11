@@ -190,7 +190,7 @@ local options = {
       -- scroll speed here depending on how long it was estimated to take...
       state.menu.loading = true
       state.menu.supplemental = {
-        SCROLL_SPEED = 3,
+        SCROLL_SPEED = 1,
         waiting = 0,
         update = function(self, s, dt)
           self.waiting = self.waiting + dt

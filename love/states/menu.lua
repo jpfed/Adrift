@@ -184,7 +184,7 @@ end
 
 local options = {
   
-  {text = "Start Game", x = 480, y = 200, w = 95, h = 20,
+  {text = "Start Game", x = 480, y = 250, w = 95, h = 20,
     action = function()  
       -- NOTE: if we had a way to do background loading, we could adjust the 
       -- scroll speed here depending on how long it was estimated to take...
@@ -201,21 +201,21 @@ local options = {
   up = 4, down = 2, left = 1, right = 1,
   },
   
-  {text = "Options", x = 480, y = 300, w = 75, h = 20,
+  {text = "Options", x = 480, y = 350, w = 75, h = 20,
     action = function()  
       state.current = state.options
   end,
   up = 1, down = 3, left = 2, right = 2,
   },
   
-  {text = "Help", x = 480, y = 350, w = 60, h = 20,
+  {text = "Help", x = 480, y = 400, w = 60, h = 20,
     action = function()
       state.current = state.help
   end,
   up = 2, down = 4, left = 3, right = 3,
   },
   
-  {text = "Quit", x = 480, y = 400, w = 60, h = 20,
+  {text = "Quit", x = 480, y = 450, w = 60, h = 20,
     action = function() 
       love.system.exit()
   end,

@@ -36,18 +36,18 @@ objects = {
 
       -- Projectiles and explosions
       {
-        function(maybeProjectile) return kindOf(maybeProjectile,Projectile) end,
-        function(maybeDamageable) return kindOf(maybeDamageable, DamageableObject) end,
+        function(a) return kindOf(a,Projectile) end,
+        function(b) return kindOf(b,DamageableObject) end,
         function(projectile, damageable) projectile:touchDamageable(damageable) end
       },
       {
-        function(maybeProxMine) return isA(maybeProxMine,ProximityMine) end,
-        function(whatever) return whatever ~= nil end,
+        function(a) return isA(a,ProximityMine) end,
+        function(b) return b ~= nil end,
         function(prox, thing) prox:explode(thing) end
       },
       {
-        function(maybeProjectile) return kindOf(maybeProjectile,Projectile) end,
-        function(whatever) return whatever ~= nil end,
+        function(a) return kindOf(a,Projectile) end,
+        function(b) return b ~= nil end,
         function(projectile, whatever, c) 
           local x,y = c:getPosition()
           projectile:touchOther(x,y)
@@ -56,13 +56,13 @@ objects = {
 
       -- Hornets and eels
       {
-        function(maybeWall) return maybeWall == L.physics end,
-        function(maybeHornet) return isA(maybeHornet, Hornet) end,
+        function(a) return a == L.physics end,
+        function(b) return isA(b, Hornet) end,
         function(wall, hornet) hornet:collided() end
       },
       {
-        function(maybeEel) return isA(maybeEel, Eel) end,
-        function(maybeShip) return isA(maybeShip, Ship) end,
+        function(a) return isA(b, Eel) end,
+        function(b) return isA(b, Ship) end,
         function(eel, ship, c)
           local x,y = c:getPosition()
           L:addObject(ZapExplosion:create(x,y,40,1.5,eel.fillColor))
@@ -70,16 +70,15 @@ objects = {
         end
       },
 
-      -- Grasshopper stuff
-      {
-        function(maybeHopper) return isA(maybeHopper, Grasshopper) end,
-        function(maybeDamageable) return kindOf(maybeDamageable, DamageableObject) end,
-        function(hopper, thing, c) local x,y = c:getPosition(); hopper:jump_off(thing, {x,y}) end
+      { -- Grasshopper hops off damageable stuff
+        function(a) return isA(a,Grasshopper) end,
+        function(b) return kindOf(b,DamageableObject) end,
+        function(hopper, thing, c) local x,y = c:getPosition(); hopper:jumpOff(thing, {x,y}) end
       },
-      {
-        function(maybeHopper) return isA(maybeHopper, Grasshopper) end,
-        function(maybeWall) return maybeWall == L.physics end,
-        function(hopper, wall, c) local x,y = c:getPosition(); hopper.touchedWall = {x,y} end
+      { -- Hop off of solid things
+        function(a) return isA(a,Grasshopper) end,
+        function(b) return b == L.physics or kindOf(b,Resource) or kindOf(b,Powerup) end,
+        function(hopper, solid, c) local x,y = c:getPosition(); hopper.touchedSolid = {x,y} end
       },
 
       -- Generic collection

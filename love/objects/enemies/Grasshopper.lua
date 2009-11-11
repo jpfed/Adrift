@@ -9,7 +9,7 @@ Grasshopper = {
   jumpPending = false,
   canJump = true,
   jumpPower = 5,
-  touchedWall = nil,
+  touchedSolid = nil,
   excited = false,
 
   color = love.graphics.newColor(10,150,30),
@@ -44,14 +44,14 @@ Grasshopper = {
       self.cooldown = self.cooldown - dt
       self.canJump = true
     end
-    if self.touchedWall ~= nil or self.jumpPending then
+    if self.touchedSolid ~= nil or self.jumpPending then
       if self.cooldown <= 0 then
         if self.canJump then
           self.cooldown = 0
           
           self.jumpPending = false
-          self:jump(self.touchedWall)
-          self.touchedWall = nil
+          self:jump(self.touchedSolid)
+          self.touchedSolid = nil
         else
           self.cooldown = 1
         end
@@ -74,7 +74,7 @@ Grasshopper = {
     self.canJump = false
   end,
 
-  jump_off = function(self,object, pos)
+  jumpOff = function(self,object, pos)
     if not isA(object, Grasshopper) then
       object:damage(0.1)
     else

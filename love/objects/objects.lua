@@ -61,7 +61,7 @@ objects = {
         function(wall, hornet) hornet:collided() end
       },
       {
-        function(a) return isA(b, Eel) end,
+        function(a) return isA(a, Eel) end,
         function(b) return isA(b, Ship) end,
         function(eel, ship, c)
           local x,y = c:getPosition()

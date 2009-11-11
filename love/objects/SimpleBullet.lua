@@ -64,7 +64,7 @@ SimpleBullet = {
     local sbShape = love.physics.newCircleShape(sbBody, SimpleBullet.radius)
     sbBody:setBullet(true)
     sbBody:setVelocity(vx,vy)
-    sbShape:setSensor(true)
+    --sbShape:setSensor(true)
     
     local result = SimplePhysicsObject:create(sbBody, sbShape)
     mixin(result, Projectile:attribute())

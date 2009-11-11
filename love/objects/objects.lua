@@ -22,6 +22,9 @@ love.filesystem.require("objects/enemies/Leech.lua")
 love.filesystem.require("objects/enemies/Grasshopper.lua")
 love.filesystem.require("objects/enemies/Turret.lua")
 love.filesystem.require("objects/enemies/Bomber.lua")
+love.filesystem.require("objects/composable/Trigger.lua")
+
+local dist = 32
 
 objects = {
 
@@ -61,7 +64,7 @@ objects = {
         function(wall, hornet) hornet:collided() end
       },
       {
-        function(a) return isA(b, Eel) end,
+        function(a) return isA(a, Eel) end,
         function(b) return isA(b, Ship) end,
         function(eel, ship, c)
           local x,y = c:getPosition()
@@ -103,6 +106,8 @@ objects = {
   end,
 
   
+  
+  
   getStartingSpot = function(obs, node)
     return WarpPortal:create(node)
   end,
@@ -112,29 +117,32 @@ objects = {
   end,
 
   getEnemy = function(obs, node, difficulty)
+    local x, y = node.x, node.y
     local r = math.random()
-    if r<0.2 then return Hornet:create(node.x, node.y, difficulty) end 
-    if r<0.4 then return HornetEgg:create(node.x, node.y, difficulty) end
+    
+    if r<0.2 then return DelayedEnemy(Hornet, x, y, difficulty, dist) end
+    if r<0.4 then return DelayedEnemy(HornetEgg, x, y, difficulty, dist) end
     -- TODO: this should create it starting on the ground or attached to a wall somehow
-    if r<0.5 then return Turret:create(node.x, node.y, difficulty) end
-    if r<0.7 then return Bomber:create(node.x, node.y, difficulty) end
-    return Eel:create(node.x,node.y, difficulty)
+    if r<0.5 then return DelayedEnemy(Turret, x, y, difficulty, dist) end
+    if r<0.7 then return DelayedEnemy(Bomber, x, y, difficulty, dist) end
+    return DelayedEnemy(Eel, x, y, difficulty, dist)
   end,
 
   getCreature = function(obs, node, difficulty)
-    return Grasshopper:create(node.x + 0.1, node.y, difficulty)
+    return DelayedEnemy(Grasshopper, node.x + 0.1, node.y, difficulty, dist)
   end,
 
   getPowerup = function(obs,node)
+    local x, y = node.x, node.y
     local r = math.random()
-    if r<0.05 then return TeleportPowerup:create(node) end
-    if r<0.15 then return BoosterPowerup:create(node) end
-    if r<0.3 then return MaxArmorPowerup:create(node) end
-    if r<0.4 then return ProximityMinePowerup:create(node) end
-    if r<0.5 then return HomingMissilePowerup:create(node) end
-    if r<0.75 then return MineralChunk:create(node) end
-    if r<0.8  then return EnergyChunk:create(node) end
-    return ArmorPowerup:create(node)
+    if r<0.05 then return DelayedPowerup(TeleportPowerup, node, dist) end
+    if r<0.15 then return DelayedPowerup(BoosterPowerup, node, dist) end
+    if r<0.3 then return DelayedPowerup(MaxArmorPowerup, node, dist) end
+    if r<0.4 then return DelayedPowerup(ProximityMinePowerup, node, dist) end
+    if r<0.5 then return DelayedPowerup(HomingMissilePowerup, node, dist) end
+    if r<0.75 then return DelayedPowerup(MineralChunk, node, dist) end
+    if r<0.8  then return DelayedPowerup(EnergyChunk, node, dist) end
+    return DelayedPowerup(ArmorPowerup, node, dist)
   end,
   
 }

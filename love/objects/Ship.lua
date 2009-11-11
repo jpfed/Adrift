@@ -62,10 +62,11 @@ Ship = {
     table.insert(result.equipables, SimpleGun:create({
       parent = result,
       ammo = math.huge,
+      chargeable = true,
       mountX = 0.5,
       mountY = 0,
       mountAngle = 0,
-      shotsPerSecond = 4,
+      shotsPerSecond = 10,
       name = "SimpleBullet",
       icon = love.graphics.newImage("graphics/simpleBulletIcon.png"),
       spawnProjectile = function(self, params)
@@ -270,7 +271,11 @@ Ship = {
         self.thruster:setIntensity(overallThrust*7.5)
       end
 
-      if isFiring then self.equipables[self.currentWeapon]:fire() end
+      if isFiring then 
+        self.equipables[self.currentWeapon]:fire() 
+      else
+        self.equipables[self.currentWeapon]:release() 
+      end
     end
 
     self.thruster:update(dt)

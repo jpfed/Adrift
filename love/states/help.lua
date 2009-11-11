@@ -6,7 +6,7 @@ local options = {
 }
 
 local supplemental = {
-  height = 200,
+  height = 250,
   draw = function(sup,s)
     love.graphics.setColor(s.normalColor)
     love.graphics.draw("Crystal: Find the warp crystal and return it to the warp portal at the beginning of the level to advance.", 75, sup.height)

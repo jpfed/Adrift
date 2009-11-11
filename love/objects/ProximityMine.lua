@@ -13,7 +13,7 @@ ProximityMine = {
   
   explode = function(self,d) 
     if not self.dead then
-      -- todo: eventually the prox mine shouldn't do direct damage to its trigger-er, it should only damage via its giant explosion
+      --todo: eventually the prox mine shouldn't do direct damage to its trigger-er, it should only damage via its giant explosion
       if isA(d, DamageableObject) then
         d:damage(self.damage)
       end
@@ -21,6 +21,14 @@ ProximityMine = {
       L:addObject(FireyExplosion:create(self.x,self.y,80,3.0))
       self.dead = true
     end
+  end,
+  
+  touchDamageable = function(self, d)
+    self:explode(d)
+  end,
+  
+  touchOther = function(self, d)
+    self:explode(d)
   end,
   
   update = function(self, dt)
@@ -48,6 +56,7 @@ ProximityMine = {
     sbBody:setVelocity(vx,vy)
     
     local result = SimplePhysicsObject:create(sbBody, sbShape)
+    mixin(result, Projectile:attribute())
     mixin(result, ProximityMine)
     result.class = ProximityMine
     result.color = color

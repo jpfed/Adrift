@@ -11,9 +11,6 @@ love.filesystem.require("objects/composable/AI.lua")
 Bomber = {
   super = MultipleBlobObject,
   
-  actionClock = 0,
-  action = nil,
-  
   cvx = nil,
   color = love.graphics.newColor(192,0,0),
   color_edge = love.graphics.newColor(128,64,64),
@@ -46,10 +43,9 @@ Bomber = {
 
  
     r.planner = Planner:create(r)
-    r.planner:addStrategy(AI.flee, AI.playerAnticipator, 0.5)
-    r.planner:addStrategy(AI.flee, AI.nearbyWalls, 0.5)
-    r.planner:addStrategy(AI.dodge, AI.nearbyWalls, 1.0)
-    --r.planner:addStrategy(AI.dodge, AI.approachingProjectiles, 0.5)
+    r.planner:addStrategy(AI.approach, AI.collectibles, 0.25)
+    r.planner:addStrategy(AI.flee, AI.nearbyWalls(3,16), 1.0)
+    r.planner:addStrategy(AI.flee, AI.allProjectiles, 1)
     
     r.engine = Engine:create(r, r.thrust, 2, 8)
     r.thruster = FireThruster:create(r, 180)

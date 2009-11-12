@@ -1,7 +1,4 @@
 love.filesystem.require("oo.lua")
-love.filesystem.require("objects/composable/DamageableObject.lua")
-love.filesystem.require("objects/composable/CollectibleObject.lua")
-love.filesystem.require("objects/goodies/WarpPortal.lua")
 
 state.game = {
   
@@ -32,11 +29,14 @@ state.game = {
   startNewLevel = function(s)
     s.waitingForNewLevel = false
     s.levelNumber = s.levelNumber + 1
-    s.background = Level:create(s.difficulty*10 + s.levelNumber, 0.25)
-    L = Level:create(s.difficulty*10 + s.levelNumber, 1, true)
+    s.background = Level:create(s.difficulty*8 + s.levelNumber, 0.25)
+    L = Level:create(s.difficulty*5 + s.levelNumber, 1, true)
     s.level = L
+
     L:solidify()
-    L:generateObjects(s.difficulty)
+
+    L.boom = BoomOperator:create(s.difficulty)
+    L.boom:startObjects()
     
     if s.ship == nil then
       s.ship = Ship:create(L.nodes[1].x, L.nodes[1].y, state.options.controlScheme)

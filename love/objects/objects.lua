@@ -23,6 +23,7 @@ love.filesystem.require("objects/enemies/Grasshopper.lua")
 love.filesystem.require("objects/enemies/Turret.lua")
 love.filesystem.require("objects/enemies/Bomber.lua")
 love.filesystem.require("objects/composable/Trigger.lua")
+love.filesystem.require("objects/BoomOperator.lua")
 
 local dist = 32
 
@@ -116,35 +117,6 @@ objects = {
     return WarpCrystal:create(node)
   end,
 
-  getEnemy = function(obs, node, difficulty)
-    local x, y = node.x, node.y
-    local r = math.random()
-    
-    if r<0.2 then return DelayedEnemy(Hornet, x, y, difficulty, dist) end
-    if r<0.4 then return DelayedEnemy(HornetEgg, x, y, difficulty, dist) end
-    -- TODO: this should create it starting on the ground or attached to a wall somehow
-    if r<0.5 then return DelayedEnemy(Turret, x, y, difficulty, dist) end
-    if r<0.7 then return DelayedEnemy(Bomber, x, y, difficulty, dist) end
-    return DelayedEnemy(Eel, x, y, difficulty, dist)
-  end,
-
-  getCreature = function(obs, node, difficulty)
-    return DelayedEnemy(Grasshopper, node.x + 0.1, node.y, difficulty, dist)
-  end,
-
-  getPowerup = function(obs,node)
-    local x, y = node.x, node.y
-    local r = math.random()
-    if r<0.05 then return DelayedPowerup(TeleportPowerup, node, dist) end
-    if r<0.15 then return DelayedPowerup(BoosterPowerup, node, dist) end
-    if r<0.3 then return DelayedPowerup(MaxArmorPowerup, node, dist) end
-    if r<0.4 then return DelayedPowerup(ProximityMinePowerup, node, dist) end
-    if r<0.5 then return DelayedPowerup(HomingMissilePowerup, node, dist) end
-    if r<0.75 then return DelayedPowerup(MineralChunk, node, dist) end
-    if r<0.8  then return DelayedPowerup(EnergyChunk, node, dist) end
-    return DelayedPowerup(ArmorPowerup, node, dist)
-  end,
-  
 }
 
 

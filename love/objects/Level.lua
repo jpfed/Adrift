@@ -1,4 +1,5 @@
 love.filesystem.require("oo.lua")
+love.filesystem.require("objects/BoomOperator.lua")
 
 Level = {
   margin = 1,
@@ -417,43 +418,6 @@ Level = {
       local col2 = love.graphics.newColor(196*lumR, 128*lumG, 64*lumB)
       local colors = {normal = col1, highlight = col2}
       table.insert(level.colors,colors)
-    end
-  end,
-
-  generateObjects = function(level, difficulty)
-    for k,v in ipairs(level.nodes) do
-      if v.startingSpot then 
-        table.insert(level.objects, objects:getStartingSpot(v)) 
-      else
-        if v.warpCrystal then 
-          table.insert(level.objects, objects:getWarpCrystal(v)) 
-        end
-        if v.enemy then 
-          table.insert(level.objects, objects:getEnemy(v, difficulty)) 
-        end
-        if v.powerup then 
-          table.insert(level.objects, objects:getPowerup(v, difficulty)) 
-        end
-        if math.random() < 0.5 then
-          table.insert(level.objects, objects:getCreature(v, difficulty)) 
-        end
-        local minerals = math.random(1,4)
-        for i=0,minerals do
-          table.insert(level.objects, MineralChunk:create(v)) 
-        end
-      end
-    end
-  end,
-
-  generateDefenders = function(level, difficulty)
-    for k,v in ipairs(level.nodes) do
-      if v.startingspot then 
-        table.insert(level.objects, objects:getEnemy(v, difficulty * 2)) 
-      else
-        if math.random() < 0.3 then
-          table.insert(level.objects, objects:getEnemy(v, difficulty)) 
-        end
-      end
     end
   end,
 

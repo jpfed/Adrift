@@ -149,4 +149,116 @@ Poly = {
     return Poly:create(points)
     
   end,
+  
+    has_point_inside = function(poly, point)
+    local orientation = geom.ccw_t(poly.points[1],poly.points[2],poly.points[3])
+    local numPoints = #poly.points
+    for k,v in pairs(poly.points) do
+      local o = geom.ccw_t(poly.points[k], poly.points[k % numPoints + 1], poly.points[k + 1 % numPoints + 1])
+      if o ~= orientation then return false end
+    end
+    return true
+  end,
+  
+  -- drill down to the leaf subPoly containing seekPoint, then
+  -- subdivide the poly into subPolys, with one subdividing ray intersecting with the poly edge at interPoint
+  subdivide = function(self,depth, interPoint, seekPoint)
+    if depth > 0 then
+      if self.subPolys == nil then
+        local num = math.random(2)+math.random(2)+1
+        self.subPolys = {}
+        local width = self:max_x_point().x - self:min_x_point().x
+        local height = self:max_y_point().y - self:min_y_point().y
+        local length = (width+height)
+      
+        local x, y = 0, 0
+        for k, v in pairs(self.points) do
+          x, y = x + v.x, y + v.y
+        end      
+        x, y = x/#(self.points), y/#(self.points)
+      
+        local center = {x = x, y = y}
+        local perimeter = {}
+        local newPolys = {}
+        local rays = {}
+        -- the spread of rays is randomly rotated
+        local dtheta = math.random()*math.pi
+        if interPoint then
+          dtheta = math.atan2(interPoint.y - center.y, interPoint.x - center.x)
+        end
+        --local dtheta = 0
+        for r = 1, num do
+          local theta = 2*math.pi*r/num + dtheta
+          -- the rays are evenly spread about the central point- no jitter
+          local ray = {x = x + length*math.cos(theta), y = y + length*math.sin(theta), r = r}
+          table.insert(rays, ray)
+        end
+        
+        -- seek forward around the poly until you hit the first ray intersection
+        local polyC = 1
+        local rayC = 1
+        local rayFound = false
+        repeat
+          local nextPolyC = polyC % #(self.points) + 1
+          local p = geom.intersection_point_t(self.points[polyC], self.points[nextPolyC], center, rays[rayC], true)
+          if p == nil then
+            polyC = nextPolyC
+          else
+            p.ray = rayC
+            table.insert(perimeter, p)
+            table.insert(newPolys, rayC)
+            rayC = rayC % num + 1
+            rayFound = true
+          end
+        until rayFound
+        
+        local startingPoint = polyC
+        local numOriginalEdgesTraversed = 0
+        local numIntersectionsEncountered = 1
+        repeat
+          local nextPolyC = polyC % #(self.points) + 1
+          local p = geom.intersection_point_t(self.points[polyC], self.points[nextPolyC], center, rays[rayC], true)
+          if p == nil then
+            polyC = nextPolyC
+            table.insert(perimeter, self.points[polyC])
+            numOriginalEdgesTraversed = numOriginalEdgesTraversed + 1
+          else
+            p.ray = rayC
+            table.insert(perimeter, p)
+            table.insert(newPolys, #perimeter)
+            rayC = rayC % num + 1
+            numIntersectionsEncountered = numIntersectionsEncountered + 1
+          end
+        until numOriginalEdgesTraversed == #self.points and numIntersectionsEncountered == #rays
+
+        -- form lists of vertices for each new poly, starting at the ray intersection points
+        -- (there should be a new poly for each ray intersection point)
+        for k, v in pairs(newPolys) do
+          local polyPoints = {perimeter[v]}
+          local p = v
+          repeat
+            p = p % #perimeter + 1
+            table.insert(polyPoints, perimeter[p])
+          until perimeter[p].ray
+          perimeter[p].ray = nil
+          table.insert(polyPoints, center)
+          table.insert(self.subPolys, Poly:create(polyPoints))
+        end
+        
+        for k, v in pairs(self.subPolys) do
+          v:subdivide(depth-1, interPoint, seekPoint)
+        end
+      else
+        -- so we already have subPolys, but we should find the subPoly that the seekPoint lies in (if any) and subdivide it
+        if seekPoint then
+          for k, v in pairs(self.subPolys) do
+            if v:has_point_inside(seekPoint) then
+              v:subdivide(depth, interPoint, seekPoint)
+              break
+            end
+          end
+        end
+      end
+    end
+  end,
 }

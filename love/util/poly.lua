@@ -150,11 +150,11 @@ Poly = {
     
   end,
   
-    has_point_inside = function(poly, point)
-    local orientation = geom.ccw_t(poly.points[1],poly.points[2],poly.points[3])
+  has_point_inside = function(poly, point)
+    local orientation = geom.ccw_t(poly.points[1],poly.points[2],point)
     local numPoints = #poly.points
     for k,v in pairs(poly.points) do
-      local o = geom.ccw_t(poly.points[k], poly.points[k % numPoints + 1], poly.points[k + 1 % numPoints + 1])
+      local o = geom.ccw_t(poly.points[k], poly.points[k % numPoints + 1], point)
       if o ~= orientation then return false end
     end
     return true

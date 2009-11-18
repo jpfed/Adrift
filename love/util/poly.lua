@@ -261,4 +261,27 @@ Poly = {
       end
     end
   end,
+  
+  subPolyAt = function(self, point)
+    if #self.subPolys > 0 then
+      for k, v in pairs(self.subPolys) do
+        if v:has_point_inside(point) then return v:subPolyAt(point) end
+      end
+    else
+      return self
+    end
+  end,
+  
+  subPolyLeaves = function(self, result)
+    if result == nil then result = {} end
+    if #self.subPolys > 0 then
+      for k, v in pairs(self.subPolys) do
+        v:subPolyLeaves(result)
+      end
+    else
+      table.insert(result, self)
+    end
+    return result
+  end,
+  
 }

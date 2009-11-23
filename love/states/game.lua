@@ -13,7 +13,7 @@ state.game = {
   load = function(s)
     state.current = state.game
     s.levelNumber = 0
-    s.difficulty = state.options.difficulty
+    s.difficulty = Opt.difficulty
     s.score = 0
     s.ship = nil
     s:startNewLevel()

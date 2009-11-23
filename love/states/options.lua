@@ -1,3 +1,7 @@
+love.filesystem.require("util/persistence.lua")
+
+Opt = { difficulty = 2, controlScheme = 1 }
+
 local opts = {
 
   {text = "Radial Keyboard Controls", x = 100, y = 225, w = 180, h = 20,
@@ -46,28 +50,28 @@ local opts = {
   
   {text = "Easy", x = 500, y = 225, w = 75, h = 20,
     action = function()
-      state.options.difficulty = 1
+      Opt.difficulty = 1
   end,
   up = 10, down = 8, left = 1, right = 1,
   },
   
   {text = "Normal", x = 500, y = 275, w = 60, h = 20,
     action = function() 
-      state.options.difficulty = 2
+      Opt.difficulty = 2
   end,
   up = 7, down = 9, left = 1, right = 1,
   },
   
   {text = "Hard", x = 500, y = 325, w = 75, h = 20,
     action = function() 
-      state.options.difficulty = 3
+      Opt.difficulty = 3
   end,
   up = 8, down = 10, left = 1, right = 1,
   },
   
   {text = "Insane", x = 500, y = 375, w = 75, h = 20,
     action = function() 
-      state.options.difficulty = 4
+      Opt.difficulty = 4
   end,
   up = 9, down = 11, left = 1, right = 1,
   },
@@ -85,8 +89,8 @@ local opts = {
 
 local supplemental = {
   draw = function(sup, s)
-    local controlsOption = s.options[state.options.controlScheme]
-    local difficultyOption = s.options[state.options.difficulty + 6]
+    local controlsOption = s.options[Opt.controlScheme]
+    local difficultyOption = s.options[Opt.difficulty + 6]
     love.graphics.setColor(s.highlightColor)
     love.graphics.circle(love.draw_fill, controlsOption.x - 30, controlsOption.y - 4, 8, 32)
     love.graphics.circle(love.draw_fill, difficultyOption.x - 30, difficultyOption.y - 4, 8, 32)
@@ -95,23 +99,12 @@ local supplemental = {
 
 state.options = getMenu(opts, supplemental)
 
-if state.options.difficulty == nil then state.options.difficulty = 2 end
-if state.options.controlScheme == nil then state.options.controlScheme = 1 end
-
 state.options.save = function(self)
-  local savePath = "options"
-  local diff = "state.options.difficulty = " .. tostring(self.difficulty) .. "\n"
-  local ctrl = "state.options.controlScheme = " .. tostring(self.controlScheme) .. "\n"
-  
-  local saveFile = love.filesystem.newFile(savePath, love.file_write)
-  love.filesystem.open(saveFile)
-  love.filesystem.write(saveFile, diff)
-  love.filesystem.write(saveFile, ctrl)
-  love.filesystem.close(saveFile)
+  persistence.store("options", Opt)
 end
 
 state.options.load = function(self)
-  local savePath = "options"
-  if love.filesystem.exists(savePath) then love.filesystem.include(savePath) end
+  local loaded = persistence.load("options")
+  if loaded ~= nil then Opt = loaded end
 end
 

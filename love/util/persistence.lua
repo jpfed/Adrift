@@ -2,61 +2,68 @@
 
 persistence =
 {
+  write_simulator = function (path)
+    return {
+      handle = love.filesystem.newFile(path, love.file_write),
+      open  = function (f) love.filesystem.open(f.handle) end,
+      close = function (f) love.filesystem.close(f.handle) end,
+      write = function (f, str) love.filesystem.write(f.handle, str) end,
+    }
+  end,
+
   store = function (path, ...)
-    local f, e = io.open(path, "w")
-    if f then
-      f:write("-- Persistent Data\n")
-      f:write("return ")
-      persistence.write(f, select(1,...), 0)
-      for i = 2, select("#", ...) do
-        f:write(",\n")
-        persistence.write(f, select(i,...), 0)
-      end
-      f:write("\n")
-    else
-      error(e)
+    local f = persistence.write_simulator(path)
+    f:open()
+    f:write("-- Persistent Data\n")
+    f:write("return ")
+    persistence.write(f, select(1,...), 0)
+    for i = 2, select("#", ...) do
+      f:write(",\n")
+      persistence.write(f, select(i,...), 0)
     end
+    f:write("\n")
     f:close()
-  end
+  end,
   
   load = function (path)
-    local f, e = loadfile(path)
+    if not love.filesystem.exists(path) then return nil end
+    local f = loadstring(love.filesystem.read(path))
     if f then
       return f()
     else
       return nil, e
       --error(e)
     end
-  end
+  end,
   
   write = function (f, item, level)
     local t = type(item)
     persistence.writers[t](f, item, level)
-  end
+  end,
   
   writeIndent = function (f, level)
     for i = 1, level do
       f:write("\t")
     end
-  end
+  end,
   
   writers = {
     ["nil"] = function (f, item, level)
         f:write("nil")
-      end
+      end,
     ["number"] = function (f, item, level)
         f:write(tostring(item))
-      end
+      end,
     ["string"] = function (f, item, level)
         f:write(string.format("%q", item))
-      end
+      end,
     ["boolean"] = function (f, item, level)
         if item then
           f:write("true")
         else
           f:write("false")
         end
-      end
+      end,
     ["table"] = function (f, item, level)
         f:write("{\n")
         for k, v in pairs(item) do
@@ -69,7 +76,7 @@ persistence =
         end
         persistence.writeIndent(f, level)
         f:write("}")
-      end
+      end,
     ["function"] = function (f, item, level)
         -- Does only work for "normal" functions, not those
         -- with upvalues or c functions
@@ -86,10 +93,10 @@ persistence =
             f:write("nil -- function could not be dumped\n")
           end
         end
-      end
+      end,
     ["thread"] = function (f, item, level)
         f:write("nil --thread\n")
-      end
+      end,
     ["userdata"] = function (f, item, level)
         f:write("nil --userdata\n")
       end

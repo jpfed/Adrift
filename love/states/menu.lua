@@ -198,7 +198,7 @@ local options = {
         end,
       }
   end,
-  up = 4, down = 2, left = 1, right = 1,
+  up = 5, down = 2, left = 1, right = 1,
   },
   
   {text = "Options", x = 480, y = 350, w = 75, h = 20,
@@ -208,18 +208,25 @@ local options = {
   up = 1, down = 3, left = 2, right = 2,
   },
   
-  {text = "Help", x = 480, y = 400, w = 60, h = 20,
+  {text = "High Scores", x = 480, y = 400, w = 100, h = 20,
     action = function()
-      state.current = state.help
+      state.current = state.highscores
   end,
   up = 2, down = 4, left = 3, right = 3,
   },
+
+  {text = "Help", x = 480, y = 450, w = 60, h = 20,
+    action = function()
+      state.current = state.help
+  end,
+  up = 3, down = 5, left = 3, right = 3,
+  },
   
-  {text = "Quit", x = 480, y = 450, w = 60, h = 20,
+  {text = "Quit", x = 480, y = 500, w = 60, h = 20,
     action = function() 
       love.system.exit()
   end,
-  up = 3, down = 1, left = 4, right = 4,
+  up = 4, down = 1, left = 4, right = 4,
   }
 }
 

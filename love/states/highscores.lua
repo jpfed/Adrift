@@ -1,4 +1,5 @@
 state.highscores = {
+  ct = 0,
   update = function(s,dt) 
     s.ct = math.min(1,s.ct + dt)
     -- TODO: It would be cool to scroll through all the high scores slowly
@@ -13,6 +14,8 @@ state.highscores = {
         local line = i .. " -- " .. v[1] .. " -- " .. v[2]
         love.graphics.draw(line, 50,80 + (i*20))
       end
+    else
+      self:init()
     end
   end,
   go = function()

@@ -10,8 +10,9 @@ state.loss = {
     love.graphics.draw("Game Over", 350,300)
   end,
   go = function()
-    state.menu:reset()
-    state.current = state.menu
+    state.highscores.ct = 0
+    state.highscores:register()
+    state.current = state.highscores
   end,
   mousepressed = function(s,x,y,button) s.go() end,
   keypressed = function(s,key) s.go() end,

@@ -26,6 +26,5 @@ util = {
     local postVal = math.min(len,math.ceil(pos))
     local progress = pos - prevVal
     return util.interpolate(vec[prevVal],vec[postVal],progress)
-  end
-  
+  end,
 }

@@ -39,7 +39,7 @@ state.game = {
     L.boom:startObjects()
     
     if s.ship == nil then
-      s.ship = Ship:create(L.nodes[1].x, L.nodes[1].y, state.options.controlScheme)
+      s.ship = Ship:create(L.nodes[1].x, L.nodes[1].y, Opt.controlScheme)
     else
       s.ship:cleanup()
       s.ship:warp(L.world, L.nodes[1].x, L.nodes[1].y)
@@ -80,6 +80,9 @@ state.game = {
     if key==love.key_v then s.ship.hasCrystal = true end
     if key==love.key_e then
       table.insert(L.objects, EnergyChunk:create({x=s.ship.x,y=s.ship.y+1}, state.game.difficulty)) 
+    end
+    if key==love.key_q then
+      s.ship.armor = 0
     end
     if key==love.key_h then
       table.insert(L.objects, Hornet:create(s.ship.x, s.ship.y, state.game.difficulty)) 

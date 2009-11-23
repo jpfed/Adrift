@@ -6,42 +6,42 @@ local opts = {
 
   {text = "Radial Keyboard Controls", x = 100, y = 225, w = 180, h = 20,
     action = function()  
-      state.options.controlScheme = 1
+      Opt.controlScheme = 1
   end,
   up = 6, down = 2, left = 7, right = 7, 
   },
 
   {text = "Eight-directional Keyboard Controls", x = 100, y = 275, w = 245, h = 20,
     action = function()  
-      state.options.controlScheme = 2
+      Opt.controlScheme = 2
   end,
   up = 1, down = 3, left = 7, right = 7,
   },
 
   {text = "Radial Gamepad Controls", x = 100, y = 325, w = 180, h = 20,
     action = function()  
-      state.options.controlScheme = 3
+      Opt.controlScheme = 3
   end,
   up = 2, down = 4, left = 7, right = 7,
   },
 
   {text = "Eight-directional Gamepad Controls", x = 100, y = 375, w = 245, h = 20,
     action = function()  
-      state.options.controlScheme = 4
+      Opt.controlScheme = 4
   end,
   up = 3, down = 5, left = 7, right = 7,
   },
   
   {text = "Radial Joystick Controls", x = 100, y = 425, w = 165, h = 20,
     action = function()  
-      state.options.controlScheme = 5
+      Opt.controlScheme = 5
   end,
   up = 4, down = 6, left = 7, right = 7,
   },
 
   {text = "Omni-directional Joystick Controls", x = 100, y = 475, w = 230, h = 20,
     action = function()  
-      state.options.controlScheme = 6
+      Opt.controlScheme = 6
   end,
   up = 5, down = 1, left = 7, right = 7,
   },

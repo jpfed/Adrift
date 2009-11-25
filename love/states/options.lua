@@ -1,6 +1,6 @@
 love.filesystem.require("util/persistence.lua")
 
-Opt = { difficulty = 2, controlScheme = 1 }
+Opt = { difficulty = 2, controlScheme = 1, highscores = {} }
 
 local opts = {
 

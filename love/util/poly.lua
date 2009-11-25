@@ -284,4 +284,20 @@ Poly = {
     return result
   end,
   
+  projectPoints = function(self, cx, cy, angle)
+    local cos,sin = math.cos(math.rad(angle)), math.sin(math.rad(angle))
+    local ps = {}
+    local x,y
+
+    for i,point in ipairs(self.points) do
+      x, y = L:xy(
+        cx + (point.x*cos - point.y*sin),
+        cy + (point.x*sin + point.y*cos),
+        0)
+      table.insert(ps, x)
+      table.insert(ps, y)
+    end
+
+    return ps
+  end,
 }

@@ -39,10 +39,6 @@ BlobPoly = {
     local x,y
 
     for i,point in ipairs(self.points) do
-        --cx + (point.x*r - point.y*i),
-        --cy + (point.x*i + point.y*r),
-        --cx + (point.x),
-        --cy + (point.y),
       x, y = L:xy(
         cx + (point.x*cos - point.y*sin),
         cy + (point.x*sin + point.y*cos),

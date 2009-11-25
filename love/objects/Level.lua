@@ -1,5 +1,6 @@
 love.filesystem.require("oo.lua")
 love.filesystem.require("objects/BoomOperator.lua")
+love.filesystem.require("util/poly.lua")
 
 Level = {
   margin = 1,
@@ -35,6 +36,7 @@ Level = {
     r.arcs = {}
     r.objects = {}
     r:generate(difficulty)
+    --r:buildPolys()
     r:rasterize()
     r:highlight()
     if color then r:coloration(color) end
@@ -116,6 +118,16 @@ Level = {
             love.graphics.rectangle(love.draw_fill,xVal,yVal,800/fovX,800/fovX)
           end
         end
+      end
+    end
+
+    if level.polyLeaves then
+      local tc = love.graphics.newColor(192,128,255)
+      love.graphics.setColor(tc)
+      for i,v in ipairs(level.polyLeaves) do
+        local points = v:projectPoints(0,0,0)
+        love.graphics.polygon(love.draw_line, unpack(points))
+        logger:add("Poly!")
       end
     end
   end,
@@ -309,6 +321,18 @@ Level = {
       if node~=nil and geom.dist_to_line_t(node, v.head, v.tail) < minDist then return false end
     end
     return true
+  end,
+
+  buildPolys = function(level)
+    level.poly = Poly:create( {{x=0,y=0},{x=0,y=level.maxRow},{x=level.maxCol,y=level.maxRow},{x=level.maxCol,y=0}} )
+    level.poly:subdivide(2)
+
+    -- Extra subdividing around nodes and arcs?
+    --for k,v in ipairs(level.nodes) do
+    --  level.poly:subdivide(1)
+    --end
+    
+    level.polyLeaves = level.poly:subPolyLeaves()
   end,
 
   rasterize = function(level)

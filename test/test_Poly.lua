@@ -59,7 +59,16 @@ function test_SubPolyLeaves()
   for numSubPolys=3,8 do
     local p = Poly:create({{x=0,y=0},{x=0,y=1},{x=1,y=1},{x=1,y=0}})
     p:subdivide(nil,numSubPolys)
-    local l = p:subPolyLeaves({})
+    local l = p:subPolyLeaves()
     assertEqual( #l, numSubPolys)
+  end
+end
+
+function test_SubPolyRecursion()
+  for numSubPolys=3,8 do
+    local p = Poly:create({{x=0,y=0},{x=0,y=1},{x=1,y=1},{x=1,y=0}})
+    p:subdivide_r(3,nil,numSubPolys)
+    local l = p:subPolyLeaves()
+    assertEqual( #l, numSubPolys*numSubPolys*numSubPolys)
   end
 end

@@ -181,7 +181,7 @@ Poly = {
       local newPolys = {}
       local rays = {}
       -- the spread of rays is randomly rotated
-      local dtheta = 0 --math.random()*math.pi
+      local dtheta = math.random()*math.pi
       if interPoint then
         dtheta = math.atan2(interPoint.y - center.y, interPoint.x - center.x)
       end
@@ -242,6 +242,15 @@ Poly = {
         perimeter[p].ray = nil
         table.insert(polyPoints, center)
         table.insert(self.subPolys, Poly:create(polyPoints))
+      end
+    end
+  end,
+  
+  subdivide_r = function(self, depth, interPoint, num)
+    if depth > 0 and self.subPolys == nil then 
+      self:subdivide(interPoint, num)
+      for k,v in pairs(self.subPolys) do
+        v:subdivide_r(depth-1,interPoint, num)
       end
     end
   end,
